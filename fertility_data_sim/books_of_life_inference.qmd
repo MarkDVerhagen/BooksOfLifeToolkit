@@ -1,0 +1,95 @@
+---
+title: "books_of_life_inference.qmd"
+format: html
+editor: visual
+---
+
+## Preliminaries
+
+Note: All data used in this example is syntethic; there is no real data.
+
+```{r}
+rm(list=ls())
+library(tidyverse)
+library(httr2)
+set.seed(08544)
+```
+
+
+## Read in books of life
+
+```{r}
+# TODO: Read from file
+
+books_of_life <- tribble(
+  ~id, ~book_of_life,
+  1, "Information about person {Age: 18, Country: Netherlands, desire: wants a child}",
+  2, "Information about person {Age: 45, Country: Netherlands, desire: wants a child}",
+  3, "Information about person {Age: 25, Country: Netherlands, desire: wants a child}",
+  4, "Information about person {Age: 35, Country: Netherlands, desire: wants a child}",
+)
+
+prompt_prefix <- "Predict as accurately as possible if this person will have a child between 2021 and 2023. Answer only '0' or '1'. Do not explain."
+prompt_suffix <- "Output one token: '0' or '1':"
+
+# append on prefix and suffix
+prompts_tib <- books_of_life %>%
+  mutate(prompt_prefix = "Predict as accurately as possible if this person will have a child between 2021 and 2023. Answer only '0' or '1'. Do not explain.") %>%
+  mutate(prompt_suffix = "Output one token '0' or '1':") 
+
+# create prompt
+prompts_tib <- prompts_tib %>%
+  mutate(prompt = paste(prompt_prefix, book_of_life, prompt_suffix))
+```
+
+```{r}
+get_response <- function(prompt) {
+
+  n_predict <- 10
+  n_probs <- 5
+  # Optional TODO move out of function to save time
+  base_url_local_server <- "http://localhost:8080"
+  access_token_local_server <- "required_but_not_used"
+  endpoint <- "/v1/completions"
+
+  req_stub <- request(paste0(base_url_local_server, endpoint)) %>%
+    req_headers(
+      `Content-Type` = "application/json",
+     `Authorization` = paste("Not needed")
+   ) %>%
+    req_throttle(rate = 120/60) # 120 requests per minute
+
+  req <- req_stub %>%
+    req_body_json(
+      list(
+        prompt = prompt,
+        n_predict = n_predict,
+        n_probs = n_probs
+      )
+    )
+  
+  # make call
+  resp <- req_perform(req)
+  
+  if (resp_status(resp) != 200) {
+    stop("Response Error: ", resp_status(resp))
+  }
+  
+  return(resp)
+}
+```
+
+
+```{r}
+# do queries
+responses <- map(prompts_tib$prompt, get_response)
+
+response_bodies <- map(responses, resp_body_json)
+
+# get content (the response from the LLM is called "content")
+responses_content <- map_chr(response_bodies, pluck, "content")
+```
+
+```{r}
+write_csv(as_tibble(responses_content), "responses_content.csv")
+```
