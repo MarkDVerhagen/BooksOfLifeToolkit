@@ -18,16 +18,15 @@ set.seed(08544)
 
 This data generating process is meant to capture 3 stylized facts:
 
-- people that want kids are more likely to have kids but there is not a perfect match between fertility desire and fertility outcome
-- there is an inverse-U shaped relationship between age and having kids
-- people in Chad have more kids than people in Netherlands who have more kids than people in South Korea
+-   people that want kids are more likely to have kids but there is not a perfect match between fertility desire and fertility outcome
+-   there is an inverse-U shaped relationship between age and having kids
+-   people in Chad have more kids than people in Netherlands who have more kids than people in South Korea
 
 Predictors:
 
-- desire: "wants a baby", "doesn't want a baby"
-- age: 18 - 45
-- county: "Chad", "Netherlands", "South Korea"
-### Ferility rates by country: https://en.wikipedia.org/wiki/List_of_countries_by_total_fertility_rate
+-   desire: "wants a baby", "doesn't want a baby"
+-   age: 18 - 45
+-   county: "Chad", "Netherlands", "South Korea" \### Ferility rates by country: https://en.wikipedia.org/wiki/List_of_countries_by_total_fertility_rate
 
 ```{r}
 # Parameters
@@ -75,7 +74,7 @@ for (row in 1:nrow(param_combos)) {
 }
 ```
 
-## graph dpg
+## graph dgp
 
 ```{r}
 # ggplot age vs p_kid facet by country and desire
@@ -93,7 +92,7 @@ param_combos %>%
 
 ```{r}
 # write param_combos to csv
-write_csv(param_combos, "fer_data_sim.csv")
+write_csv(param_combos, "fer_data_sim_dpg_params.csv")
 ```
 
 ## generate data
@@ -144,11 +143,32 @@ people <- people %>%
   )
 ```
 
-## write people file
+## write people csv file
 
 ```{r}
-# write param_combos to csv
-write_csv(people, "people.csv")
+header <- "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request."
+instruction <- "You are a smart and helpful AI assistant that has been trained to predict life outcomes."
+people <- people %>%
+  mutate(instruction = instruction) %>%
+  mutate(input = str_glue("country is {country}, age is {age}, desire is {desire}")) %>%
+  mutate(input_hash = str_glue("country is {country_hash}, age is {age_hash}, desire is {desire_hash}")) %>%
+  mutate(response = str_glue("kid: {kid}")) %>%
+  mutate(text = str_glue("{header}\n\n \ 
+                         ### Instruction:\n{instruction}\n\n \
+                         ### Input:\n{input}\n\n \
+                         ### Response:\n{response}")) %>%
+  mutate(text_hash = str_glue("{header}\n\n \ 
+                         ### Instruction:\n{instruction}\n\n \
+                         ### Input:\n{input_hash}\n\n \
+                         ### Response:\n{response}"))
+
 ```
 
-
+```{r}
+# write fine tuning file
+n <- 100
+people %>%
+  select(instruction, input, response, text) %>%
+  slice_sample(n = n) %>%
+  write_csv(str_glue("fake_data_for_ft_n={n}.csv"))
+```
