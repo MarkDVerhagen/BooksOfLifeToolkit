@@ -1,0 +1,62 @@
+main_key: person_id
+datasets:
+  - name: householdbus
+    description: "A dataset containing each individual's changes to their household composition"
+    documentation: "https://www.cbs.nl/nl-nl/onze-diensten/maatwerk-en-microdata/microdata-zelf-onderzoek-doen/microdatabestanden/gbahuishoudensbus-huishoudenskenmerken"
+    source: .. 
+    social_structure:
+      self_degree:
+        - household_id
+        - household_size
+        - household_type
+        - household_number_of_adults
+        - household_number_of_children
+        - time (likely the start date of the spell)
+      parent_degree:
+        - parent_id
+        - self
+        - parent_birth_year
+        - parent_birth_month
+        - parent_birth_day
+        - parent_sex_at_birth
+        - parent_income
+      sibling_degree:
+        - sibling_id
+        - sibling_birth_year
+        - sibling_birth_month
+        - sibling_birth_day
+        - sibling_sex_at_birth
+      partner_degree:
+        - partner_id
+        - partner_birth_year
+        - partner_birth_month
+        - partner_birth_day
+        - partner_sex_at_birth
+        - partner_income
+  
+  - name: vektisactivities
+    description: "https://www.cbs.nl/nl-nl/onze-diensten/maatwerk-en-microdata/microdata-zelf-onderzoek-doen/microdatabestanden/mszzorgactiviteitenvekttab-zorgactiviteiten-diagnose"
+    documentation: "https://www.kaggle.com/c/titanic/data"
+    social_structure:
+      self_degree:
+        - activity_id
+        - activity_type
+        - activity_family
+        - activity_date
+        - activity_diagnosis
+        - time
+      hospital_degree:
+        - hospital_id
+        - hospital_type
+        - patient_ids
+
+  - name: persoontab
+    description: "A dataset containing characteristics of individuals at birth."
+    documentation: "https://www.cbs.nl/nl-nl/onze-diensten/maatwerk-en-microdata/microdata-zelf-onderzoek-doen/microdatabestanden/gbapersoontab-persoonskenmerken-van-personen-in-de-brp"
+    social_structure:
+      self_degree:
+        - person_birth_year
+        - person_birth_month
+        - person_birth_day
+        - person_birth_country
+        - time
