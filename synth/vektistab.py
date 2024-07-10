@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
-from synth.params import synth_params
+import os
+from params import synth_params
 import datetime
 
 medical_events = {'sprained ankle': [0, 0.15, 0.1, 0.1, 0.1, 0.1, 0.05],
