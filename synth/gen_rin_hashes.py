@@ -15,7 +15,7 @@ def generate_n_hashed_ids(n, seed):
     return ids
 
 # Specify the number of IDs you want to generate
-N = synth_params["N"]
+N = synth_params["N_hash"]
 seed = synth_params["seed"]
 hashed_ids = generate_n_hashed_ids(N, seed=1704)
 
@@ -24,7 +24,7 @@ with open(os.path.join('synth', 'hashed_ids_' + str(N) + '.json'), 'w') as f:
 
 
 # Specify the number of IDs you want to generate
-N = synth_params["N_households"]
+N = synth_params["N_hh_hash"]
 seed = synth_params["seed"]
 hashed_ids = generate_n_hashed_ids(N, seed=1704)
 
