@@ -15,7 +15,7 @@ Attributes:
 
 
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Literal
 
 
 @dataclass
@@ -134,12 +134,12 @@ Attributes:
 
 # Create instances of PersonParagraph
 person_paragraphs = [
-    PersonParagraph(1980, "person_paragraph", "person_paragraph_table", 12345, "Netherlands", "1", "Germany", "France", "1", "group1", "0", 1980, "2", "1", 1950, 1948, "Netherlands", "1", "1980-01-01"),
-    PersonParagraph(1990, "person_paragraph", "person_paragraph_table", 67890, "USA", "2", "Canada", "Mexico", "2", "group2", "1", 1990, "1", "2", 1960, 1958, "USA", "0", "1990-05-15"),
-    PersonParagraph(1975, "person_paragraph", "person_paragraph_table", 13579, "Japan", "-", "China", "South Korea", "-", "group3", "2", 1975, "-", "2", 1945, 1943, "Japan", "-", "1975-07-30")
+    PersonOriginParagraph(1980, "person_paragraph", "person_paragraph_table", 12345, "Netherlands", "1", "Germany", "France", "1", "group1", "0", 1980, "2", "1", 1950, 1948, "Netherlands", "1", "1980-01-01"),
+    PersonOriginParagraph(1990, "person_paragraph", "person_paragraph_table", 67890, "USA", "2", "Canada", "Mexico", "2", "group2", "1", 1990, "1", "2", 1960, 1958, "USA", "0", "1990-05-15"),
+    PersonOriginParagraph(1975, "person_paragraph", "person_paragraph_table", 13579, "Japan", "-", "China", "South Korea", "-", "group3", "2", 1975, "-", "2", 1945, 1943, "Japan", "-", "1975-07-30")
 ]
 
-# Convert list of PersonParagraph instances to list of dictionaries
+# Convert list of PersonOriginParagraph instances to list of dictionaries
 person_paragraphs_dict_list = [paragraph.__dict__ for paragraph in person_paragraphs]
 
 # Display the list of dictionaries
