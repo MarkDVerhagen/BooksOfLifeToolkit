@@ -41,3 +41,45 @@ class HouseholdEventParagraph(Paragraph):
     
     def get_paragraph_string(self, excluded_features_list=None):
         return super().get_paragraph_string(excluded_features_list)
+    
+
+household_paragraphs = [
+    HouseholdEventParagraph(
+        dataset_name="household_paragraph_table",  # Table name
+        person_id=12345,                     # Person ID
+        HOUSEKEEPING_NR="12345",             # Unique household identification number
+        TYPHH="Single",                      # Household type
+        DATE_STIRTHH="2020-01-01",           # Household start date
+        DATUMEINDEHH="2021-01-01",           # Household end date
+        NUMBERPERSHH=1,                      # Number of persons in the household
+        PLHH="Head",                         # Place of person in the household
+        REFPERSOONHH="1",                    # Reference person indicator
+        AANTALOVHH=0,                        # Number of other members in the household
+        AANTALKINDHH=0,                      # Number of children living at home in the household
+        BIRTHEDYOUNGCHILDHH=0,               # Year of birth of the youngest child in the household
+        GEBMAANDJONGSTEKINDHH="--",          # Birth month of the youngest child in the household
+        GEBJAAROUDSTEKINDHH=0,               # Year of birth of the oldest child in the household
+        BMAANDOUDSTEKINDHH="--"              # Birth month of the oldest child in the household
+    ),
+    HouseholdEventParagraph(
+        dataset_name="household_paragraph_table",  # Table name
+        person_id=67890,                     # Person ID
+        HOUSEKEEPING_NR="67890",             # Unique household identification number
+        TYPHH="Family",                      # Household type
+        DATE_STIRTHH="2020-01-01",           # Household start date
+        DATUMEINDEHH="2021-01-01",           # Household end date
+        NUMBERPERSHH=4,                      # Number of persons in the household
+        PLHH="Child",                        # Place of person in the household
+        REFPERSOONHH="0",                    # Reference person indicator
+        AANTALOVHH=3,                        # Number of other members in the household
+        AANTALKINDHH=2,                      # Number of children living at home in the household
+        BIRTHEDYOUNGCHILDHH=2010,            # Year of birth of the youngest child in the household
+        GEBMAANDJONGSTEKINDHH="01",          # Birth month of the youngest child in the household
+        GEBJAAROUDSTEKINDHH=2005,            # Year of birth of the oldest child in the household
+        BMAANDOUDSTEKINDHH="12"              # Birth month of the oldest child in the household
+    ),
+]
+
+# generate example paragraph string
+for paragraph in household_paragraphs:
+    print(paragraph.get_paragraph_string())

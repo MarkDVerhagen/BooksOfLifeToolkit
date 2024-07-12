@@ -106,4 +106,3 @@ person_paragraphs_dict_list = [paragraph.__dict__ for paragraph in person_paragr
 # Display the list of dictionaries
 for paragraph in person_paragraphs:
     print(paragraph.get_paragraph_string())
-    print(paragraph)
