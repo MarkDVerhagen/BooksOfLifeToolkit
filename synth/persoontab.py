@@ -17,11 +17,44 @@ gbapersoon = gbahh.sort_values(by=['rinpersoon', 'Start Date'], ascending=True).
     groupby('rinpersoon').first()
 
 gbapersoon['age'] = gbapersoon['Household Member place'].apply(assign_age)
-gbapersoon['birth_date'] = np.where(gbapersoon['Start Date'] > '1990-01-01',
-                                    gbapersoon['Start Date'].str.slice(0, 4),                                    
-                                    1990 - gbapersoon['age'])
+gbapersoon['birthday'] = np.where(gbapersoon['Start Date'] > '1990-01-01',
+                                  gbapersoon['Start Date'].str.slice(0, 4),                                    
+                                  1990 - gbapersoon['age'])
 
-gbapersoon['birth_country'] = np.where(gbapersoon['Start Date'] > '1990-01-01',
-                                       'NL', np.random.choice(['NL', 'France', 'US', 'Egypt'], p = [0.8, 0.15, 0.03, 0.02]))
+## Simulate additional data
+gbapersoon['GBAGEBOORTELAND'] = np.where(gbapersoon['Start Date'] > '1990-01-01',
+                                         'NL', np.random.choice(['NL', 'France', 'US', 'Egypt'], p = [0.8, 0.15, 0.03, 0.02]))
+gbapersoon['GBAGESLACHT'] = np.random.choice(['1', '2', '-'], size=len(gbapersoon), p=[0.49, 0.49, 0.02])
+gbapersoon['GBAGEBOORTELANDMOEDER'] = np.random.choice(['NL', 'France', 'US', 'Egypt'], size=len(gbapersoon), p=[0.8, 0.15, 0.03, 0.02])
+gbapersoon['GBAGEBOORTELANDVADER'] = np.random.choice(['NL', 'France', 'US', 'Egypt'], size=len(gbapersoon), p=[0.8, 0.15, 0.03, 0.02])
+gbapersoon['GBAAANTALOUDERSBUITENLAND'] = gbapersoon.apply(lambda row: str(int(row['GBAGEBOORTELANDMOEDER'] != 'NL') + int(row['GBAGEBOORTELANDVADER'] != 'NL')), axis=1)
+gbapersoon['GBAHERKOMSTGROEPERING'] = gbapersoon['GBAGEBOORTELAND'].apply(lambda x: 'Western' if x in ['NL', 'France', 'US'] else 'Non-Western')
+gbapersoon['GBAGENERATIE'] = np.random.choice(['-', '0', '1', '2'], size=len(gbapersoon), p=[0.01, 0.3, 0.4, 0.29])
+gbapersoon['GBAGEBOORTEJAAR'] = gbapersoon['birthday'].astype(int)
+gbapersoon['GBAGESLACHTMOEDER'] = np.random.choice(['1', '2', '-'], size=len(gbapersoon), p=[0.01, 0.98, 0.01])
+gbapersoon['GBAGESLACHTVADER'] = np.random.choice(['1', '2', '-'], size=len(gbapersoon), p=[0.98, 0.01, 0.01])
+gbapersoon['GBAGEBOORTEJAARMOEDER'] = gbapersoon['GBAGEBOORTEJAAR'] - np.random.randint(20, 40, size=len(gbapersoon))
+gbapersoon['GBAGEBOORTEJAARVADER'] = gbapersoon['GBAGEBOORTEJAAR'] - np.random.randint(20, 40, size=len(gbapersoon))
+gbapersoon['GBAHERKOMSTLAND'] = gbapersoon['GBAGEBOORTELAND']
+gbapersoon['GBAGEBOORTELANDNL'] = np.where(gbapersoon['GBAGEBOORTELAND'] == 'NL', '1', '0')
 
-gbapersoon[['birth_country', 'birth_date']].to_csv(os.path.join('synth', 'data', 'persoontab.csv'))
+cols = [
+    'rinpersoon',
+    'GBAGEBOORTELAND',
+    'GBAGESLACHT',
+    'GBAGEBOORTELANDMOEDER',
+    'GBAGEBOORTELANDVADER',
+    'GBAAANTALOUDERSBUITENLAND',
+    'GBAHERKOMSTGROEPERING',
+    'GBAGENERATIE',
+    'GBAGEBOORTEJAAR',
+    'GBAGESLACHTMOEDER',
+    'GBAGESLACHTVADER',
+    'GBAGEBOORTEJAARMOEDER',
+    'GBAGEBOORTEJAARVADER',
+    'GBAHERKOMSTLAND',
+    'GBAGEBOORTELANDNL',
+    'birthday',
+    ]
+
+gbapersoon.reset_index()[cols].to_csv(os.path.join('synth', 'data', 'persoontab.csv'))
