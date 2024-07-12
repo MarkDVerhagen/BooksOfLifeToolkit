@@ -1,16 +1,16 @@
 """
-The Event class serves as a base class for representing and serializing various types of 
-events related to persons in the CBS personal records database.
+The Paragraph class serves as a base class for representing and serializing various types of 
+information related to persons in the CBS personal records database.
 
-It includes common attributes that are shared across different event types and provides a framework for 
-more specific event classes to build upon.
+It includes common attributes that are shared across different paragraph types and provides a framework for 
+more specific paragraph classes to build upon.
 
 Attributes:
-    year (int): The year the event occurred.
-    event_type (str): The category of the event.
+    year (int): The year the paragraph occurred.
+    paragraph_type (str): The category of the paragraph.
     table_name (str): The name of the source database table.
-    person_id (int): Unique identifier for the person related to the event.
-    event_string (str, init=False): Textual representation of the event (constructed in subclasses).
+    person_id (int): Unique identifier for the person related to the paragraph.
+    paragraph_string (str, init=False): Textual representation of the paragraph (constructed in subclasses).
 """
 
 
@@ -21,11 +21,11 @@ from typing import List
 @dataclass
 class Paragraph:
     year: int
-    event_type: str 
-    is_spell: bool # spell or single event?
+    paragraph_type: str 
+    is_spell: bool # spell or single paragraph?
     table_name: str
     person_id: int # RINSPERSOON. Is this the main key?
-    event_string: str = field(init=False)
+    paragraph_string: str = field(init=False)
 
 
 
@@ -33,8 +33,8 @@ class Paragraph:
 class PersonOriginParagraph(Paragraph):
 
     """
-The PersonEvent class is specifically designed for the GBAPERSOONTAB data table.
-It extends the Event class by adding attributes that capture invariant 
+The PersonParagraph class is specifically designed for the GBAPERSOONTAB data table.
+It extends the Paragraph class by adding attributes that capture invariant 
 personal information such as country of birth, gender, 
 parents' birth countries, and more.
 
@@ -107,7 +107,7 @@ Attributes:
         self.year = self.GBAGEBOORTEJAAR
 
         # The basic serialization is a list of the attributes
-        self.event_string = (
+        self.paragraph_string = (
             f"person_id: {self.person_id}\n"
             f"GBAGEBOORTELAND: {self.GBAGEBOORTELAND}\n"
             f"GBAGESLACHT: {self.GBAGESLACHT}\n"
@@ -125,23 +125,23 @@ Attributes:
             f"GBAGEBOORTELANDNL: {self.GBAGEBOORTELANDNL}\n"
             f"birthday: {self.birthday}"
         )
-        self.event_type = "person_event"
-        self.table_name = "person_event_table"
+        self.paragraph_type = "person_paragraph"
+        self.table_name = "person_paragraph_table"
 
     def simple_string(self):
         data_string = None
         return data_string
 
-# Create instances of PersonEvent
-person_events = [
-    PersonEvent(1980, "person_event", "person_event_table", 12345, "Netherlands", "1", "Germany", "France", "1", "group1", "0", 1980, "2", "1", 1950, 1948, "Netherlands", "1", "1980-01-01"),
-    PersonEvent(1990, "person_event", "person_event_table", 67890, "USA", "2", "Canada", "Mexico", "2", "group2", "1", 1990, "1", "2", 1960, 1958, "USA", "0", "1990-05-15"),
-    PersonEvent(1975, "person_event", "person_event_table", 13579, "Japan", "-", "China", "South Korea", "-", "group3", "2", 1975, "-", "2", 1945, 1943, "Japan", "-", "1975-07-30")
+# Create instances of PersonParagraph
+person_paragraphs = [
+    PersonParagraph(1980, "person_paragraph", "person_paragraph_table", 12345, "Netherlands", "1", "Germany", "France", "1", "group1", "0", 1980, "2", "1", 1950, 1948, "Netherlands", "1", "1980-01-01"),
+    PersonParagraph(1990, "person_paragraph", "person_paragraph_table", 67890, "USA", "2", "Canada", "Mexico", "2", "group2", "1", 1990, "1", "2", 1960, 1958, "USA", "0", "1990-05-15"),
+    PersonParagraph(1975, "person_paragraph", "person_paragraph_table", 13579, "Japan", "-", "China", "South Korea", "-", "group3", "2", 1975, "-", "2", 1945, 1943, "Japan", "-", "1975-07-30")
 ]
 
-# Convert list of PersonEvent instances to list of dictionaries
-person_events_dict_list = [event.__dict__ for event in person_events]
+# Convert list of PersonParagraph instances to list of dictionaries
+person_paragraphs_dict_list = [paragraph.__dict__ for paragraph in person_paragraphs]
 
 # Display the list of dictionaries
-for event in person_events:
-    print(event.event_string)
+for paragraph in person_paragraphs:
+    print(paragraph.paragraph_string)
