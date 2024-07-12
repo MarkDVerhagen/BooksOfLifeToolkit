@@ -134,9 +134,28 @@ Attributes:
 
 # Create instances of PersonParagraph
 person_paragraphs = [
-    PersonOriginParagraph(1980, "person_paragraph", "person_paragraph_table", 12345, "Netherlands", "1", "Germany", "France", "1", "group1", "0", 1980, "2", "1", 1950, 1948, "Netherlands", "1", "1980-01-01"),
-    PersonOriginParagraph(1990, "person_paragraph", "person_paragraph_table", 67890, "USA", "2", "Canada", "Mexico", "2", "group2", "1", 1990, "1", "2", 1960, 1958, "USA", "0", "1990-05-15"),
-    PersonOriginParagraph(1975, "person_paragraph", "person_paragraph_table", 13579, "Japan", "-", "China", "South Korea", "-", "group3", "2", 1975, "-", "2", 1945, 1943, "Japan", "-", "1975-07-30")
+    PersonOriginParagraph(
+        1980,                      # year
+        "person_paragraph",        # paragraph_type
+        False,                     # is_spell (assuming it's a boolean, adjust as needed)
+        "person_paragraph_table",  # table_name
+        12345,                     # person_id
+        "Netherlands",             # GBAGEBOORTELAND
+        "1",                       # GBAGESLACHT
+        "Germany",                 # GBAGEBOORTELANDMOEDER
+        "France",                  # GBAGEBOORTELANDVADER
+        "1",                       # GBAAANTALOUDERSBUITENLAND
+        "group1",                  # GBAHERKOMSTGROEPERING
+        "0",                       # GBAGENERATIE
+        1980,                      # GBAGEBOORTEJAAR
+        "2",                       # GBAGESLACHTMOEDER
+        "1",                       # GBAGESLACHTVADER
+        1950,                      # GBAGEBOORTEJAARMOEDER
+        1948,                      # GBAGEBOORTEJAARVADER
+        "Netherlands",             # GBAHERKOMSTLAND
+        "1",                       # GBAGEBOORTELANDNL
+        "1980-01-01"               # birthday
+    ),
 ]
 
 # Convert list of PersonOriginParagraph instances to list of dictionaries
