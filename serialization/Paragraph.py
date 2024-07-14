@@ -38,9 +38,9 @@ class Paragraph:
         parent_class_features = [f.name for f in fields(Paragraph)]
         if excluded_features_list:
             excluded_features_list = parent_class_features + excluded_features_list
-            attributes = (f"{field.name}: {getattr(self, field.name)}" for field in fields(self) if field.name not in excluded_features_list)
+            attributes = (f"{field.name}: {getattr(self, field.name)}" for field in fields(self) if field.name not in excluded_features_list and getattr(self, field.name))
             return "\n".join(attributes)
         else:
             excluded_features_list = parent_class_features
-            attributes = (f"{field.name}: {getattr(self, field.name)}" for field in fields(self) if field.name not in excluded_features_list)
+            attributes = (f"{field.name}: {getattr(self, field.name)}" for field in fields(self) if field.name not in excluded_features_list and getattr(self, field.name))
             return "\n".join(attributes)

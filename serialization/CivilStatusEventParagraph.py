@@ -35,30 +35,28 @@ class CivilStatusEventParagraph(Paragraph):
     GBAGESLACHTPARTNER: Literal["1", "2", "-"] = field(default=None)
     
     def __post_init__(self):
-        # Dynamically build paragraph_string with non-None values
-        attributes = (f"{field.name}: {getattr(self, field.name)}" for field in fields(self) if getattr(self, field.name) is not None)
-        self.paragraph_string = "\n".join(attributes)
+        assert self.dataset_name == 'civilstatus_bus', "This class is specifically designed for the GBAPERSOONTAB data table. Dataset name must be 'civilstatus_bus'"
 
-# Create instances of CivilStatusEventParagraph
-civil_status_data = [
-    CivilStatusEventParagraph(
-        dataset_name="houshold_bus",  # Table name
-        person_id=67890,   
-        GBAAANVANGBURGERLIJKESTAAT="19951001",     # Date on which a person's civil status is established
-        GBAEINDEBURGERLIJKESTAAT="19961231",       # Date on which a person's civil status is terminated
-        GBABURGERLIJKESTAATNW="5",                 # Current civil state of the person
-        GBAGEBOORTEJAARPARTNER=1980,               # Year of birth of a person's partner
-        GBAGEBOORTEMAANDPARTNER="05",              # Birth month of a person's partner
-        GBAGEBOORTEDAGPARTNER="01",                # Birth day of a person's partner
-        GBAGEBOORTELANDPARTNER="Netherlands",      # Country of birth of a person's partner
-        GBAGESLACHTPARTNER="1"                     # Gender of a person's partner
-    ),
-]
+# # Create instances of CivilStatusEventParagraph
+# civil_status_data = [
+#     CivilStatusEventParagraph(
+#         dataset_name="civilstatus_bus",  # Table name
+#         person_id=67890,   
+#         GBAAANVANGBURGERLIJKESTAAT="19951001",     # Date on which a person's civil status is established
+#         GBAEINDEBURGERLIJKESTAAT="19961231",       # Date on which a person's civil status is terminated
+#         GBABURGERLIJKESTAATNW="5",                 # Current civil state of the person
+#         GBAGEBOORTEJAARPARTNER=1980,               # Year of birth of a person's partner
+#         GBAGEBOORTEMAANDPARTNER="05",              # Birth month of a person's partner
+#         GBAGEBOORTEDAGPARTNER="01",                # Birth day of a person's partner
+#         GBAGEBOORTELANDPARTNER="Netherlands",      # Country of birth of a person's partner
+#         GBAGESLACHTPARTNER="1"                     # Gender of a person's partner
+#     ),
+# ]
 
-# Convert list of CivilStatusEventParagraph instances to list of dictionaries
-civil_status_data_dict_list = [civil_status.__dict__ for civil_status in civil_status_data]
+# # Convert list of CivilStatusEventParagraph instances to list of dictionaries
+# civil_status_data_dict_list = [civil_status.__dict__ for civil_status in civil_status_data]
 
-# Display the list of dictionaries
-for civil_status in civil_status_data:
-    print(civil_status.get_paragraph_string_tabular())
+# # Display the list of dictionaries
+# for civil_status in civil_status_data:
+#     print(civil_status.get_paragraph_string_tabular())
 
