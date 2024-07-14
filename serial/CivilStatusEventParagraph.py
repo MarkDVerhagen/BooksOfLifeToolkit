@@ -60,5 +60,5 @@ civil_status_data_dict_list = [civil_status.__dict__ for civil_status in civil_s
 
 # Display the list of dictionaries
 for civil_status in civil_status_data:
-    print(civil_status.paragraph_string)
+    print(civil_status.get_paragraph_string_tabular())
 

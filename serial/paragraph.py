@@ -22,20 +22,18 @@ class Paragraph:
     person_id: int # RINSPERSOON. Is this the main key?
     is_spell: bool = field(default=False)
 
-    # paragraph_string: str = field(default=None)
-
     year: int = field(default=None)
     month: int = field(default=None)
     day: int = field(default=None)
 
     
 
-    def __post_init__(self):
-        # The basic serialization: dynamically build paragraph_string with non-None values
-        attributes = (f"{field.name}: {getattr(self, field.name)}" for field in fields(self) if getattr(self, field.name) is not None)
-        self.paragraph_string = "\n".join(attributes)
+    # def __post_init__(self):
+    #     # The basic serialization: dynamically build paragraph_string with non-None values
+    #     attributes = (f"{field.name}: {getattr(self, field.name)}" for field in fields(self) if getattr(self, field.name) is not None)
+    #     self.paragraph_string = "\n".join(attributes)
 
-    def get_paragraph_string(self, excluded_features_list=None):
+    def get_paragraph_string_tabular(self, excluded_features_list=None):
         # features of parent class are excluded from basic serialization by default
         parent_class_features = [f.name for f in fields(Paragraph)]
         if excluded_features_list:

@@ -38,14 +38,26 @@ class HouseholdEventParagraph(Paragraph):
     GEBJAAROUDSTEKINDHH: int = field(default=None)
     # Birth month of the oldest child in the household
     BMAANDOUDSTEKINDHH: Literal["--", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"] = field(default=None)
+
+    # HOUSEHOLD MEMBER LISTS
+    # Children living at home in the household
+    CHILDREN: List[int] = field(default_factory=list)
+    # Partners living at home in the household
+    PARTNERS: List[int] = field(default_factory=list)
+    # Other members living at home in the household
+    OTHER_MEMBERS: List[int] = field(default_factory=list)
+    # All members living at home in the household
+    ALL_MEMBERS: List[int] = field(default_factory=list)
+
+    def __post_init__(self):        
+        # TODO set year, month, and day values of parent class from houshold start date
+        pass
     
-    def get_paragraph_string(self, excluded_features_list=None):
-        return super().get_paragraph_string(excluded_features_list)
-    
+
 
 household_paragraphs = [
     HouseholdEventParagraph(
-        dataset_name="household_paragraph_table",  # Table name
+        dataset_name="household_bus",  # Table name
         person_id=12345,                     # Person ID
         HOUSEKEEPING_NR="12345",             # Unique household identification number
         TYPHH="Single",                      # Household type
@@ -62,7 +74,7 @@ household_paragraphs = [
         BMAANDOUDSTEKINDHH="--"              # Birth month of the oldest child in the household
     ),
     HouseholdEventParagraph(
-        dataset_name="household_paragraph_table",  # Table name
+        dataset_name="houshold_bus",  # Table name
         person_id=67890,                     # Person ID
         HOUSEKEEPING_NR="67890",             # Unique household identification number
         TYPHH="Family",                      # Household type
@@ -82,4 +94,4 @@ household_paragraphs = [
 
 # generate example paragraph string
 for paragraph in household_paragraphs:
-    print(paragraph.get_paragraph_string())
+    print(paragraph.get_paragraph_string_tabular())
