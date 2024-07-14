@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field, fields
 from typing import List, Literal
-from Paragraph import Paragraph
+from serial.paragraph import Paragraph
 
 @dataclass
 class PersonAttributesParagraph(Paragraph):
@@ -73,36 +73,36 @@ class PersonAttributesParagraph(Paragraph):
 
     
 
-person_paragraphs = [
-    PersonAttributesParagraph(
-        dataset_name="person_paragraph_table",  # Table name
-        person_id=12345,                     # Person ID
-        GBAGEBOORTELAND="Netherlands",             # Country of birth
-        GBAGESLACHT="1",                       # Gender
-        GBAGEBOORTELANDMOEDER="Germany",                 # Country of birth of person's mother
-        GBAGEBOORTELANDVADER="France",                  # Country of birth of person's father
-        GBAAANTALOUDERSBUITENLAND="1",                       # Number of parents born outside the Netherlands
-        GBAHERKOMSTGROEPERING="group1",                  # Migration background
-        GBAGENERATIE="0",                       # Migration background generation
-        GBAGEBOORTEJAAR=1980,                      # Year of birth
-        GBAGEBOORTEMAAND="01",                      # Month of birth
-        GBAGEBOORTEDAG="01",                      # Day of birth
-        GBAGESLACHTMOEDER="2",                       # Mother's gender
-        GBAGESLACHTVADER="1",                       # Father's gender
-        GBAGEBOORTEJAARMOEDER=1950,                      # Mother's birth year
-        GBAGEBOORTEMAANDMOEDER="02",                      # Mother's birth month
-        GBAGEBOORTEDAGMOEDER="01",                      # Mother's birth day
-        GBAGEBOORTEJAARVADER=1948,                      # Father's birth year
-        GBAGEBOORTEMAANDVADER="03",                      # Father's birth month
-        GBAGEBOORTEDAGVADER="01",                      # Father's birth day
-        GBAHERKOMSTLAND="Netherlands",             # Country of origin
-        GBAGEBOORTELANDNL="1",                       # Born in the Netherlands or outside
-    ),
-]
+# person_paragraphs = [
+#     PersonAttributesParagraph(
+#         dataset_name="person_paragraph_table",  # Table name
+#         person_id=12345,                     # Person ID
+#         GBAGEBOORTELAND="Netherlands",             # Country of birth
+#         GBAGESLACHT="1",                       # Gender
+#         GBAGEBOORTELANDMOEDER="Germany",                 # Country of birth of person's mother
+#         GBAGEBOORTELANDVADER="France",                  # Country of birth of person's father
+#         GBAAANTALOUDERSBUITENLAND="1",                       # Number of parents born outside the Netherlands
+#         GBAHERKOMSTGROEPERING="group1",                  # Migration background
+#         GBAGENERATIE="0",                       # Migration background generation
+#         GBAGEBOORTEJAAR=1980,                      # Year of birth
+#         GBAGEBOORTEMAAND="01",                      # Month of birth
+#         GBAGEBOORTEDAG="01",                      # Day of birth
+#         GBAGESLACHTMOEDER="2",                       # Mother's gender
+#         GBAGESLACHTVADER="1",                       # Father's gender
+#         GBAGEBOORTEJAARMOEDER=1950,                      # Mother's birth year
+#         GBAGEBOORTEMAANDMOEDER="02",                      # Mother's birth month
+#         GBAGEBOORTEDAGMOEDER="01",                      # Mother's birth day
+#         GBAGEBOORTEJAARVADER=1948,                      # Father's birth year
+#         GBAGEBOORTEMAANDVADER="03",                      # Father's birth month
+#         GBAGEBOORTEDAGVADER="01",                      # Father's birth day
+#         GBAHERKOMSTLAND="Netherlands",             # Country of origin
+#         GBAGEBOORTELANDNL="1",                       # Born in the Netherlands or outside
+#     ),
+# ]
 
-# Convert list of PersonOriginParagraph instances to list of dictionaries
-person_paragraphs_dict_list = [paragraph.__dict__ for paragraph in person_paragraphs]
+# # Convert list of PersonOriginParagraph instances to list of dictionaries
+# person_paragraphs_dict_list = [paragraph.__dict__ for paragraph in person_paragraphs]
 
-# Display the list of dictionaries
-for paragraph in person_paragraphs:
-    print(paragraph.get_paragraph_string())
+# # Display the list of dictionaries
+# for paragraph in person_paragraphs:
+#     print(paragraph.get_paragraph_string())
