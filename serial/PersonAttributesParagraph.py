@@ -103,6 +103,6 @@ class PersonAttributesParagraph(Paragraph):
 # # Convert list of PersonOriginParagraph instances to list of dictionaries
 # person_paragraphs_dict_list = [paragraph.__dict__ for paragraph in person_paragraphs]
 
-# # Display the list of dictionaries
-# for paragraph in person_paragraphs:
-#     print(paragraph.get_paragraph_string())
+# Display the list of dictionaries
+for paragraph in person_paragraphs:
+    print(paragraph.get_paragraph_string_tabular())
