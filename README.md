@@ -5,7 +5,8 @@ This repository contains code to prepare the analytical pipeline for PreFer Stag
 ## Install requirements
 
 1. Set up virtual environment (recommended)
-```python3 -m venv myenv  
+```
+python3 -m venv myenv  
 source myenv/bin/activate
 ```
 
