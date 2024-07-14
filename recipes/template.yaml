@@ -17,4 +17,4 @@ datasets:
       - GBAGESLACHTVADER
 formatting:
   sorting_key: year
-  paragraph_generator: get_paragraph_string_tabular
+  paragraph_generator: get_paragraph_string_biographic

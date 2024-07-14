@@ -76,6 +76,62 @@ class PersonAttributesParagraph(Paragraph):
         self.day = self.GBAGEBOORTEDAG
 
 
+    def get_paragraph_string_biographic(self):
+        paragraph = ""
+
+        # Gender
+        gender_map = {"1": "male", "2": "female", "-": "unknown gender"}
+        gender = gender_map.get(self.GBAGESLACHT, "unknown gender")
+
+        # Birth information
+        birth_date = f"{self.GBAGEBOORTEJAAR}"
+        if self.GBAGEBOORTEMAAND != "--":
+            birth_date += f"-{self.GBAGEBOORTEMAAND}"
+            if self.GBAGEBOORTEDAG != "--":
+                birth_date += f"-{self.GBAGEBOORTEDAG}"
+        
+        paragraph += f"This individual is a {gender} person born on {birth_date} in {self.GBAGEBOORTELAND}. "
+
+        # Migration background
+        if self.GBAGENERATIE == "0":
+            paragraph += "They are a native Dutch person. "
+        elif self.GBAGENERATIE == "1":
+            paragraph += "They are a first-generation migrant. "
+        elif self.GBAGENERATIE == "2":
+            paragraph += "They are a second-generation migrant. "
+
+        if self.GBAHERKOMSTGROEPERING:
+            paragraph += f"Their migration background is classified as {self.GBAHERKOMSTGROEPERING}. "
+
+        # Parents' information
+        if self.GBAAANTALOUDERSBUITENLAND == "0":
+            paragraph += "Both of their parents were born in the Netherlands. "
+        elif self.GBAAANTALOUDERSBUITENLAND == "1":
+            paragraph += "One of their parents was born outside the Netherlands. "
+        elif self.GBAAANTALOUDERSBUITENLAND == "2":
+            paragraph += "Both of their parents were born outside the Netherlands. "
+
+        # Mother's information
+        if self.GBAGEBOORTELANDMOEDER:
+            mother_birth_date = f"{self.GBAGEBOORTEJAARMOEDER or 'unknown year'}"
+            if self.GBAGEBOORTEMAANDMOEDER != "--":
+                mother_birth_date += f"-{self.GBAGEBOORTEMAANDMOEDER}"
+                if self.GBAGEBOORTEDAGMOEDER != "--":
+                    mother_birth_date += f"-{self.GBAGEBOORTEDAGMOEDER}"
+            paragraph += f"Their mother was born on {mother_birth_date} in {self.GBAGEBOORTELANDMOEDER}. "
+
+        # Father's information
+        if self.GBAGEBOORTELANDVADER:
+            father_birth_date = f"{self.GBAGEBOORTEJAARVADER or 'unknown year'}"
+            if self.GBAGEBOORTEMAANDVADER != "--":
+                father_birth_date += f"-{self.GBAGEBOORTEMAANDVADER}"
+                if self.GBAGEBOORTEDAGVADER != "--":
+                    father_birth_date += f"-{self.GBAGEBOORTEDAGVADER}"
+            paragraph += f"Their father was born on {father_birth_date} in {self.GBAGEBOORTELANDVADER}. "
+
+        return paragraph.strip()
+
+
     
 
 # person_paragraphs = [

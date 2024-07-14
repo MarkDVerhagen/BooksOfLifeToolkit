@@ -53,6 +53,40 @@ class HouseholdEventParagraph(Paragraph):
         assert self.dataset_name == 'household_bus', "This class is specifically designed for the GBAPERSOONTAB data table. Dataset name must be 'household_bus'"
         # TODO set year, month, and day values of parent class from houshold start date
         pass
+
+    def get_paragraph_string_biographic(self):
+        paragraph = f"On {self.DATE_STIRTHH}, a new household (ID: {self.HOUSEKEEPING_NR}) was formed. "
+
+        household_types = {
+            "1": "single-person",
+            "2": "unmarried couple without children",
+            "3": "married couple without children",
+            "4": "unmarried couple with children",
+            "5": "married couple with children",
+            "6": "single parent",
+            "7": "other"
+        }
+
+        household_type = household_types.get(self.TYPHH, "unknown type")
+        paragraph += f"This was a {household_type} household consisting of {self.NUMBERPERSHH} person{'s' if self.NUMBERPERSHH != 1 else ''}. "
+
+        if self.AANTALKINDHH > 0:
+            paragraph += f"The household included {self.AANTALKINDHH} child{'ren' if self.AANTALKINDHH > 1 else ''}. "
+            if self.GEBJAAROUDSTEKINDHH and self.GEBJAAROUDSTEKINDHH != self.BIRTHEDYOUNGCHILDHH:
+                paragraph += f"The oldest child was born in {self.GEBJAAROUDSTEKINDHH}, while the youngest was born in {self.BIRTHEDYOUNGCHILDHH}. "
+            elif self.BIRTHEDYOUNGCHILDHH:
+                paragraph += f"The {'only' if self.AANTALKINDHH == 1 else 'youngest'} child was born in {self.BIRTHEDYOUNGCHILDHH}. "
+
+        if self.AANTALOVHH > 0:
+            paragraph += f"Besides the reference person and any children, there {'was' if self.AANTALOVHH == 1 else 'were'} {self.AANTALOVHH} other household member{'s' if self.AANTALOVHH > 1 else ''}. "
+
+        if self.DATUMEINDEHH:
+            paragraph += f"This household configuration lasted until {self.DATUMEINDEHH}. "
+        else:
+            paragraph += "This household configuration is still current as of the latest record. "
+
+        return paragraph.strip()
+        
     
 
 

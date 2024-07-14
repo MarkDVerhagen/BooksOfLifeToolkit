@@ -44,3 +44,7 @@ class Paragraph:
             excluded_features_list = parent_class_features
             attributes = (f"{field.name}: {getattr(self, field.name)}" for field in fields(self) if field.name not in excluded_features_list and getattr(self, field.name))
             return "\n".join(attributes)
+        
+
+    def get_paragraph_string_biographic(self):
+        pass
