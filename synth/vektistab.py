@@ -11,14 +11,14 @@ years = list(
 )
 
 persons = pd.read_csv(os.path.join('synth', 'data', 'persoontab.csv')).reset_index()\
-    [['rinpersoon', 'birth_date']]
+    [['rinpersoon', 'birthday']]
 
 year = 1990
 
 vektistab = pd.DataFrame()
 
 for year in years:
-    persons['age_index'] = round((year - persons['birth_date']) / 10)
+    persons['age_index'] = round((year - persons['birthday']) / 10)
     persons.loc[persons['age_index'] <= 0, 'age_index'] = 0
     
     def index_list(row, outcome='sprained ankle'):
