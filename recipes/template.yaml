@@ -1,12 +1,13 @@
 main_key: person_id
 datasets:
-    name: householdbus 
-    excluded_features:
-        - household_size
-        - household_type
-    name: persoontab
-    excluded_features:
-        - person_birth_month
+    - name: household_bus 
+      excluded_features:
+          - household_size
+          - household_type
+    - name: persoon_tab
+      excluded_features:
+          - person_birth_month
 formatting:
-    sorting_key: year
+    sorting_keys: 
+      - year
     paragraph_generator: get_paragraph_string_tabular
