@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field, fields
 from typing import List, Literal
-from Paragraph import Paragraph
+from serial.paragraph import Paragraph
 
 @dataclass
 class PersonAttributesParagraph(Paragraph):

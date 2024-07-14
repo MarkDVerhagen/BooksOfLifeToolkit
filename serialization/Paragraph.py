@@ -9,7 +9,7 @@ Attributes:
     year (int): The year the paragraph occurred.
     paragraph_type (str): The category of the paragraph.
     table_name (str): The name of the source database table.
-    person_id (int): Unique identifier for the person related to the paragraph.
+    rinpersoon (int): Unique identifier for the person related to the paragraph.
     paragraph_string (str, init=False): Textual representation of the paragraph (constructed in subclasses).
 """
 from dataclasses import dataclass, field, fields
@@ -19,7 +19,7 @@ from typing import List, Literal
 @dataclass
 class Paragraph:
     dataset_name: str
-    person_id: int # RINSPERSOON. Is this the main key?
+    rinpersoon: int # RINSPERSOON. Is this the main key?
     is_spell: bool = field(default=False)
 
     year: int = field(default=None)

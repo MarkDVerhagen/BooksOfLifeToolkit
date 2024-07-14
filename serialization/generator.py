@@ -1,6 +1,10 @@
+from serial.HouseholdEventParagraph import HouseholdEventParagraph
+from serial.PersonAttributesParagraph import PersonAttributesParagraph
 import yaml
 import requests
 import pandas as pd
+
+simulator.datasets
 
 class Simulator:
     def __init__(self, yaml_file):
@@ -8,17 +12,8 @@ class Simulator:
             self.config = yaml.safe_load(file)
         self.datasets = self.config.get('datasets', [])
 
-    def fetch_dataset(self, source):
-        try:
-            response = requests.get(source)
-            response.raise_for_status()
-            return pd.read_csv(response.url)
-        except requests.RequestException as e:
-            print(f"Error fetching dataset from {source}: {e}")
-            return None
-
     def pull_hierarchy(data, hierarchy_vars=['HOUSEKEEPING_NR', 'DATE_STIRTHH'],
-                   hierarchy_cat=None, main_key='rinpersoon'):
+                       main_key='rinpersoon', hierarchy_cat=None):
         ## Function to pull in main keys based on a hierarchy variable
         
         # Make hierarchy variable
@@ -33,19 +28,23 @@ class Simulator:
         grouped = data.groupby(hierarchy_list).agg({main_key: list}).reset_index()
 
         # Pivot table
-        pivoted = grouped.pivot(index='hierarchy', columns=hierarchy_cat, values=main_key).reset_index()
+        if hierarchy_cat:
+            grouped = grouped.pivot(index='hierarchy', columns=hierarchy_cat, values=main_key).reset_index()
 
         # Renaem columns
-        pivoted.columns.name = None
-        pivoted.columns = ['hierarchy'] + [f'ID_list_{col}' for col in pivoted.columns if col != 'hierarchy']
-        return pd.merge(data, pivoted)
-    
-    
+        grouped.columns.name = None
+        grouped.columns = ['hierarchy'] + [f'ID_list_{col}' for col in grouped.columns if col != 'hierarchy']
+        return pd.merge(data, grouped)
+
     def load_datasets(self):
-        ## Generate self-degree time sequence
-        ## Include self-degree information
-        ## Fetch and add hierarchy to each event
-        ## Fetch and add information for each fetched hierarchy element
+        source = dataset['source']
+        data = pd.read_csv(source)
+        
+        if dataset['social_structure']:
+            pull_hierarchy(data, hierarchy_vars=dataset['social_structure'],
+                           main_key=simulator.config['main_key'])
+        
+        return dataset
 
     def generate_sequence(self):
         ## order all events
@@ -56,8 +55,12 @@ class Simulator:
         return sequence
 
 # Example usage
-yaml_file = 'datasets.yaml'
+yaml_file = os.path.join('synth', 'simple_recipe.yaml')
 simulator = Simulator(yaml_file)
+source = simulator.datasets[0]['source']
+
+dataset = simulator.datasets[0]
+
 simulator.show_attributes()
 datasets = simulator.load_datasets()
 
