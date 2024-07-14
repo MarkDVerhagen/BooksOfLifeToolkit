@@ -1,12 +1,14 @@
 
 from typing import List
-from Paragraph import Paragraph
-from PersonAttributesParagraph import PersonAttributesParagraph
-from HouseholdEventParagraph import HouseholdEventParagraph
+from instantiator_scripts.Paragraph import Paragraph
+from instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
+from instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
 from Recipe import Recipe
+from instantiator_scripts.persoon_tab import get_person_attributes
 
 class BookofLifeGenerator:
-    def __init__(self, recipe_yaml_path):
+    def __init__(self, rinpersoon, recipe_yaml_path):
+        self.rinpersoon = rinpersoon
         self.recipe = Recipe(recipe_yaml_path)
         self.book: str = ""
         self.paragraphs: List[Paragraph] = []
@@ -17,13 +19,12 @@ class BookofLifeGenerator:
             excluded_features = self.recipe.get_excluded_features(dataset_name)
 
             if dataset_name == 'persoon_tab':
-                paragraph = PersonAttributesParagraph(dataset_name, excluded_features)
+                self.paragraphs.append(get_person_attributes(self.rinpersoon))
             elif dataset_name == 'household_bus':
                 paragraph = HouseholdEventParagraph(dataset_name, excluded_features)
             else:
                 raise ValueError(f"Dataset name {dataset_name} not recognized")
             
-            self.paragraphs.append(paragraph)
 
     def sort_paragraphs(self, sorting_keys):
         # TODO: sort paragraphs based on sorting keys. order of keys specified hierachy of what to sort on first
@@ -45,5 +46,5 @@ class BookofLifeGenerator:
     
 
 # Example usage:
-generator = BookofLifeGenerator('recipes/template.yaml')
+generator = BookofLifeGenerator("03c6605f", 'recipes/template.yaml')
 print(generator.generate_book())
