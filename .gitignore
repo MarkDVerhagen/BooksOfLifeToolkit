@@ -4,3 +4,4 @@ fertility_data_sim/.RProj.user/*
 fertility_data_sim/fer_data_sim_files/*
 .DS_Store
 *.pyc
+prefer/*
