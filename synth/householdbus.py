@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import random
 from datetime import datetime, timedelta
-from params import synth_params
+from synth.params import synth_params
 import json
 from copy import copy, deepcopy
 import pandas as pd
@@ -174,12 +174,16 @@ def collect_data_for_dataframe_separate_rows(households):
         household_size = len(household.members)
         
         hh_dict = {
-                    'Household ID': household.id,
-                    'Household type': household.household_type,
+                    'HOUSEKEEPING_NR': household.id,
+                    'TYPHH': household.household_type,
                     'rinpersoon': [h.id for h in household.members],
-                    'Household Member place': [h.place for h in household.members],
-                    'Start Date': household.spells[0],
-                    'End Date': household.spells[1]  # Handling ongoing spels
+                    'PLHH': [h.place for h in household.members],
+                    'REFPERSOONHH': round(np.random.choice([0, 1])),
+                    'NUMBERPERSHH': len(household.members),
+                    'DATE_STIRTHH': household.spells[0],
+                    'DATUMEINDEHH': household.spells[1],  # Handling ongoing spels
+                    'AANTALOVHH': len([h.place for h in household.members if h.place != 'child living at home']),
+                    'AANTALKINDHH': len([h.place for h in household.members if h.place == 'child living at home']),
                 }
         
         normalized_hh_dict = {k: [v] * household_size if not isinstance(v, list)
@@ -208,7 +212,16 @@ while t < time_periods:
     households_list.append(simulate_movement(households_list[-1]))
     t += 1
 
+hh_df = pd.concat([collect_data_for_dataframe_separate_rows(hh) for hh in households_list])
 
-pd.concat([collect_data_for_dataframe_separate_rows(hh) for hh in households_list]).\
-    to_csv(os.path.join('synth', 'data', 'householdbus.csv'))
+# Draw additional random values to align with documentation
+def process_household(df):
+    df['BIRTHEDYOUNGCHILDHH'] = df.apply(lambda x: 2015 if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else None, axis=1)
+    df['GEBMAANDJONGSTEKINDHH'] = df.apply(lambda x: '01' if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else '--', axis=1)
+    df['GEBJAAROUDSTEKINDHH'] = df.apply(lambda x: 2010 if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else None, axis=1)
+    df['BMAANDOUDSTEKINDHH'] = df.apply(lambda x: '05' if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else '--', axis=1)
+
+    return df
+
+process_household(hh_df).to_csv(os.path.join('synth', 'data', 'householdbus.csv'))
     
