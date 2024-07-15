@@ -1,8 +1,10 @@
-main_key: person_id
+main_key: rinpersoon
 datasets:
-  - name: household_bus
+  - name: householdbus.csv
     excluded_features:
-  - name: persoon_tab
+    structure_features: ['HOUSEKEEPING_NR', 'DATE_STIRTHH']
+    # structure_classification: []
+  - name: persoontab.csv
     excluded_features:
       - GBAGEBOORTEMAAND
       - GBAGEBOORTEDAG

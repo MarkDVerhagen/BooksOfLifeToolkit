@@ -10,7 +10,7 @@ years = list(
     range(synth_params['start_year'], (synth_params['start_year'] + synth_params['time_periods']))
 )
 
-persons = pd.read_csv(os.path.join('synth', 'data', 'persoontab.csv')).reset_index()\
+persons = pd.read_csv(os.path.join('synth', 'data', 'raw', 'persoontab.csv')).reset_index()\
     [['rinpersoon', 'birthday']]
 
 year = 1990
@@ -41,4 +41,4 @@ for year in years:
     activities['date'] = activities['rinpersoon'].apply(lambda l: datetime.datetime(year, round(np.random.uniform(1, 12)), 1))
     vektistab = pd.concat([vektistab, activities])
 
-vektistab.to_csv(os.path.join('synth', 'data', 'vektistab.csv'))
+vektistab.to_csv(os.path.join('synth', 'data', 'raw', 'vektistab.csv'), index=False)

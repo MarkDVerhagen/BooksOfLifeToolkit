@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import random
 from datetime import datetime, timedelta
-from synth.params import synth_params
+from params import synth_params
 import json
 from copy import copy, deepcopy
 import pandas as pd
@@ -223,5 +223,6 @@ def process_household(df):
 
     return df
 
-process_household(hh_df).to_csv(os.path.join('synth', 'data', 'householdbus.csv'))
+process_household(hh_df).to_csv(os.path.join('synth', 'data', 'raw', 'householdbus.csv'),
+                                index=False)
     
