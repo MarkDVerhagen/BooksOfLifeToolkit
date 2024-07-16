@@ -9,6 +9,7 @@ class PersonAttributesParagraph(Paragraph):
     The PersonOriginParagraph class is specifically designed for the GBAPERSOONTAB data table.
     It extends the Paragraph class by adding attributes that capture invariant personal information 
     such as country of birth, gender, parents' birth countries, and more.
+    name: persoon_tab
     """
 
     ### ORDER OF BELOW IS RELEVANT! ###

@@ -9,6 +9,7 @@ class CivilStatusEventParagraph(Paragraph):
     information of persons registered in the Municipal Personal Data Administration (GBA).
     It includes attributes such as start and end dates of civil status events, partner information, 
     and more.
+    name: civilstatus_bus
     """
     # Date on which a person's civil status is established
     GBAAANVANGBURGERLIJKESTAAT: str = field(default=None)

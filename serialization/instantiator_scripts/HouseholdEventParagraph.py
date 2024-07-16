@@ -8,6 +8,7 @@ class HouseholdEventParagraph(Paragraph):
     characteristics of persons registered in the Municipal Personal Data Administration (GBA).
     It includes attributes such as household start and end dates, household type, number of persons 
     in the household, and more.
+    name: household_bus
     """
     ## HOUSEHOLD
     # Unique household identification number
