@@ -5,3 +5,7 @@ fertility_data_sim/fer_data_sim_files/*
 .DS_Store
 *.pyc
 prefer/*
+hf_pipeline_MWE/hf_models/*
+hf_pipeline_MWE/fine_tuned_models/*
+hf_pipeline_MWE/output/*
+hf_pipeline_MWE/wandb/
