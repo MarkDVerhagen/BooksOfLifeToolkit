@@ -22,6 +22,8 @@ You will need to create a conda environment on Della named hf_environment that c
 
 `pip install -r requirements.txt`
 
+`conda activate hf_environment`
+
 # Step 3: Personalizing slurm jobs
 
 Make sure that you change your the file paths and the email that will receieve updates when the job is completed.
