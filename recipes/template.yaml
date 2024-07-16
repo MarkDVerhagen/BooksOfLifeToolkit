@@ -2,7 +2,15 @@ main_key: rinpersoon
 datasets:
   - name: household_bus
     excluded_features:
-    structure_features: ['HOUSEKEEPING_NR', 'DATE_STIRTHH']
+    social_context_features:
+      children: 
+        - name: persoon_tab
+          features:
+            - GBAGESLACHT
+      partners:
+        - name: inpa_tab
+          features:
+            - INPPERSBRUT
   - name: persoon_tab
     excluded_features:
       - GBAGEBOORTEMAAND
@@ -18,4 +26,4 @@ datasets:
       - GBAGESLACHTVADER
 formatting:
   sorting_key: year
-  paragraph_generator: get_paragraph_string_biographic
+  paragraph_generator: get_paragraph_string_tabular
