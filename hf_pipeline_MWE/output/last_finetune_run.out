@@ -1,1 +1,21 @@
-python: can't open file '/scratch/gpfs/vs3041/fine_tuning_hf/scripts/inference_with_hf.py': [Errno 2] No such file or directory
+wandb: Tracking run with wandb version 0.17.4
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+/scratch/gpfs/vs3041/prefer_prepare/hf_pipeline_MWE/scripts/fine_tuning_with_hf.py:74: SettingWithCopyWarning: 
+A value is trying to be set on a copy of a slice from a DataFrame.
+Try using .loc[row_indexer,col_indexer] = value instead
+
+See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+  data["labels"] = (data["labels"] == "kid: 1").astype(int)
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:02<00:06,  2.32s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:04<00:04,  2.46s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:19<00:07,  7.88s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:19<00:00,  4.88s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:19<00:00,  4.88s/it]
+Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at /scratch/gpfs/vs3041/prefer_prepare/hf_pipeline_MWE/hf_models/Meta-Llama-3-8B/ and are newly initialized: ['score.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+PEFT Model
+trainable params: 13,639,680 || all params: 7,518,572,544 || trainable%: 0.1814
+Map:   0%|          | 0/100 [00:00<?, ? examples/s]Map: 100%|██████████| 100/100 [00:00<00:00, 1104.57 examples/s]
+Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
+wandb: WARNING The `run_name` is currently set to the same value as `TrainingArguments.output_dir`. If this was not intended, please specify a different run name by setting the `TrainingArguments.run_name` parameter.
+wandb: WARNING URL not available in offline run
+  0%|          | 0/200 [00:00<?, ?it/s]We detected that you are passing `past_key_values` as a tuple and this is deprecated and will be removed in v4.43. Please use an appropriate `Cache` class (https://huggingface.co/docs/transformers/v4.41.3/en/internal/generation_utils#transformers.Cache)
+  0%|          | 1/200 [00:01<05:30,  1.66s/it]  1%|          | 2/200 [00:02<04:06,  1.24s/it]  2%|▏         | 3/200 [00:03<03:38,  1.11s/it]  2%|▏         | 4/200 [00:04<03:24,  1.04s/it]

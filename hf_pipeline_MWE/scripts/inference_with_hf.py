@@ -75,15 +75,17 @@ tokenizer.pad_token = tokenizer.eos_token
 classifier = pipeline("text-classification", model=model, tokenizer=tokenizer)
 
 # Evaluate the model on the test set using the pipeline
-test_predictions = []
+prediction_probabilities = []
 for sample in tqdm(test_dataset):
     prediction = classifier(sample["text"])
-    print(sample["text"])
-    print(prediction)
-    test_predictions.append(prediction)
+
+    label = prediction["labels"]
+    soft_max_probability = prediction["score"]
+
+    prediction_probabilities.append(soft_max_probability)
 
 save_path = project_directory + "output/predictions/" + model_name + ".csv"
-prediction_df = pd.DataFrame(test_predictions)
+prediction_df = pd.DataFrame(prediction_probabilities)
 prediction_df.to_csv(save_path)
 
 
