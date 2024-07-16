@@ -51,6 +51,7 @@ class HouseholdEventParagraph(Paragraph):
     ALL_MEMBERS: List[int] = field(default_factory=list)
 
     def __post_init__(self):        
+        super().__post_init__()
         assert self.dataset_name == 'household_bus', "This class is specifically designed for the GBAPERSOONTAB data table. Dataset name must be 'household_bus'"
         # TODO set year, month, and day values of parent class from houshold start date
         pass

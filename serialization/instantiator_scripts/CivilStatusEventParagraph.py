@@ -36,6 +36,7 @@ class CivilStatusEventParagraph(Paragraph):
     GBAGESLACHTPARTNER: Literal["1", "2", "-"] = field(default=None)
     
     def __post_init__(self):
+        super().__post_init__()
         assert self.dataset_name == 'civilstatus_bus', "This class is specifically designed for the GBAPERSOONTAB data table. Dataset name must be 'civilstatus_bus'"
 
 # # Create instances of CivilStatusEventParagraph
