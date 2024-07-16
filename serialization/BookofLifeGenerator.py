@@ -5,6 +5,7 @@ from instantiator_scripts.PersonAttributesParagraph import PersonAttributesParag
 from instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
 from Recipe import Recipe
 from instantiator_scripts.persoon_tab import get_person_attributes
+from operator import attrgetter
 
 class BookofLifeGenerator:
     def __init__(self, rinpersoon, recipe_yaml_path):
@@ -27,10 +28,14 @@ class BookofLifeGenerator:
             
 
     def sort_paragraphs(self, sorting_keys):
-        # TODO: sort paragraphs based on sorting keys. order of keys specified hierachy of what to sort on first
+        '''sort paragraphs based on sorting keys.'''
+
+        if isinstance(sorting_keys, str):
+            sorting_keys = [sorting_keys]
+        
+        self.paragraphs.sort(key=attrgetter(*sorting_keys))
         return self.paragraphs
 
-    
     def write_book(self, generator_function):
         assert self.book == "", "Book is not empty"
         for paragraph in self.paragraphs:
