@@ -4,6 +4,8 @@
 import pandas as pd
 import numpy as np
 
+np.random.seed(111)
+
 # Read in persoontab
 persoontab = pd.read_csv('synth/data/raw/persoontab.csv')
 
