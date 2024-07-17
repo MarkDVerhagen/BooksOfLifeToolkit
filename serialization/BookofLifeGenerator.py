@@ -5,6 +5,7 @@ from instantiator_scripts.PersonAttributesParagraph import PersonAttributesParag
 from instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
 from Recipe import Recipe
 from instantiator_scripts.persoon_tab import get_person_attributes
+from instantiator_scripts.household_bus import get_households
 from operator import attrgetter
 
 class BookofLifeGenerator:

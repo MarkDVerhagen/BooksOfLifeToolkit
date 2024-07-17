@@ -1,6 +1,9 @@
 import pandas as pd
 from instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
 
+'''This function loads personal attributes for a given rinpersoon (person_id)
+by creating the PersonAttributesParagraph object'''
+
 def get_person_attributes(rinpersoon: int) -> PersonAttributesParagraph:
     # Load the dataset
     df = pd.read_csv('synth/data/raw/persoontab.csv')
