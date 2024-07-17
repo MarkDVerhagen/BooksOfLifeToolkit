@@ -3,7 +3,7 @@ from instantiator_scripts.PersonAttributesParagraph import PersonAttributesParag
 
 def get_person_attributes(rinpersoon: int) -> PersonAttributesParagraph:
     # Load the dataset
-    df = pd.read_csv('synth/data/persoontab.csv')
+    df = pd.read_csv('synth/data/raw/persoontab.csv')
     
     # Find the row with the given person_id
     person_row = df[df['rinpersoon'] == rinpersoon]
