@@ -26,7 +26,7 @@ class BookofLifeGenerator:
             if dataset_name == 'persoon_tab':
                 self.paragraphs.append(get_person_attributes(self.rinpersoon))
             elif dataset_name == 'household_bus':
-                paragraph = HouseholdEventParagraph(dataset_name, features)
+                pass # TODO write function tath takes in rinpersoon and returns list of HouseholdEventParagraph objects
             else:
                 raise ValueError(f"Dataset name {dataset_name} not recognized")
             
@@ -75,9 +75,9 @@ class BookofLifeGenerator:
 
 # Example usage:
 generator = BookofLifeGenerator("03c6605f", 'recipes/template.yaml')
-print("Partner:", generator.social_context_paragraphs['household_bus']['partners'].generate_book())
-print("Partner's child:", generator.social_context_paragraphs['household_bus']['partners'].social_context_paragraphs['persoon_tab']['partners'].generate_book())
+# print("Partner:", generator.social_context_paragraphs['household_bus']['partners'].generate_book())
+# print("Partner's child:", generator.social_context_paragraphs['household_bus']['partners'].social_context_paragraphs['persoon_tab']['partners'].generate_book())
 print('Main book:', generator.generate_book())
 
 
-print("Partner's child:", generator.social_context_paragraphs)
+# print("Partner's child:", generator.social_context_paragraphs)

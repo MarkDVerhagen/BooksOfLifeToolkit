@@ -22,11 +22,6 @@ datasets:
       - GBAGEBOORTEDAG
       - GBAGEBOORTEJAARVADER
       - GBAGESLACHTVADER
-    social_context_features:
-      sdlkfjs:
-          - name: inpa_tab
-            features:
-              - INPPERSBRUT
 formatting:
-  sorting_key: year
+  sorting_keys: year
   paragraph_generator: get_paragraph_string_biographic
