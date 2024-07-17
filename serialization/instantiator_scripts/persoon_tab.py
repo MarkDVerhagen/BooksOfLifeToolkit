@@ -1,5 +1,5 @@
 import pandas as pd
-from instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
+from serialization.instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
 
 '''This function loads personal attributes for a given rinpersoon (person_id)
 by creating the PersonAttributesParagraph object'''

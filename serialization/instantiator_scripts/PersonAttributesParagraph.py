@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field, fields
 from typing import List, Literal
-from instantiator_scripts.Paragraph import Paragraph
+from serialization.instantiator_scripts.Paragraph import Paragraph
 
 
 @dataclass

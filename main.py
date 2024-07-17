@@ -1,4 +1,4 @@
-from serialization import BookofLifeGenerator
+from serialization.BookofLifeGenerator import BookofLifeGenerator
 
 # Example usage:
 generator = BookofLifeGenerator("03c6605f", 'recipes/template.yaml')
