@@ -12,8 +12,8 @@ class Generator:
 
         for d in self.datasets:
             print('Now doing {}'.format(d['name']))
-            data = pd.read_csv(os.path.join(self.data_dir, 'raw', d['name']))
-
+            data = pd.read_csv(os.path.join(self.data_dir, 'raw', d['name'] + '.csv'))
+            
             structure_features = d.get('structure_features')
             structure_class = d.get('structure_classification')
             if structure_features:
@@ -23,7 +23,7 @@ class Generator:
                     data, hierarchy_vars=structure_features,
                     main_key=self.main_key, hierarchy_cat=structure_class)
             
-            data.to_csv(os.path.join(self.data_dir, 'edit', d['name']))
+            data.to_csv(os.path.join(self.data_dir, 'edit', d['name'] + '.csv'))
     
     
     def pull_hierarchy(self, data, hierarchy_vars=['HOUSEKEEPING_NR', 'DATE_STIRTHH'],
@@ -53,6 +53,6 @@ class Generator:
 
 if __name__ == "__main__":    
     # Example usage
-    yaml_file = os.path.join('recipes', 'template.yaml')
+    yaml_file = os.path.join('recipes', 'make_db.yaml')
     data_path = os.path.join('synth', 'data')
-    Generator(yaml_file, data_dir=data_path)
+    a = Generator(yaml_file, data_dir=data_path)
