@@ -1,0 +1,288 @@
+{
+    "os": "Linux-4.18.0-553.8.1.el8_10.x86_64-x86_64-with-glibc2.28",
+    "python": "3.12.4",
+    "heartbeatAt": "2024-07-11T09:18:23.950117",
+    "startedAt": "2024-07-11T09:18:23.856651",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/scratch/gpfs/vs3041/fine_tuning_hf/scripts/sft_full_prefer.py",
+    "codePathLocal": "scripts/sft_full_prefer.py",
+    "codePath": "fine_tuning_hf/scripts/sft_full_prefer.py",
+    "git": {
+        "remote": null,
+        "commit": null
+    },
+    "email": null,
+    "root": "/scratch/gpfs/vs3041",
+    "host": "della-l05g4",
+    "username": "vs3041",
+    "executable": "/home/vs3041/.conda/envs/hf_environment/bin/python",
+    "cpu_count": 48,
+    "cpu_count_logical": 48,
+    "cpu_freq": {
+        "current": 3489.719291666667,
+        "min": 3500.0,
+        "max": 3500.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3397.73,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3403.896,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3500.0,
+            "min": 3500.0,
+            "max": 3500.0
+        },
+        {
+            "current": 3404.9,
+            "min": 3500.0,
+            "max": 3500.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 149.130126953125,
+            "used": 97.3285903930664
+        }
+    },
+    "gpu": "NVIDIA A100 80GB PCIe",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA A100 80GB PCIe",
+            "memory_total": 85899345920
+        }
+    ],
+    "memory": {
+        "total": 1006.8473167419434
+    }
+}
