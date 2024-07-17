@@ -32,9 +32,9 @@ def get_households(rinpersoon: int) -> list[HouseholdEventParagraph]:
             GEBMAANDJONGSTEKINDHH=row['GEBMAANDJONGSTEKINDHH'],
             GEBJAAROUDSTEKINDHH=row['GEBJAAROUDSTEKINDHH'],
             BMAANDOUDSTEKINDHH=row['BMAANDOUDSTEKINDHH'],
-            CHILDREN=[], #not implemented
-            PARTNERS=[],  # Assuming there are no explicit partner lists in the data provided
-            OTHER_MEMBERS=[],  # Assuming there are no explicit other members lists in the data provided
+            CHILDREN= None, #not implemented
+            PARTNERS=None,  # Assuming there are no explicit partner lists in the data provided
+            OTHER_MEMBERS=None,  # Assuming there are no explicit other members lists in the data provided
             ALL_MEMBERS=row['ID_list_rinpersoon']
         )
         household_paragraphs.append(household_paragraph)
