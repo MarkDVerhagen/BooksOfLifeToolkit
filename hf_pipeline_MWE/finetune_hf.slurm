@@ -22,8 +22,9 @@ conda activate hf_environment
 
 python scripts/fine_tuning_with_hf.py \
 --model_name "llama3-8b" \
---train_dataset "n_100" \
+--train_dataset "salganik" \
 --fine_tune_method "lora" \
 --GPU_util "single" \
---params "default"
+--params "default" \
+--training_folds "1-2"   # follows syntax: start-end
 

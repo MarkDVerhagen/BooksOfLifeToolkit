@@ -6,60 +6,12 @@ from trl import SFTTrainer
 from peft import get_peft_model, LoraConfig, AutoPeftModelForSequenceClassification
 import argparse
 import pandas as pd 
+import time
 
 # setting wandb to offline
 wandb.init(mode="offline")   
 
-# model arguments from the command line
-parser = argparse.ArgumentParser()
-parser.add_argument("--model_name", type=str, help="model name")
-parser.add_argument("--train_dataset", type=str)
-parser.add_argument("--fine_tune_method", type=str)
-parser.add_argument("--GPU_util", type=str)
-parser.add_argument("--params", type=str)
-args = parser.parse_args()
-
-model_name = args.model_name
-train_dataset = args.train_dataset
-fine_tune_method = args.fine_tune_method
-GPU_util = args.GPU_util
-params = args.params
-
-project_directory = os.environ.get('project_path') + "/"
-
-fine_tuned_model_name = "-".join([model_name, train_dataset, fine_tune_method, GPU_util, params])
-output_directory = project_directory + "fine_tuned_models/" + fine_tuned_model_name
-
-if model_name == "llama3-8b":
-    model_to_read = project_directory + "hf_models/" + "Meta-Llama-3-8B/"
-else: 
-    raise Exception("Either the model is the wrong place, or we haven't downloaded it yet :(")
-
-if train_dataset == "n_30k":
-    data_to_read = project_directory + "data/fake_data_for_tuning_3cols.csv"
-elif train_dataset == "n_100":
-    data_to_read = project_directory + "data/fake_data_for_tuning_3cols_subset.csv"
-else:
-    raise Exception("Dataset not recognised")
-
-if fine_tune_method == "full":
-    pass
-elif fine_tune_method == "lora":
-    pass
-else: 
-    raise Exception("Haven't written code to support other fine-tune methods yet")
-
-if GPU_util == "single":
-    pass
-else: 
-    raise Exception("Haven't written code to support distributed GPU utilization yet")
-
-if params == "default":
-    pass
-else: 
-    raise Exception("Haven't written code to change parameters yet")
-
-def format_fake_data(data):
+def format_salganik_data(data):
 
     ## Taking csv and turning it into HF format
 
@@ -84,9 +36,78 @@ def tokenize_and_prepare(data):
 
     return tokenizer(data["text"], truncation=True, padding="max_length", max_length=512)
 
-# reading training data and converting to hugging face format
-train_dataset = pd.read_csv(data_to_read)
-train_dataset = format_fake_data(train_dataset)
+# model arguments from the command line
+parser = argparse.ArgumentParser()
+parser.add_argument("--model_name", type=str, help="model name")
+parser.add_argument("--train_dataset", type=str)
+parser.add_argument("--fine_tune_method", type=str)
+parser.add_argument("--GPU_util", type=str)
+parser.add_argument("--params", type=str)
+parser.add_argument("--training_folds")
+args = parser.parse_args()
+
+model_name = args.model_name
+train_dataset = args.train_dataset
+fine_tune_method = args.fine_tune_method
+GPU_util = args.GPU_util
+params = args.params
+training_folds = args.training_folds
+first_training_fold, last_training_fold = map(int, training_folds.split("-"))
+
+project_directory = os.environ.get('project_path') + "/"
+
+fine_tuned_model_name = "-".join([model_name, train_dataset, fine_tune_method, GPU_util, params, training_folds])
+output_directory = project_directory + "fine_tuned_models/" + fine_tuned_model_name
+
+#### SPECIFIYING MODEL
+
+if model_name == "llama3-8b":
+    model_to_read = project_directory + "hf_models/" + "Meta-Llama-3-8B/"
+else: 
+    raise Exception("Either the model is the wrong place, or we haven't downloaded it yet :(")
+
+
+#### SPECIFIYING DATA
+
+if train_dataset == "salganik":
+    # reading training data 
+    data_to_read = project_directory + "data/salganik_data.csv"
+    train_dataset = pd.read_csv(data_to_read)
+
+    # subsetting data to specified training folds 
+    train_dataset = train_dataset[train_dataset['fold'].between(first_training_fold, last_training_fold)]
+
+
+    # formatting the salganik data to get it into a format readable by the LLM
+    train_dataset = format_salganik_data(train_dataset)    
+
+else:
+    raise Exception("Dataset not recognised")
+
+#### SPECIFIYING FINE-TUNING METHOD
+
+if fine_tune_method == "full":
+    pass
+elif fine_tune_method == "lora":
+    pass
+else: 
+    raise Exception("Haven't written code to support other fine-tune methods yet")
+
+
+#### SPECIFIYING GPU UTILIZATION
+
+if GPU_util == "single":
+    pass
+else: 
+    raise Exception("Haven't written code to support distributed GPU utilization yet")
+
+
+#### ADDING CUSTOM HYPERPARAMETERS
+
+if params == "default":
+    pass
+else: 
+    raise Exception("Haven't written code to change parameters yet")
 
 # setting up model architecture and initializing tokenizer
 model = AutoModelForSequenceClassification.from_pretrained(model_to_read, num_labels=2)
@@ -107,6 +128,7 @@ else:
 
 # clearing cuda(maybe?)
 
+# see: https://huggingface.co/docs/transformers/en/perf_train_gpu_one#batch-size-choice
 
 # model hyperparameters
 training_args = TrainingArguments(
@@ -115,6 +137,7 @@ training_args = TrainingArguments(
     learning_rate=2e-5,
     per_device_train_batch_size=1,
     num_train_epochs=2,
+    gradient_accumulation_steps=4, # improves memory utilization
     # weight_decay=0.01,
 )
 
@@ -134,7 +157,17 @@ trainer = Trainer(
     data_collator=data_collator,
 )
 
+
+
+start_time = time.time()
+
 trainer.train()
+
+end_time = time.time()
+
+execution_time = end_time - start_time
+
+print(f"Fine-tuning time: {execution_time} seconds")
 
 # saving model weights
 if fine_tune_method == "lora":
