@@ -52,23 +52,33 @@ def tokenize_and_prepare(data):
     return tokenizer(data["text"], truncation=True, padding="max_length", max_length=512)
 
 
-if test_dataset == "n_30k":
+if test_dataset == "n_30000":
     data_to_read = project_directory + "data/fake_data_for_tuning_3cols.csv"
 elif test_dataset == "n_100":
-    data_to_read = project_directory + "data/fake_data_for_tuning_3cols_subset.csv"
+    data_to_read = project_directory + "data/fake_data_for_tuning_3cols_n_100.csv"
+elif test_dataset == "n_1000":
+    data_to_read = project_directory + "data/fake_data_for_tuning_3cols_subset_n_1000.csv"
+elif test_dataset == "n_5000":
+    data_to_read = project_directory + "data/fake_data_for_tuning_3cols_subset_n_5000.csv"
+elif test_dataset == "n_10000":
+    data_to_read = project_directory + "data/fake_data_for_tuning_3cols_subset_n_100000.csv"
+elif test_dataset == "n_20000":
+    data_to_read = project_directory + "data/fake_data_for_tuning_3cols_subset_n_20000.csv"
 else:
     raise Exception("Dataset not recognised")
 
-model_path = "/scratch/gpfs/vs3041/fine_tuning_hf/fine_tuned_models/"
-model_name = "-".join([model_name, test_dataset, fine_tune_method, GPU_util, params])
+model_save_name = "-".join([model_name, test_dataset, fine_tune_method, GPU_util, params])
+
+fine_tuned_directory = project_directory + "fine_tuned_models/" + model_save_name
 
 # formatting dataset
 test_dataset = pd.read_csv(data_to_read)
 test_dataset = format_fake_data(test_dataset)
 
+
 # Load the fine-tuned model and tokenizer
-model = AutoModelForSequenceClassification.from_pretrained(model_path + model_name, device_map="auto")
-tokenizer = AutoTokenizer.from_pretrained(model_path + model_name)
+model = AutoModelForSequenceClassification.from_pretrained(fine_tuned_directory, device_map="auto")
+tokenizer = AutoTokenizer.from_pretrained(fine_tuned_directory)
 tokenizer.pad_token = tokenizer.eos_token
 
 # Create a pipeline for sequence classification
@@ -79,12 +89,12 @@ prediction_probabilities = []
 for sample in tqdm(test_dataset):
     prediction = classifier(sample["text"])
 
-    label = prediction["labels"]
-    soft_max_probability = prediction["score"]
+    label = prediction[0]["label"]
+    soft_max_probability = prediction[0]["score"]
 
     prediction_probabilities.append(soft_max_probability)
 
-save_path = project_directory + "output/predictions/" + model_name + ".csv"
+save_path = project_directory + "output/predictions/" + model_save_name + ".csv"
 prediction_df = pd.DataFrame(prediction_probabilities)
 prediction_df.to_csv(save_path)
 

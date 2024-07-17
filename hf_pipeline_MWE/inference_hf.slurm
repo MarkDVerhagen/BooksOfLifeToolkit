@@ -10,13 +10,13 @@
 #SBATCH --mail-user=vs3041@princeton.edu
 #SBATCH -o output/last_inference_run.out # output file 
 
-export file_path="/scratch/gpfs/vs3041/fine_tuning_hf/"
+export project_path=$(pwd)
 
-mkdir -p $file_path/output/predictions/
+mkdir -p $project_path/output/predictions/
 
 # setting up the environment
 module purge
-cd $file_path 
+cd $project_path
 module load anaconda3/2024.2
 conda activate hf_environment
 
