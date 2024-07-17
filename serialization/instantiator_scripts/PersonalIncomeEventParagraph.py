@@ -71,7 +71,7 @@ class PersonalIncomeEventParagraph(Paragraph):
         super().__post_init__()
         assert self.dataset_name == 'inpatab', "This class is specifically designed for the inpatab data table. Dataset name must be 'inpatab'"
 
-    def get_paragraph_string_family_decision(self):
+    def get_paragraph_string_biographic(self):
         paragraph = ""
 
         # Income

@@ -78,7 +78,7 @@ class PersonAttributesParagraph(Paragraph):
         self.day = self.GBAGEBOORTEDAG
 
 
-    def get_paragraph_string_biographic(self):
+    def get_paragraph_string_biographic(self, features=None):
         paragraph = ""
 
         # Gender

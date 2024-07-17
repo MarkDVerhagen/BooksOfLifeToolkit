@@ -56,7 +56,23 @@ class HouseholdEventParagraph(Paragraph):
         # TODO set year, month, and day values of parent class from houshold start date
         pass
 
-    def get_paragraph_string_biographic(self):
+    def instantiate_social_context_paragraphs(self, social_context_features):
+        result = {}
+        for dataset in social_context_features:
+            dataset_name = list(dataset.keys())[0]
+            result[dataset_name] = {}
+            for context, features in dataset[dataset_name].items():
+                result[dataset_name][context] = BookofLifeGenerator("03c6605f", {
+                    'main_key': self.recipe.main_key,
+                    'datasets': features,
+                    'formatting': {
+                        'sorting_keys': self.recipe.sorting_keys,
+                        'paragraph_generator': 'get_paragraph_string_tabular'
+                    }
+                })
+        return result
+
+    def get_paragraph_string_biographic(self, features=None):
         paragraph = f"On {self.DATE_STIRTHH}, a new household (ID: {self.HOUSEKEEPING_NR}) was formed. "
 
         household_types = {
@@ -86,6 +102,8 @@ class HouseholdEventParagraph(Paragraph):
             paragraph += f"This household configuration lasted until {self.DATUMEINDEHH}. "
         else:
             paragraph += "This household configuration is still current as of the latest record. "
+
+        paragraph += f"The person lives with their partner{'s' if len(self.PARTNERS) > 1 else ''} ({', '.join(str(p) for p in self.PARTNERS)}), child{'ren' if len(self.CHILDREN) > 1 else ''} ({', '.join(str(c) for c in self.CHILDREN)}), and other household member{'s' if len(self.OTHER_MEMBERS) > 1 else ''} ({', '.join(str(o) for o in self.OTHER_MEMBERS)})."
 
         return paragraph.strip()
         
