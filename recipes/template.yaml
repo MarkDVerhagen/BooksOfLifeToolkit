@@ -1,5 +1,11 @@
 main_key: rinpersoon
 datasets:
+  - name: persoon_tab
+    features:
+      - GBAGEBOORTEMAAND
+      - GBAGEBOORTEDAG
+      - GBAGEBOORTEJAARVADER
+      - GBAGESLACHTVADER
   - name: household_bus
     features:
     social_context_features:
@@ -16,12 +22,6 @@ datasets:
         - name: persoon_tab
           features:
             - GBAGESLACHT
-  - name: persoon_tab
-    features:
-      - GBAGEBOORTEMAAND
-      - GBAGEBOORTEDAG
-      - GBAGEBOORTEJAARVADER
-      - GBAGESLACHTVADER
 formatting:
   sorting_keys: year
   paragraph_generator: get_paragraph_string_biographic

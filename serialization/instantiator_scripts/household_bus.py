@@ -7,7 +7,7 @@ by creating a list of HouseholdEventParagraph objects'''
 def get_households(rinpersoon: int) -> list[HouseholdEventParagraph]:
 
     # Load the dataset
-    df = pd.read_csv('synth/data/edit/householdbus.csv')
+    df = pd.read_csv('synth/data/edit/household_bus.csv')
     
     # Filter rows related to the given rinpersoon
     households_df = df[df['rinpersoon'] == rinpersoon]
@@ -43,7 +43,7 @@ def get_households(rinpersoon: int) -> list[HouseholdEventParagraph]:
 
 
 ##Example usage
-person_id = '71ed4a86' # Replace with the actual person_id you want to query
-households = get_households(person_id)
-for household in households:
-    print(households)
+# person_id = '71ed4a86' # Replace with the actual person_id you want to query
+# households = get_households(person_id)
+# for household in households:
+#     print(households)
