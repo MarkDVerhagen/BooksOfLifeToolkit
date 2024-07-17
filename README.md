@@ -47,7 +47,7 @@ The `serialization` module generates personalized "books of life" text containin
 
 1. **Prepare your data**: Ensure your datasets are ready and conform to the expected formats.
 
-2. **Define your recipe**: Create a YAML file that specifies the datasets and features to be used.
+2. **Define your recipe**: Create a YAML file that specifies the datasets and features to be used. See `recipes/template.yaml` for an example.
 
 3. **Generate the book**:
 The following code snippet prints the Book of Life for person `"03c6605f"`.
