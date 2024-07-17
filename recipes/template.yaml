@@ -1,29 +1,32 @@
 main_key: rinpersoon
 datasets:
   - name: household_bus
-    excluded_features:
+    features:
     social_context_features:
+      partners:
+          - name: household_bus
+            features:
+              - GBAGESLACHT
+            social_context_features:
+              partners:
+                  - name: persoon_tab
+                    features:
+                      - GBAGEBOORTEJAARMOEDER
       children: 
         - name: persoon_tab
           features:
             - GBAGESLACHT
-      partners:
-        - name: inpa_tab
-          features:
-            - INPPERSBRUT
   - name: persoon_tab
-    excluded_features:
+    features:
       - GBAGEBOORTEMAAND
       - GBAGEBOORTEDAG
-      - GBAGEBOORTELANDNL
-      - GBAGEBOORTEMAANDMOEDER
-      - GBAGEBOORTEDAGMOEDER
-      - GBAGEBOORTEJAARMOEDER
-      - GBAGESLACHTMOEDER
-      - GBAGEBOORTEMAANDVADER
-      - GBAGEBOORTEDAGVADER
       - GBAGEBOORTEJAARVADER
       - GBAGESLACHTVADER
+    social_context_features:
+      sdlkfjs:
+          - name: inpa_tab
+            features:
+              - INPPERSBRUT
 formatting:
   sorting_key: year
-  paragraph_generator: get_paragraph_string_tabular
+  paragraph_generator: get_paragraph_string_biographic
