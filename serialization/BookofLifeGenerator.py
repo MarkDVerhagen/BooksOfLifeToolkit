@@ -25,9 +25,11 @@ class BookofLifeGenerator:
             features = self.recipe.get_features(dataset_name)
 
             if dataset_name == 'persoon_tab':
+                ## Add PersonAttributesParagraph to the list of paragraphs
                 self.paragraphs.append(get_person_attributes(self.rinpersoon))
             elif dataset_name == 'household_bus':
-                pass # TODO write function tath takes in rinpersoon and returns list of HouseholdEventParagraph objects
+                ## Add List of HouseholdEventParagraphs to the list of paragraphs
+                self.paragraphs.append(get_households(self.rinpersoon))
             else:
                 raise ValueError(f"Dataset name {dataset_name} not recognized")
             
