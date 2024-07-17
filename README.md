@@ -4,13 +4,9 @@ This repository contains code to prepare the analytical pipeline for PreFer Stag
 
 ## Getting Started
 
-1. **Clone the repository**:
-    ```bash
-    git clone https://github.com/yourusername/booksoflife.git
-    cd booksoflife
-    ```
+1. **Clone the repository**
 
-2. **Set up virtual environment (recommended.**
+2. **Set up virtual environment (recommended).**
 ```
 python3 -m venv myenv  
 source myenv/bin/activate
