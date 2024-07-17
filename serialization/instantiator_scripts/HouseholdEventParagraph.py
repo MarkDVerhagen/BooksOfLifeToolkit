@@ -53,8 +53,16 @@ class HouseholdEventParagraph(Paragraph):
     def __post_init__(self):        
         super().__post_init__()
         assert self.dataset_name == 'household_bus', "This class is specifically designed for the GBAPERSOONTAB data table. Dataset name must be 'household_bus'"
-        # TODO set year, month, and day values of parent class from houshold start date
-        pass
+        
+        # set year, month, and day values of parent class from houshold start date
+        year, month, day = self.DATE_STIRTHH.split('-')
+
+        # Convert them to integers (if needed)
+        self.year = int(year)
+        self.month = int(month)
+        self.day = int(day)
+        
+        return
 
     def instantiate_social_context_paragraphs(self, social_context_features):
         result = {}

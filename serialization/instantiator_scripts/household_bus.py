@@ -19,6 +19,7 @@ def get_households(rinpersoon: int) -> list[HouseholdEventParagraph]:
     for _, row in households_df.iterrows():
         household_paragraph = HouseholdEventParagraph(
             dataset_name="household_bus",
+            rinpersoon=rinpersoon,
             HOUSEKEEPING_NR=row['HOUSEKEEPING_NR'],
             TYPHH=row['TYPHH'],
             DATE_STIRTHH=row['DATE_STIRTHH'],
@@ -35,7 +36,7 @@ def get_households(rinpersoon: int) -> list[HouseholdEventParagraph]:
             CHILDREN= None, #not implemented
             PARTNERS=None,  # Assuming there are no explicit partner lists in the data provided
             OTHER_MEMBERS=None,  # Assuming there are no explicit other members lists in the data provided
-            ALL_MEMBERS=row['ID_list_rinpersoon']
+            ALL_MEMBERS=None #row['ID_list_rinpersoon']
         )
         household_paragraphs.append(household_paragraph)
     

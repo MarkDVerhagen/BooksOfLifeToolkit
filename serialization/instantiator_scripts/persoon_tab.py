@@ -7,7 +7,6 @@ by creating the PersonAttributesParagraph object'''
 def get_person_attributes(rinpersoon: int) -> PersonAttributesParagraph:
     # Load the dataset
     df = pd.read_csv('synth/data/raw/persoon_tab.csv')
-    print('found persoontab')
     
     # Find the row with the given person_id
     person_row = df[df['rinpersoon'] == rinpersoon]
