@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 from BookofLifeGenerator import BookofLifeGenerator
 import pandas as pd
 import random
+=======
+from serialization.BookofLifeGenerator import BookofLifeGenerator
+>>>>>>> 704ba90f0126fd4c993f71ac002963bd98273480
 
 synth_hh = pd.read_csv(os.path.join('synth', 'data', 'edit', 'household_bus.csv'))
 

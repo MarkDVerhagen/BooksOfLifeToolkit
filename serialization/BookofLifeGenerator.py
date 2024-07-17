@@ -81,6 +81,7 @@ class BookofLifeGenerator:
         self.write_book(self.recipe.paragraph_generator)
         return self.book
 
+<<<<<<< HEAD
     
 
 # # Example usage:
@@ -91,3 +92,6 @@ class BookofLifeGenerator:
 
 
 # # print("Partner's child:", generator.social_context_paragraphs)
+=======
+    
+>>>>>>> 704ba90f0126fd4c993f71ac002963bd98273480

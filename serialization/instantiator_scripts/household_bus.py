@@ -1,5 +1,5 @@
 import pandas as pd
-from instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
+from serialization.instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
 
 '''This function loads all households for a given rinpersoon (person_id)
 by creating a list of HouseholdEventParagraph objects'''
