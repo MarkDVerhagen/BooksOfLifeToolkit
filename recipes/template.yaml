@@ -23,5 +23,5 @@ datasets:
           features:
             - GBAGESLACHT
 formatting:
-  sorting_keys: year
+  sorting_keys: year  ## right now only supports 'year' and 'dataset_name'
   paragraph_generator: get_paragraph_string_biographic

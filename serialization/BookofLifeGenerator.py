@@ -27,9 +27,11 @@ class BookofLifeGenerator:
             if dataset_name == 'persoon_tab':
                 ## Add PersonAttributesParagraph to the list of paragraphs
                 self.paragraphs.append(get_person_attributes(self.rinpersoon))
+                #print('person added')
             elif dataset_name == 'household_bus':
                 ## Add List of HouseholdEventParagraphs to the list of paragraphs
-                self.paragraphs.append(get_households(self.rinpersoon))
+                self.paragraphs.extend(get_households(self.rinpersoon))
+                #print('household added')
             else:
                 raise ValueError(f"Dataset name {dataset_name} not recognized")
             
@@ -60,6 +62,11 @@ class BookofLifeGenerator:
         if isinstance(sorting_keys, str):
             sorting_keys = [sorting_keys]
         
+        supported_sorting_keys = ['year', 'dataset_name']
+
+        # Assert that all elements in sorting_keys are either 'year' or 'dataset_name'
+        assert all(key in supported_sorting_keys for key in sorting_keys), "sorting_keys contains values outside of 'year' and 'dataset_name'"
+
         self.paragraphs.sort(key=attrgetter(*sorting_keys))
         return self.paragraphs
 
