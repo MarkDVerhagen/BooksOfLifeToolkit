@@ -39,7 +39,7 @@ def tokenize_and_prepare(data):
 # model arguments from the command line
 parser = argparse.ArgumentParser()
 parser.add_argument("--model_name", type=str, help="model name")
-parser.add_argument("--train_dataset", type=str)
+parser.add_argument("--dataset", type=str)
 parser.add_argument("--fine_tune_method", type=str)
 parser.add_argument("--GPU_util", type=str)
 parser.add_argument("--params", type=str)
@@ -47,7 +47,7 @@ parser.add_argument("--training_folds")
 args = parser.parse_args()
 
 model_name = args.model_name
-train_dataset = args.train_dataset
+dataset = args.dataset
 fine_tune_method = args.fine_tune_method
 GPU_util = args.GPU_util
 params = args.params
@@ -56,7 +56,7 @@ first_training_fold, last_training_fold = map(int, training_folds.split("-"))
 
 project_directory = os.environ.get('project_path') + "/"
 
-fine_tuned_model_name = "-".join([model_name, train_dataset, fine_tune_method, GPU_util, params, training_folds])
+fine_tuned_model_name = "-".join([model_name, dataset, fine_tune_method, GPU_util, params, "folds", training_folds])
 output_directory = project_directory + "fine_tuned_models/" + fine_tuned_model_name
 
 #### SPECIFIYING MODEL
@@ -69,14 +69,13 @@ else:
 
 #### SPECIFIYING DATA
 
-if train_dataset == "salganik":
+if dataset == "salganik":
     # reading training data 
     data_to_read = project_directory + "data/salganik_data.csv"
     train_dataset = pd.read_csv(data_to_read)
 
     # subsetting data to specified training folds 
     train_dataset = train_dataset[train_dataset['fold'].between(first_training_fold, last_training_fold)]
-
 
     # formatting the salganik data to get it into a format readable by the LLM
     train_dataset = format_salganik_data(train_dataset)    
@@ -126,7 +125,6 @@ if fine_tune_method == "lora":
 else:
     pass
 
-# clearing cuda(maybe?)
 
 # see: https://huggingface.co/docs/transformers/en/perf_train_gpu_one#batch-size-choice
 
