@@ -11,7 +11,7 @@ def assign_age(value):
     else:
         return np.random.randint(0, 11) 
 
-gbahh = pd.read_csv(os.path.join('synth', 'data', 'raw', 'householdbus.csv'))
+gbahh = pd.read_csv(os.path.join('synth', 'data', 'raw', 'household_bus.csv'))
 
 gbapersoon = gbahh.sort_values(by=['rinpersoon', 'DATE_STIRTHH'], ascending=True).\
     groupby('rinpersoon').first()
@@ -57,5 +57,5 @@ cols = [
     'birthday',
     ]
 
-gbapersoon.reset_index()[cols].to_csv(os.path.join('synth', 'data', 'raw', 'persoontab.csv'),
+gbapersoon.reset_index()[cols].to_csv(os.path.join('synth', 'data', 'raw', 'persoon_tab.csv'),
                                       index=False)

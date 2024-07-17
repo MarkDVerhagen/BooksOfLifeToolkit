@@ -1,0 +1,8 @@
+main_key: rinpersoon
+datasets:
+  - name: household_bus
+    structure_features: ['HOUSEKEEPING_NR', 'DATE_STIRTHH']
+    structure_classification: 'PLHH'
+  - name: persoon_tab
+    structure_features:
+    structure_classification:

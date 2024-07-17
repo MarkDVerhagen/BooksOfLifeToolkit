@@ -223,6 +223,6 @@ def process_household(df):
 
     return df
 
-process_household(hh_df).to_csv(os.path.join('synth', 'data', 'raw', 'householdbus.csv'),
+process_household(hh_df).to_csv(os.path.join('synth', 'data', 'raw', 'household_bus.csv'),
                                 index=False)
     
