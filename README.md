@@ -53,7 +53,7 @@ The `serialization` module generates personalized "books of life" text containin
 The following code snippet prints the Book of Life for person `"03c6605f"`.
 
     ```python
-    from your_module import BookofLifeGenerator 
+    from serialization import BookofLifeGenerator 
 
     rinpersoon = "03c6605f"
     recipe_yaml_path = "path/to/your/recipe.yaml"
