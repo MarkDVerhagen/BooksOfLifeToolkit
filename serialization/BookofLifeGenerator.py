@@ -1,11 +1,11 @@
 
 from typing import List
-from serialization.instantiator_scripts.Paragraph import Paragraph
-from serialization.instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
-from serialization.instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
-from serialization.Recipe import Recipe
-from serialization.instantiator_scripts.persoon_tab import get_person_attributes
-from serialization.instantiator_scripts.household_bus import get_households
+from instantiator_scripts.Paragraph import Paragraph
+from instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
+from instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
+from Recipe import Recipe
+from instantiator_scripts.persoon_tab import get_person_attributes
+from instantiator_scripts.household_bus import get_households
 from operator import attrgetter
 
 class BookofLifeGenerator:
@@ -81,4 +81,17 @@ class BookofLifeGenerator:
         self.write_book(self.recipe.paragraph_generator)
         return self.book
 
+<<<<<<< HEAD
     
+
+# # Example usage:
+# generator = BookofLifeGenerator("03c6605f", 'recipes/template.yaml')
+# # print("Partner:", generator.social_context_paragraphs['household_bus']['partners'].generate_book())
+# # print("Partner's child:", generator.social_context_paragraphs['household_bus']['partners'].social_context_paragraphs['persoon_tab']['partners'].generate_book())
+# print('Main book:', generator.generate_book())
+
+
+# # print("Partner's child:", generator.social_context_paragraphs)
+=======
+    
+>>>>>>> 704ba90f0126fd4c993f71ac002963bd98273480

@@ -1,0 +1,27 @@
+main_key: rinpersoon
+datasets:
+  - name: persoon_tab
+    features:
+      - GBAGEBOORTEMAAND
+      - GBAGEBOORTEDAG
+      - GBAGEBOORTEJAARVADER
+      - GBAGESLACHTVADER
+  - name: household_bus
+    features:
+    social_context_features:
+      partners:
+          - name: household_bus
+            features:
+              - GBAGESLACHT
+            social_context_features:
+              partners:
+                  - name: persoon_tab
+                    features:
+                      - GBAGEBOORTEJAARMOEDER
+      children: 
+        - name: persoon_tab
+          features:
+            - GBAGESLACHT
+formatting:
+  sorting_keys: year  ## right now only supports 'year' and 'dataset_name'
+  paragraph_generator: get_paragraph_string_biographic

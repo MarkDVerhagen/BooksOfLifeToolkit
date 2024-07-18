@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import random
 from datetime import datetime, timedelta
-from params import synth_params
+from synth.params import synth_params
 import json
 from copy import copy, deepcopy
 import pandas as pd
@@ -41,10 +41,11 @@ class HouseholdMember:
         self.place = place
 
 class Household:
-    def __init__(self, id, members=[], empty=False):
+    def __init__(self, id, members=[], empty=False, event='initiate'):
         self.id = id
         self.members = members
         self.spells = []
+        self.event = event
         self.household_type = self.draw_household_type()
         self.generate_members_based_on_type()
     
@@ -110,6 +111,7 @@ def simulate_movement(households_input):
         
         if event == 'nothing':
             hh.spells = [hh.spells[-1], datetime(hh.spells[-1].year + 1, 1, 1)]
+            hh.event = event
             households_output.append(hh)
         if event == 'child_born':
             hh.spells = [hh.spells[-1], datetime(hh.spells[-1].year + 1, 1, 1)]
@@ -119,6 +121,7 @@ def simulate_movement(households_input):
                 m.place = child_born_map[m.place]
             
             hh.household_type = assign_household_type(hh)
+            hh.event = event
             households_output.append(hh)
         if event == 'breakup':
             children = [h for h in hh.members if h.place == 'child living at home']
@@ -143,6 +146,9 @@ def simulate_movement(households_input):
             
             new_hh.spells = [hh.spells[-1], datetime(hh.spells[-1].year + 1, 1, 1)]
             
+            new_hh.event = event
+            old_hh.event = event
+            
             households_output.append(new_hh)
             households_output.append(old_hh)
 
@@ -164,6 +170,7 @@ def simulate_movement(households_input):
                         m.place = 'partner in couple without children'
                 new_hh.spells = [new_hh.spells[-1], datetime(new_hh.spells[-1].year + 1, 1, 1)]
                 new_hh.household_type = assign_household_type(new_hh)
+                new_hh.event = event
                 households_output.append(new_hh)
             
     return households_output
@@ -184,6 +191,7 @@ def collect_data_for_dataframe_separate_rows(households):
                     'DATUMEINDEHH': household.spells[1],  # Handling ongoing spels
                     'AANTALOVHH': len([h.place for h in household.members if h.place != 'child living at home']),
                     'AANTALKINDHH': len([h.place for h in household.members if h.place == 'child living at home']),
+                    'EVENT': household.event,
                 }
         
         normalized_hh_dict = {k: [v] * household_size if not isinstance(v, list)
