@@ -111,8 +111,10 @@ class HouseholdEventParagraph(Paragraph):
         else:
             paragraph += "This household configuration is still current as of the latest record. "
 
-        if self.CHILDREN is not None and self.PARTNERS is not None:
+        if self.CHILDREN is not None and self.PARTNERS is not None and self.OTHER_MEMBERS is not None:
             paragraph += f"The person lives with their partner{'s' if len(self.PARTNERS) > 1 else ''} ({', '.join(str(p) for p in self.PARTNERS)}), child{'ren' if len(self.CHILDREN) > 1 else ''} ({', '.join(str(c) for c in self.CHILDREN)}), and other household member{'s' if len(self.OTHER_MEMBERS) > 1 else ''} ({', '.join(str(o) for o in self.OTHER_MEMBERS)})."
+        elif self.CHILDREN is not None and self.PARTNERS is not None:
+            paragraph += f"The person lives with their partner{'s' if len(self.PARTNERS) > 1 else ''} ({', '.join(str(p) for p in self.PARTNERS)}) and child{'ren' if len(self.CHILDREN) > 1 else ''} ({', '.join(str(c) for c in self.CHILDREN)})."
 
         return paragraph.strip()
         

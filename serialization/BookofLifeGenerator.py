@@ -16,8 +16,7 @@ class BookofLifeGenerator:
         self.paragraphs: List[Paragraph] = []
         self.instantiate_paragraphs()
 
-
-        # self.social_context_paragraphs = self.instantiate_social_context_paragraphs(self.recipe.social_context_features)
+        self.social_context_paragraphs = self.instantiate_social_context_paragraphs(self.recipe.social_context_features)
 
     def instantiate_paragraphs(self):
         for dataset in self.recipe.datasets:
@@ -44,14 +43,30 @@ class BookofLifeGenerator:
 
             
             for context, features in dataset[dataset_name].items():
-                result[dataset_name][context] = BookofLifeGenerator("03c6605f", {
-                    'main_key': self.recipe.main_key,
-                    'datasets': features,
-                    'formatting': {
-                        'sorting_keys': self.recipe.sorting_keys,
-                        'paragraph_generator': 'get_paragraph_string_tabular'
-                    }
-                })
+
+                # get all paragraphs of this domain from main book of life
+                domain_paragraphs = [item for item in self.paragraphs if item.dataset_name == dataset_name]
+
+                # get all relevant social context rinpersoon to generate BoLs for
+                rinpersoons = []
+                for paragraph in domain_paragraphs:
+                    if context in paragraph.__annotations__:
+                        rinpersoons.extend(getattr(paragraph, context))
+
+                # generate BoLs for all relevant rinpersoons and append to result
+                result[dataset_name][context] = {}
+                for rinpersoon in rinpersoons:
+                    # check if rinpersoon is already in result for this context and dataset
+                    if rinpersoon not in result[dataset_name][context]:
+                        result[dataset_name][context][rinpersoon] = BookofLifeGenerator(rinpersoon, {
+                            'main_key': self.recipe.main_key,
+                            'datasets': features,
+                            'formatting': {
+                                'sorting_keys': self.recipe.sorting_keys,
+                                'paragraph_generator': 'get_paragraph_string_tabular'
+                            }
+                        })
+
         return result
 
 

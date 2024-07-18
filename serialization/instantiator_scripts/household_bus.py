@@ -55,8 +55,8 @@ def get_households(rinpersoon: str, db_path: str = 'synthetic_data.db') -> List[
             GEBMAANDJONGSTEKINDHH=row_dict['GEBMAANDJONGSTEKINDHH'],
             GEBJAAROUDSTEKINDHH=row_dict['GEBJAAROUDSTEKINDHH'],
             BMAANDOUDSTEKINDHH=row_dict['BMAANDOUDSTEKINDHH'],
-            CHILDREN=row_dict.get('CHILDREN'),
-            PARTNERS=row_dict.get('PARTNERS'),
+            CHILDREN=["00a2cd32", "00a2cd32"], # TODO remove this hardcoded value
+            PARTNERS=["00a2cd32", "00a2cd32"],
             OTHER_MEMBERS=row_dict.get('OTHER_MEMBERS'),
             ALL_MEMBERS=row_dict.get('ALL_MEMBERS')
         )
