@@ -3,7 +3,7 @@ from multiprocessing import Pool
 import time
 
 def run_query(query):
-    conn = sqlite3.connect('your_database.db')
+    conn = sqlite3.connect('synthetic_data.db')
     cursor = conn.cursor()
     cursor.execute(query)
     result = cursor.fetchall()
