@@ -98,5 +98,5 @@ def main(max_processes=None):
 
 if __name__ == "__main__":
     start_time = time.time()
-    main()
+    main(max_processes=4)
     print(f"Execution time: {time.time() - start_time} seconds.")
