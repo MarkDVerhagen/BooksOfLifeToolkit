@@ -6,6 +6,11 @@ import os
 from serialization.BookofLifeGenerator import BookofLifeGenerator
 import time
 import traceback
+from tqdm import tqdm
+
+def generate_and_save_book_wrapper(args):
+    """Wrapper function to unpack arguments for generate_and_save_book."""
+    return generate_and_save_book(*args)
 
 def get_unique_rinpersoons(db_path):
     """Fetch all unique rinpersoon IDs from the persoon_tab table."""
@@ -61,6 +66,7 @@ def main(max_processes=None):
     print(f"Using {num_processes} processes for parallel generation.")
     
     for recipe in recipes:
+        print(f"\n\nGenerating Books of Life and outcomes for recipe: {recipe}\n----------")
         recipe_yaml_path = f'./recipes/{recipe}.yaml'
         
         # Generate and save Books of Life
@@ -70,8 +76,13 @@ def main(max_processes=None):
         os.makedirs(test_output_dir, exist_ok=True)
         
         with multiprocessing.Pool(processes=num_processes) as pool:
-            pool.starmap(generate_and_save_book, [(rin, recipe_yaml_path, train_output_dir) for rin in train_rins])
-            pool.starmap(generate_and_save_book, [(rin, recipe_yaml_path, test_output_dir) for rin in test_rins])
+            print("Generating train Books of Life:")
+            train_args = [(rin, recipe_yaml_path, train_output_dir) for rin in train_rins]
+            list(tqdm(pool.imap(generate_and_save_book_wrapper, train_args), total=len(train_rins)))
+            
+            print("Generating test Books of Life:")
+            test_args = [(rin, recipe_yaml_path, test_output_dir) for rin in test_rins]
+            list(tqdm(pool.imap(generate_and_save_book_wrapper, test_args), total=len(test_rins)))
         
         # Process outcomes
         outcome = pd.read_csv(os.path.join('synth', 'data', 'edit', 'household_bus.csv'))
