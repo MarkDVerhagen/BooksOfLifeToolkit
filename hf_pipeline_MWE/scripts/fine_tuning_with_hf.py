@@ -72,14 +72,14 @@ def format_BOL_data(path_to_training_data):
             outcome = infile.read().strip()
 
         data_for_unique_id = {
-            "input": book_of_life,
+            "text": book_of_life,
             "unique_id": unique_id,
-            "outcome": int(outcome)
+            "labels": int(outcome)
         }
 
         data.append(data_for_unique_id)
 
-        data = Dataset.from_list(data)
+    data = Dataset.from_list(data)
 
     return data
 
@@ -90,21 +90,13 @@ def tokenize_and_prepare(data):
     return tokenizer(data["text"], truncation=True, padding="max_length", max_length=512)
 
 # model arguments from the command line
-parser = argparse.ArgumentParser()
-parser.add_argument("--model_name", type=str, help="model name")
-parser.add_argument("--dataset", type=str)
-parser.add_argument("--fine_tune_method", type=str)
-parser.add_argument("--GPU_util", type=str)
-parser.add_argument("--params", type=str)
-parser.add_argument("--training_folds")
-args = parser.parse_args()
 
-model_name = args.model_name
-dataset = args.dataset
-fine_tune_method = args.fine_tune_method
-GPU_util = args.GPU_util
-params = args.params
-training_folds = args.training_folds
+model_name = os.environ.get('model_name')
+dataset = os.environ.get('dataset')
+fine_tune_method = os.environ.get('fine_tune_method')
+GPU_util = os.environ.get('GPU_util')
+params = os.environ.get('params')
+training_folds = os.environ.get('training_folds')
 first_training_fold, last_training_fold = map(int, training_folds.split("-"))
 
 project_directory = os.environ.get('project_path') + "/"
@@ -133,10 +125,15 @@ if dataset == "salganik":
     # formatting the salganik data to get it into a format readable by the LLM
     train_dataset = format_salganik_data(train_dataset)    
 
+    print("using Salganik data")
+
 elif dataset == "bol-temp-1":
     data_to_read =  "/scratch/gpfs/vs3041/prefer_prepare/synth/data/e2e/test_template1/train/"
 
     train_dataset = format_BOL_data(data_to_read)
+
+    print("Using BOL template 1 data")
+
 else:
     raise Exception("Dataset not recognised")
 
@@ -166,7 +163,7 @@ else:
     raise Exception("Haven't written code to change parameters yet")
 
 # setting up model architecture and initializing tokenizer
-model = AutoModelForSequenceClassification.from_pretrained(model_to_read, num_labels=2)
+model = AutoModelForSequenceClassification.from_pretrained(model_to_read, num_labels=2, device_map = "auto")
 tokenizer = AutoTokenizer.from_pretrained(model_to_read)
 tokenizer.pad_token = tokenizer.eos_token 
 
@@ -190,8 +187,8 @@ training_args = TrainingArguments(
     output_dir=output_directory,
     logging_steps=20,
     learning_rate=2e-5,
-    per_device_train_batch_size=1,
-    num_train_epochs=2,
+    per_device_train_batch_size=8,
+    num_train_epochs=1,
     gradient_accumulation_steps=4, # improves memory utilization
     # weight_decay=0.01,
 )

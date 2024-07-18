@@ -8,28 +8,18 @@ import argparse
 import pandas as pd 
 from transformers import pipeline
 from tqdm import tqdm
+import glob
 
-# model arguments from the command line
-parser = argparse.ArgumentParser()
-parser.add_argument("--model_name", type=str, help="model name")
-parser.add_argument("--dataset", type=str)
-parser.add_argument("--fine_tune_method", type=str)
-parser.add_argument("--GPU_util", type=str)
-parser.add_argument("--params", type=str)
-parser.add_argument("--training_folds")
-parser.add_argument("--test_folds")
-args = parser.parse_args()
+model_name = os.environ.get('model_name')
+dataset = os.environ.get('dataset')
+fine_tune_method = os.environ.get('fine_tune_method')
+GPU_util = os.environ.get('GPU_util')
+params = os.environ.get('params')
+training_folds = os.environ.get('training_folds')
+test_folds = os.environ.get('test_folds')
 
-model_name = args.model_name
-dataset = args.dataset
-fine_tune_method = args.fine_tune_method
-GPU_util = args.GPU_util
-params = args.params
-training_folds = args.training_folds
 first_training_fold, last_training_fold = map(int, training_folds.split("-"))
-test_folds = args.test_folds
 first_test_fold, last_test_fold = map(int, test_folds.split("-"))
-
 
 project_directory = os.environ.get('project_path') + "/"
 
@@ -46,6 +36,58 @@ def format_salganik_data(data):
 
     # converting to HF format
     data = Dataset.from_pandas(data)
+
+    return data
+
+
+def extract_unique_id(filename):
+
+    # extract from books of life 
+    if "bol/" in filename:
+        start = filename.index('bol/') + len('bol/')
+        end = filename.index('.txt')
+
+    elif "outcome/" in filename:
+        start = filename.index('outcome/') + len('outcome/')
+        end = filename.index('.txt')
+    else: 
+        ValueError("Can't find unique id from filename")
+    
+    return filename[start:end]
+
+def format_BOL_data(path_to_training_data):
+    
+    # Step 1: reading in books of life
+
+    # the books of life are contained in multiple .txt files 
+    BOL_txt_files = glob.glob(path_to_training_data + "bol/" + '*.txt')
+
+    books_of_life = []
+    unique_ids = []
+    data = []
+
+    for txt_file in BOL_txt_files:
+
+        #reading books of life
+        with open(txt_file, 'r') as infile:
+            book_of_life = infile.read().strip()
+            unique_id = extract_unique_id(txt_file)     # extract unique_id from filename
+
+        
+        # reading outcomes
+        outcome_txt_file = path_to_training_data + "outcome/" + unique_id + '.txt'
+        with open(outcome_txt_file, 'r') as infile:
+            outcome = infile.read().strip()
+
+        data_for_unique_id = {
+            "text": book_of_life,
+            "unique_id": unique_id,
+            "labels": int(outcome)
+        }
+
+        data.append(data_for_unique_id)
+
+    data = Dataset.from_list(data)
 
     return data
 
@@ -75,6 +117,14 @@ if dataset == "salganik":
 
     # formatting the salganik data to get it into a format readable by the LLM
     test_dataset = format_salganik_data(test_dataset)    
+
+elif dataset == "bol-temp-1":
+    data_to_read =  "/scratch/gpfs/vs3041/prefer_prepare/synth/data/e2e/test_template1/test/"  # make sure this is test
+
+    test_dataset = format_BOL_data(data_to_read)
+
+    index_column = test_dataset["unique_id"]
+
 
 else:
     raise Exception("Dataset not recognised")
@@ -107,10 +157,10 @@ for sample in tqdm(test_dataset):
 save_path = project_directory + "output/predictions/" + model_save_name + "-predictions-" + "folds-" + test_folds + ".csv"
 
 prediction_df = pd.DataFrame({
-    "rinspersoon": index_column, 
+    "unique_id": test_dataset["unique_id"], 
     "softmax_probabilities": prediction_probabilities,
     "predicted_label": prediction_labels,
-    "true_label": true_labels
+    "true_label": test_dataset["labels"]
     })
 
 prediction_df.to_csv(save_path)

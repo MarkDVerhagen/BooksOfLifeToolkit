@@ -4,6 +4,7 @@ from datasets import load_dataset, load_from_disk, Dataset
 
 
 
+
 def extract_unique_id(filename):
 
     # extract from books of life 
@@ -44,19 +45,20 @@ def format_BOL_data(path_to_training_data):
             outcome = infile.read().strip()
 
         data_for_unique_id = {
-            "input": book_of_life,
+            "text": book_of_life,
             "unique_id": unique_id,
-            "outcome": int(outcome)
+            "labels": int(outcome)
         }
 
         data.append(data_for_unique_id)
 
+    data = Dataset.from_list(data)
+
     return data
 
-path_to_training_data =  "/scratch/gpfs/vs3041/prefer_prepare/synth/data/e2e/test_template1/train/"
-
-
-data_dict = format_BOL_data(path_to_training_data)
+data_dict = format_BOL_data("/scratch/gpfs/vs3041/prefer_prepare/synth/data/e2e/test_template1/train/")
 
 dataset = Dataset.from_list(data_dict)
+
+print(len(dataset["unique_id"]))
 
