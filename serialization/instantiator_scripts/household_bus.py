@@ -67,9 +67,3 @@ def get_households(rinpersoon: str, db_path: str = 'synthetic_data.db') -> List[
 
     return household_paragraphs
 
-# Example usage
-# db_path = 'path/to/your/synthetic_data.db'
-# person_id = 12345  # Replace with an actual person_id in your database
-# households = get_households(person_id, db_path)
-# for household in households:
-#     print(household)
