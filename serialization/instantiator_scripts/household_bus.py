@@ -1,50 +1,75 @@
-import pandas as pd
-from instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
+import sqlite3
+import json
+from typing import List
+from serialization.instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
 
-'''This function loads all households for a given rinpersoon (person_id)
-by creating a list of HouseholdEventParagraph objects'''
+def get_households(rinpersoon: str, db_path: str = 'synthetic_data.db') -> List[HouseholdEventParagraph]:
+    """
+    This function loads all households for a given rinpersoon (person_id)
+    by querying the SQLite database and creating a list of HouseholdEventParagraph objects.
+    """
+    # Connect to the database
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row  # This allows accessing columns by name
+    cursor = conn.cursor()
 
-def get_households(rinpersoon: int) -> list[HouseholdEventParagraph]:
+    # Query the database for all households related to the given rinpersoon
+    query = """
+    SELECT * FROM household_bus
+    WHERE rinpersoon = ?
+    """
+    cursor.execute(query, (rinpersoon,))
+    results = cursor.fetchall()
 
-    # Load the dataset
-    df = pd.read_csv('synth/data/edit/household_bus.csv')
-    
-    # Filter rows related to the given rinpersoon
-    households_df = df[df['rinpersoon'] == rinpersoon]
-    
     # Create a list to hold HouseholdEventParagraph objects
     household_paragraphs = []
-    
+
     # Iterate over each row to create HouseholdEventParagraph objects
-    for _, row in households_df.iterrows():
+    for row in results:
+        # Convert sqlite3.Row object to a regular dictionary
+        row_dict = dict(row)
+
+        # TODO Replace this for loop with the actual istantiation of the hoousehold mmebers from edited table
+        # Parse JSON strings for specific fields if they exist
+        for field in ['CHILDREN', 'PARTNERS', 'OTHER_MEMBERS', 'ALL_MEMBERS']:
+            if row_dict.get(field):
+                try:
+                    row_dict[field] = json.loads(row_dict[field])
+                except json.JSONDecodeError:
+                    # If it's not valid JSON, keep it as is
+                    pass
+
         household_paragraph = HouseholdEventParagraph(
             dataset_name="household_bus",
             rinpersoon=rinpersoon,
-            HOUSEKEEPING_NR=row['HOUSEKEEPING_NR'],
-            TYPHH=row['TYPHH'],
-            DATE_STIRTHH=row['DATE_STIRTHH'],
-            DATUMEINDEHH=row['DATUMEINDEHH'],
-            NUMBERPERSHH=row['NUMBERPERSHH'],
-            PLHH=row['PLHH'],
-            REFPERSOONHH=row['REFPERSOONHH'],
-            AANTALOVHH=row['AANTALOVHH'],
-            AANTALKINDHH=row['AANTALKINDHH'],
-            BIRTHEDYOUNGCHILDHH=row['BIRTHEDYOUNGCHILDHH'],
-            GEBMAANDJONGSTEKINDHH=row['GEBMAANDJONGSTEKINDHH'],
-            GEBJAAROUDSTEKINDHH=row['GEBJAAROUDSTEKINDHH'],
-            BMAANDOUDSTEKINDHH=row['BMAANDOUDSTEKINDHH'],
-            CHILDREN= None, #not implemented
-            PARTNERS=None,  # Assuming there are no explicit partner lists in the data provided
-            OTHER_MEMBERS=None,  # Assuming there are no explicit other members lists in the data provided
-            ALL_MEMBERS=None #row['ID_list_rinpersoon']
+            HOUSEKEEPING_NR=row_dict['HOUSEKEEPING_NR'],
+            TYPHH=row_dict['TYPHH'],
+            DATE_STIRTHH=row_dict['DATE_STIRTHH'],
+            DATUMEINDEHH=row_dict['DATUMEINDEHH'],
+            NUMBERPERSHH=int(row_dict['NUMBERPERSHH']),
+            PLHH=row_dict['PLHH'],
+            REFPERSOONHH=row_dict['REFPERSOONHH'],
+            AANTALOVHH=int(row_dict['AANTALOVHH']),
+            AANTALKINDHH=int(row_dict['AANTALKINDHH']),
+            BIRTHEDYOUNGCHILDHH=row_dict['BIRTHEDYOUNGCHILDHH'],
+            GEBMAANDJONGSTEKINDHH=row_dict['GEBMAANDJONGSTEKINDHH'],
+            GEBJAAROUDSTEKINDHH=row_dict['GEBJAAROUDSTEKINDHH'],
+            BMAANDOUDSTEKINDHH=row_dict['BMAANDOUDSTEKINDHH'],
+            CHILDREN=row_dict.get('CHILDREN'),
+            PARTNERS=row_dict.get('PARTNERS'),
+            OTHER_MEMBERS=row_dict.get('OTHER_MEMBERS'),
+            ALL_MEMBERS=row_dict.get('ALL_MEMBERS')
         )
         household_paragraphs.append(household_paragraph)
-    
+
+    # Close the database connection
+    conn.close()
+
     return household_paragraphs
 
-
-##Example usage
-# person_id = '71ed4a86' # Replace with the actual person_id you want to query
-# households = get_households(person_id)
+# Example usage
+# db_path = 'path/to/your/synthetic_data.db'
+# person_id = 12345  # Replace with an actual person_id in your database
+# households = get_households(person_id, db_path)
 # for household in households:
-#     print(households)
+#     print(household)
