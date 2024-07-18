@@ -6,6 +6,7 @@ import os
 from serialization.BookofLifeGenerator import BookofLifeGenerator
 import time
 import traceback
+
 def get_unique_rinpersoons(db_path):
     """Fetch all unique rinpersoon IDs from the persoon_tab table."""
     try:

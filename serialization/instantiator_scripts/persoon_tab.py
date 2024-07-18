@@ -9,6 +9,8 @@ def get_person_attributes(rinpersoon: str, db_path: str = 'synthetic_data.db') -
     """
     # Connect to the database
     conn = sqlite3.connect(db_path)
+    dest = sqlite3.connect(':memory:')
+    conn.backup(dest)
     cursor = conn.cursor()
 
     # Query the database for the person with the given rinpersoon
