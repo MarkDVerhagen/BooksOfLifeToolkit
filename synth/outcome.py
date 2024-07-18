@@ -7,7 +7,7 @@ import numpy as np
 np.random.seed(111)
 
 # Read in persoontab
-persoontab = pd.read_csv('synth/data/raw/persoontab.csv')
+persoontab = pd.read_csv('synth/data/raw/persoon_tab.csv')
 
 # Create a new dataframe with the 'rinpersoon' column
 outcome_df = persoontab[['rinpersoon']].copy()
