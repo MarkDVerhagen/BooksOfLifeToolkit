@@ -4,7 +4,8 @@ import pandas as pd
 import random
 import os
 from serialization.BookofLifeGenerator import BookofLifeGenerator
-
+import time
+import traceback
 def get_unique_rinpersoons(db_path):
     """Fetch all unique rinpersoon IDs from the persoon_tab table."""
     try:
@@ -28,12 +29,16 @@ def generate_and_save_book(rinpersoon, recipe_yaml_path, output_dir):
         with open(filepath, 'w') as file:
             file.write(book_content)
         
-        print(f"Generated and saved Book of Life for rinpersoon: {rinpersoon}")
     except Exception as e:
         print(f"Error generating Book of Life for rinpersoon {rinpersoon}: {str(e)}")
+        print(traceback.format_exc())
 
 def main(max_processes=None):
+    # Print number of unique rinpersoons
     db_path = 'synthetic_data.db'
+    unique_rinpersoons = get_unique_rinpersoons(db_path)
+    print(f"Number of unique rinpersoons: {len(unique_rinpersoons)}")
+
     synth_hh = pd.read_csv(os.path.join('synth', 'data', 'edit', 'household_bus.csv'))
     
     # Filter and process data
@@ -92,4 +97,6 @@ def main(max_processes=None):
     print("All Books of Life and outcomes have been generated and saved.")
 
 if __name__ == "__main__":
-    main(max_processes=4)
+    start_time = time.time()
+    main()
+    print(f"Execution time: {time.time() - start_time} seconds.")
