@@ -28,6 +28,8 @@ params = args.params
 training_folds = args.training_folds
 first_training_fold, last_training_fold = map(int, training_folds.split("-"))
 test_folds = args.test_folds
+first_test_fold, last_test_fold = map(int, test_folds.split("-"))
+
 
 project_directory = os.environ.get('project_path') + "/"
 
@@ -41,9 +43,6 @@ def format_salganik_data(data):
 
     # keeping only inputs and outputs
     data = data[["text", "labels"]]
-
-    # making sure outputs are 0s and 1s (will need to make this programatic)
-    data["labels"] = (data["labels"] == "kid: 1").astype(int)  
 
     # converting to HF format
     data = Dataset.from_pandas(data)
@@ -67,8 +66,12 @@ if dataset == "salganik":
     # subsetting data to specified training folds 
     test_dataset = test_dataset[test_dataset['fold'].between(first_test_fold, last_test_fold)]
 
+    # making sure outputs are 0s and 1s (will need to make this programatic)
+    test_dataset["output"] = (test_dataset["output"] == "kid: 1").astype(int)  
+
     # for keeping track of predictions when saving
     index_column = test_dataset["rinpersoon"]
+    true_labels = test_dataset["output"]
 
     # formatting the salganik data to get it into a format readable by the LLM
     test_dataset = format_salganik_data(test_dataset)    
@@ -90,6 +93,7 @@ classifier = pipeline("text-classification", model=model, tokenizer=tokenizer)
 
 # Evaluate the model on the test set using the pipeline
 prediction_probabilities = []
+prediction_labels = []
 for sample in tqdm(test_dataset):
     prediction = classifier(sample["text"])
 
@@ -97,13 +101,16 @@ for sample in tqdm(test_dataset):
     soft_max_probability = prediction[0]["score"]
 
     prediction_probabilities.append(soft_max_probability)
+    prediction_labels.append(label)
 
 
 save_path = project_directory + "output/predictions/" + model_save_name + "-predictions-" + "folds-" + test_folds + ".csv"
 
 prediction_df = pd.DataFrame({
     "rinspersoon": index_column, 
-    "softmax_probabilities": prediction_probabilities
+    "softmax_probabilities": prediction_probabilities,
+    "predicted_label": prediction_labels,
+    "true_label": true_labels
     })
 
 prediction_df.to_csv(save_path)
