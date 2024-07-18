@@ -17,7 +17,7 @@ class BookofLifeGenerator:
         self.instantiate_paragraphs()
 
 
-        self.social_context_paragraphs = self.instantiate_social_context_paragraphs(self.recipe.social_context_features)
+        # self.social_context_paragraphs = self.instantiate_social_context_paragraphs(self.recipe.social_context_features)
 
     def instantiate_paragraphs(self):
         for dataset in self.recipe.datasets:
