@@ -7,6 +7,7 @@ from peft import get_peft_model, LoraConfig, AutoPeftModelForSequenceClassificat
 import argparse
 import pandas as pd 
 import time
+import glob
 
 # setting wandb to offline
 wandb.init(mode="offline")   
@@ -27,6 +28,58 @@ def format_salganik_data(data):
 
     # converting to HF format
     data = Dataset.from_pandas(data)
+
+    return data
+
+
+def extract_unique_id(filename):
+
+    # extract from books of life 
+    if "bol/" in filename:
+        start = filename.index('bol/') + len('bol/')
+        end = filename.index('.txt')
+
+    elif "outcome/" in filename:
+        start = filename.index('outcome/') + len('outcome/')
+        end = filename.index('.txt')
+    else: 
+        ValueError("Can't find unique id from filename")
+    
+    return filename[start:end]
+
+def format_BOL_data(path_to_training_data):
+    
+    # Step 1: reading in books of life
+
+    # the books of life are contained in multiple .txt files 
+    BOL_txt_files = glob.glob(path_to_training_data + "bol/" + '*.txt')
+
+    books_of_life = []
+    unique_ids = []
+    data = []
+
+    for txt_file in BOL_txt_files:
+
+        #reading books of life
+        with open(txt_file, 'r') as infile:
+            book_of_life = infile.read().strip()
+            unique_id = extract_unique_id(txt_file)     # extract unique_id from filename
+
+        
+        # reading outcomes
+        outcome_txt_file = path_to_training_data + "outcome/" + unique_id + '.txt'
+        with open(outcome_txt_file, 'r') as infile:
+            outcome = infile.read().strip()
+
+        data_for_unique_id = {
+            "input": book_of_life,
+            "unique_id": unique_id,
+            "outcome": int(outcome)
+        }
+
+        data.append(data_for_unique_id)
+
+        data = Dataset.from_list(data)
 
     return data
 
@@ -80,6 +133,10 @@ if dataset == "salganik":
     # formatting the salganik data to get it into a format readable by the LLM
     train_dataset = format_salganik_data(train_dataset)    
 
+elif dataset == "bol-temp-1":
+    data_to_read =  "/scratch/gpfs/vs3041/prefer_prepare/synth/data/e2e/test_template1/train/"
+
+    train_dataset = format_BOL_data(data_to_read)
 else:
     raise Exception("Dataset not recognised")
 
