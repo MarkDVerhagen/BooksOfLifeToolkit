@@ -1,42 +1,61 @@
-import pandas as pd
+import sqlite3
+from typing import Dict, Any
 from serialization.instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
 
-'''This function loads personal attributes for a given rinpersoon (person_id)
-by creating the PersonAttributesParagraph object'''
+def get_person_attributes(rinpersoon: str, db_path: str = 'synthetic_data.db') -> PersonAttributesParagraph:
+    """
+    This function loads personal attributes for a given rinpersoon (person_id)
+    by querying the SQLite database and creating the PersonAttributesParagraph object.
+    """
+    # Connect to the database
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
 
-def get_person_attributes(rinpersoon: int) -> PersonAttributesParagraph:
-    # Load the dataset
-    df = pd.read_csv('synth/data/raw/persoon_tab.csv')
-    
-    # Find the row with the given person_id
-    person_row = df[df['rinpersoon'] == rinpersoon]
-    person_row = person_row.to_dict(orient="list")
-    
+    # Query the database for the person with the given rinpersoon
+    query = """
+    SELECT * FROM persoon_tab
+    WHERE rinpersoon = ?
+    """
+    cursor.execute(query, (rinpersoon,))
+    result = cursor.fetchone()
+
+    if not result:
+        conn.close()
+        raise ValueError(f"No person found with rinpersoon {rinpersoon}")
+
+    # Get the column names
+    column_names = [description[0] for description in cursor.description]
+
+    # Create a dictionary with column names as keys and row values as values
+    person_row = dict(zip(column_names, result))
+
+    # Close the database connection
+    conn.close()
+
     # Create the PersonAttributesParagraph object
     person_attributes = PersonAttributesParagraph(
-    dataset_name="persoon_tab",
-    rinpersoon=person_row['rinpersoon'][0],
-    GBAGEBOORTELAND=person_row['GBAGEBOORTELAND'][0],
-    GBAGESLACHT=person_row['GBAGESLACHT'][0],
-    GBAGEBOORTEJAAR=person_row['GBAGEBOORTEJAAR'][0],
-    GBAHERKOMSTLAND=person_row['GBAHERKOMSTLAND'][0],
-    GBAGEBOORTELANDNL=person_row['GBAGEBOORTELANDNL'][0],
-    GBAHERKOMSTGROEPERING=person_row['GBAHERKOMSTGROEPERING'][0],
-    GBAGENERATIE=person_row['GBAGENERATIE'][0],
-    GBAAANTALOUDERSBUITENLAND=person_row['GBAAANTALOUDERSBUITENLAND'][0],
-    GBAGEBOORTELANDMOEDER=person_row['GBAGEBOORTELANDMOEDER'][0],
-    GBAGESLACHTMOEDER=person_row['GBAGESLACHTMOEDER'][0],
-    GBAGEBOORTEJAARMOEDER=person_row['GBAGEBOORTEJAARMOEDER'][0],
-    GBAGEBOORTELANDVADER=person_row['GBAGEBOORTELANDVADER'][0],
-    GBAGESLACHTVADER=person_row['GBAGESLACHTVADER'][0],
-    GBAGEBOORTEJAARVADER=person_row['GBAGEBOORTEJAARVADER'][0],
+        dataset_name="persoon_tab",
+        rinpersoon=person_row['rinpersoon'],
+        GBAGEBOORTELAND=person_row['GBAGEBOORTELAND'],
+        GBAGESLACHT=person_row['GBAGESLACHT'],
+        GBAGEBOORTEJAAR=int(person_row['GBAGEBOORTEJAAR']),
+        GBAHERKOMSTLAND=person_row['GBAHERKOMSTLAND'],
+        GBAGEBOORTELANDNL=person_row['GBAGEBOORTELANDNL'],
+        GBAHERKOMSTGROEPERING=person_row['GBAHERKOMSTGROEPERING'],
+        GBAGENERATIE=int(person_row['GBAGENERATIE']),
+        GBAAANTALOUDERSBUITENLAND=int(person_row['GBAAANTALOUDERSBUITENLAND']),
+        GBAGEBOORTELANDMOEDER=person_row['GBAGEBOORTELANDMOEDER'],
+        GBAGESLACHTMOEDER=person_row['GBAGESLACHTMOEDER'],
+        GBAGEBOORTEJAARMOEDER=int(person_row['GBAGEBOORTEJAARMOEDER']),
+        GBAGEBOORTELANDVADER=person_row['GBAGEBOORTELANDVADER'],
+        GBAGESLACHTVADER=person_row['GBAGESLACHTVADER'],
+        GBAGEBOORTEJAARVADER=int(person_row['GBAGEBOORTEJAARVADER']),
     )
 
-    
     return person_attributes
 
 # Example usage
-# file_path = 'synth/data/persoontab.csv'
+# db_path = 'synthetic_data.db'  # Replace with the path to your SQLite database
 # person_id = 12345  # Replace with the actual person_id you want to query
-# person_attributes = get_person_attributes(person_id)
+# person_attributes = get_person_attributes(person_id, db_path)
 # print(person_attributes)
