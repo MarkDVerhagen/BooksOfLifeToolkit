@@ -1,11 +1,11 @@
 
 from typing import List
-from instantiator_scripts.Paragraph import Paragraph
-from instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
-from instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
-from Recipe import Recipe
-from instantiator_scripts.persoon_tab import get_person_attributes
-from instantiator_scripts.household_bus import get_households
+from serialization.instantiator_scripts.Paragraph import Paragraph
+from serialization.instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
+from serialization.instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
+from serialization.Recipe import Recipe
+from serialization.instantiator_scripts.persoon_tab import get_person_attributes
+from serialization.instantiator_scripts.household_bus import get_households
 from operator import attrgetter
 
 class BookofLifeGenerator:
@@ -15,7 +15,6 @@ class BookofLifeGenerator:
         self.book: str = ""
         self.paragraphs: List[Paragraph] = []
         self.instantiate_paragraphs()
-
 
         self.social_context_paragraphs = self.instantiate_social_context_paragraphs(self.recipe.social_context_features)
 
@@ -44,14 +43,30 @@ class BookofLifeGenerator:
 
             
             for context, features in dataset[dataset_name].items():
-                result[dataset_name][context] = BookofLifeGenerator("03c6605f", {
-                    'main_key': self.recipe.main_key,
-                    'datasets': features,
-                    'formatting': {
-                        'sorting_keys': self.recipe.sorting_keys,
-                        'paragraph_generator': 'get_paragraph_string_tabular'
-                    }
-                })
+
+                # get all paragraphs of this domain from main book of life
+                domain_paragraphs = [item for item in self.paragraphs if item.dataset_name == dataset_name]
+
+                # get all relevant social context rinpersoon to generate BoLs for
+                rinpersoons = []
+                for paragraph in domain_paragraphs:
+                    if context in paragraph.__annotations__:
+                        rinpersoons.extend(getattr(paragraph, context))
+
+                # generate BoLs for all relevant rinpersoons and append to result
+                result[dataset_name][context] = {}
+                for rinpersoon in rinpersoons:
+                    # check if rinpersoon is already in result for this context and dataset
+                    if rinpersoon not in result[dataset_name][context]:
+                        result[dataset_name][context][rinpersoon] = BookofLifeGenerator(rinpersoon, {
+                            'main_key': self.recipe.main_key,
+                            'datasets': features,
+                            'formatting': {
+                                'sorting_keys': self.recipe.sorting_keys,
+                                'paragraph_generator': 'get_paragraph_string_tabular'
+                            }
+                        })
+
         return result
 
 
@@ -81,17 +96,4 @@ class BookofLifeGenerator:
         self.write_book(self.recipe.paragraph_generator)
         return self.book
 
-<<<<<<< HEAD
     
-
-# # Example usage:
-# generator = BookofLifeGenerator("03c6605f", 'recipes/template.yaml')
-# # print("Partner:", generator.social_context_paragraphs['household_bus']['partners'].generate_book())
-# # print("Partner's child:", generator.social_context_paragraphs['household_bus']['partners'].social_context_paragraphs['persoon_tab']['partners'].generate_book())
-# print('Main book:', generator.generate_book())
-
-
-# # print("Partner's child:", generator.social_context_paragraphs)
-=======
-    
->>>>>>> 704ba90f0126fd4c993f71ac002963bd98273480

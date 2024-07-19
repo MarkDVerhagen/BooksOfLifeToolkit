@@ -22,7 +22,7 @@ conda activate hf_environment
 
 python scripts/fine_tuning_with_hf.py \
 --model_name "llama3-8b" \
---train_dataset "salganik" \
+--dataset "bol-temp-1" \
 --fine_tune_method "lora" \
 --GPU_util "single" \
 --params "default" \

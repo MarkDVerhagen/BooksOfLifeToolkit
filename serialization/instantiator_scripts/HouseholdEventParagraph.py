@@ -42,13 +42,13 @@ class HouseholdEventParagraph(Paragraph):
 
     # HOUSEHOLD MEMBER LISTS
     # Children living at home in the household
-    CHILDREN: List[int] = field(default_factory=list)
+    CHILDREN: List[str] = field(default_factory=list)
     # Partners living at home in the household
-    PARTNERS: List[int] = field(default_factory=list)
+    PARTNERS: List[str] = field(default_factory=list)
     # Other members living at home in the household
-    OTHER_MEMBERS: List[int] = field(default_factory=list)
+    OTHER_MEMBERS: List[str] = field(default_factory=list)
     # All members living at home in the household
-    ALL_MEMBERS: List[int] = field(default_factory=list)
+    ALL_MEMBERS: List[str] = field(default_factory=list)
 
     def __post_init__(self):        
         super().__post_init__()
@@ -111,51 +111,11 @@ class HouseholdEventParagraph(Paragraph):
         else:
             paragraph += "This household configuration is still current as of the latest record. "
 
-        if self.CHILDREN is not None and self.PARTNERS is not None:
+        if self.CHILDREN is not None and self.PARTNERS is not None and self.OTHER_MEMBERS is not None:
             paragraph += f"The person lives with their partner{'s' if len(self.PARTNERS) > 1 else ''} ({', '.join(str(p) for p in self.PARTNERS)}), child{'ren' if len(self.CHILDREN) > 1 else ''} ({', '.join(str(c) for c in self.CHILDREN)}), and other household member{'s' if len(self.OTHER_MEMBERS) > 1 else ''} ({', '.join(str(o) for o in self.OTHER_MEMBERS)})."
+        elif self.CHILDREN is not None and self.PARTNERS is not None:
+            paragraph += f"The person lives with their partner{'s' if len(self.PARTNERS) > 1 else ''} ({', '.join(str(p) for p in self.PARTNERS)}) and child{'ren' if len(self.CHILDREN) > 1 else ''} ({', '.join(str(c) for c in self.CHILDREN)})."
 
         return paragraph.strip()
         
     
-
-
-# household_paragraphs = [
-#     HouseholdEventParagraph(
-#         dataset_name="household_bus",  # Table name
-#         person_id=12345,                     # Person ID
-#         HOUSEKEEPING_NR="12345",             # Unique household identification number
-#         TYPHH="Single",                      # Household type
-#         DATE_STIRTHH="2020-01-01",           # Household start date
-#         DATUMEINDEHH="2021-01-01",           # Household end date
-#         NUMBERPERSHH=1,                      # Number of persons in the household
-#         PLHH="Head",                         # Place of person in the household
-#         REFPERSOONHH="1",                    # Reference person indicator
-#         AANTALOVHH=0,                        # Number of other members in the household
-#         AANTALKINDHH=0,                      # Number of children living at home in the household
-#         BIRTHEDYOUNGCHILDHH=0,               # Year of birth of the youngest child in the household
-#         GEBMAANDJONGSTEKINDHH="--",          # Birth month of the youngest child in the household
-#         GEBJAAROUDSTEKINDHH=0,               # Year of birth of the oldest child in the household
-#         BMAANDOUDSTEKINDHH="--"              # Birth month of the oldest child in the household
-#     ),
-#     HouseholdEventParagraph(
-#         dataset_name="household_bus",  # Table name
-#         person_id=67890,                     # Person ID
-#         HOUSEKEEPING_NR="67890",             # Unique household identification number
-#         TYPHH="Family",                      # Household type
-#         DATE_STIRTHH="2020-01-01",           # Household start date
-#         DATUMEINDEHH="2021-01-01",           # Household end date
-#         NUMBERPERSHH=4,                      # Number of persons in the household
-#         PLHH="Child",                        # Place of person in the household
-#         REFPERSOONHH="0",                    # Reference person indicator
-#         AANTALOVHH=3,                        # Number of other members in the household
-#         AANTALKINDHH=2,                      # Number of children living at home in the household
-#         BIRTHEDYOUNGCHILDHH=2010,            # Year of birth of the youngest child in the household
-#         GEBMAANDJONGSTEKINDHH="01",          # Birth month of the youngest child in the household
-#         GEBJAAROUDSTEKINDHH=2005,            # Year of birth of the oldest child in the household
-#         BMAANDOUDSTEKINDHH="12"              # Birth month of the oldest child in the household
-#     ),
-# ]
-
-# # generate example paragraph string
-# for paragraph in household_paragraphs:
-#     print(paragraph.get_paragraph_string_tabular())

@@ -9,16 +9,16 @@ datasets:
   - name: household_bus
     features:
     social_context_features:
-      partners:
+      PARTNERS:
           - name: household_bus
             features:
               - GBAGESLACHT
             social_context_features:
-              partners:
+              CHILDREN:
                   - name: persoon_tab
                     features:
                       - GBAGEBOORTEJAARMOEDER
-      children: 
+      CHILDREN: 
         - name: persoon_tab
           features:
             - GBAGESLACHT
