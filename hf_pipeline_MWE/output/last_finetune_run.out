@@ -1,45 +1,0 @@
-wandb: Tracking run with wandb version 0.17.4
-wandb: W&B syncing is set to `offline` in this directory.  
-wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
-Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards:  25%|██▌       | 1/4 [00:01<00:04,  1.63s/it]Loading checkpoint shards:  50%|█████     | 2/4 [00:03<00:03,  1.62s/it]Loading checkpoint shards:  75%|███████▌  | 3/4 [00:04<00:01,  1.61s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:04<00:00,  1.03s/it]Loading checkpoint shards: 100%|██████████| 4/4 [00:04<00:00,  1.24s/it]
-Some weights of LlamaForSequenceClassification were not initialized from the model checkpoint at /scratch/gpfs/vs3041/prefer_prepare/hf_pipeline_MWE/hf_models/Meta-Llama-3-8B/ and are newly initialized: ['score.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
-PEFT Model
-trainable params: 13,639,680 || all params: 7,518,572,544 || trainable%: 0.1814
-Map:   0%|          | 0/116 [00:00<?, ? examples/s]Map: 100%|██████████| 116/116 [00:00<00:00, 2421.28 examples/s]
-Detected kernel version 4.18.0, which is below the recommended minimum of 5.5.0; this can cause the process to hang. It is recommended to upgrade the kernel to the minimum version or higher.
-wandb: WARNING The `run_name` is currently set to the same value as `TrainingArguments.output_dir`. If this was not intended, please specify a different run name by setting the `TrainingArguments.run_name` parameter.
-wandb: WARNING URL not available in offline run
-  0%|          | 0/58 [00:00<?, ?it/s]We detected that you are passing `past_key_values` as a tuple and this is deprecated and will be removed in v4.43. Please use an appropriate `Cache` class (https://huggingface.co/docs/transformers/v4.41.3/en/internal/generation_utils#transformers.Cache)
-  2%|▏         | 1/58 [00:04<03:52,  4.08s/it]  3%|▎         | 2/58 [00:07<03:34,  3.84s/it]  5%|▌         | 3/58 [00:11<03:26,  3.76s/it]  7%|▋         | 4/58 [00:15<03:21,  3.72s/it]  9%|▊         | 5/58 [00:18<03:16,  3.71s/it] 10%|█         | 6/58 [00:22<03:12,  3.70s/it] 12%|█▏        | 7/58 [00:26<03:08,  3.70s/it] 14%|█▍        | 8/58 [00:29<03:04,  3.69s/it] 16%|█▌        | 9/58 [00:33<03:01,  3.70s/it] 17%|█▋        | 10/58 [00:37<02:57,  3.70s/it] 19%|█▉        | 11/58 [00:40<02:53,  3.70s/it] 21%|██        | 12/58 [00:44<02:50,  3.71s/it] 22%|██▏       | 13/58 [00:48<02:46,  3.71s/it] 24%|██▍       | 14/58 [00:52<02:43,  3.71s/it] 26%|██▌       | 15/58 [00:55<02:39,  3.71s/it] 28%|██▊       | 16/58 [00:59<02:36,  3.72s/it] 29%|██▉       | 17/58 [01:03<02:32,  3.72s/it] 31%|███       | 18/58 [01:06<02:28,  3.72s/it] 33%|███▎      | 19/58 [01:10<02:25,  3.73s/it] 34%|███▍      | 20/58 [01:14<02:21,  3.73s/it]                                                34%|███▍      | 20/58 [01:14<02:21,  3.73s/it] 36%|███▌      | 21/58 [01:18<02:18,  3.73s/it] 38%|███▊      | 22/58 [01:21<02:14,  3.73s/it] 40%|███▉      | 23/58 [01:25<02:10,  3.73s/it] 41%|████▏     | 24/58 [01:29<02:06,  3.73s/it] 43%|████▎     | 25/58 [01:33<02:03,  3.73s/it] 45%|████▍     | 26/58 [01:36<01:59,  3.74s/it] 47%|████▋     | 27/58 [01:40<01:55,  3.74s/it] 48%|████▊     | 28/58 [01:44<01:52,  3.74s/it] 50%|█████     | 29/58 [01:48<01:48,  3.74s/it] 52%|█████▏    | 30/58 [01:51<01:44,  3.74s/it] 53%|█████▎    | 31/58 [01:55<01:41,  3.74s/it] 55%|█████▌    | 32/58 [01:59<01:37,  3.74s/it] 57%|█████▋    | 33/58 [02:03<01:33,  3.74s/it] 59%|█████▊    | 34/58 [02:06<01:29,  3.74s/it] 60%|██████    | 35/58 [02:10<01:26,  3.75s/it] 62%|██████▏   | 36/58 [02:14<01:22,  3.75s/it] 64%|██████▍   | 37/58 [02:18<01:18,  3.75s/it] 66%|██████▌   | 38/58 [02:21<01:14,  3.75s/it] 67%|██████▋   | 39/58 [02:25<01:11,  3.75s/it] 69%|██████▉   | 40/58 [02:29<01:07,  3.75s/it]                                                69%|██████▉   | 40/58 [02:29<01:07,  3.75s/it] 71%|███████   | 41/58 [02:33<01:03,  3.75s/it] 72%|███████▏  | 42/58 [02:36<01:00,  3.75s/it] 74%|███████▍  | 43/58 [02:40<00:56,  3.75s/it] 76%|███████▌  | 44/58 [02:44<00:52,  3.75s/it] 78%|███████▊  | 45/58 [02:48<00:48,  3.75s/it] 79%|███████▉  | 46/58 [02:51<00:45,  3.75s/it] 81%|████████  | 47/58 [02:55<00:41,  3.76s/it] 83%|████████▎ | 48/58 [02:59<00:37,  3.76s/it] 84%|████████▍ | 49/58 [03:03<00:33,  3.76s/it] 86%|████████▌ | 50/58 [03:06<00:30,  3.76s/it] 88%|████████▊ | 51/58 [03:10<00:26,  3.76s/it] 90%|████████▉ | 52/58 [03:14<00:22,  3.76s/it] 91%|█████████▏| 53/58 [03:18<00:18,  3.76s/it] 93%|█████████▎| 54/58 [03:21<00:15,  3.76s/it] 95%|█████████▍| 55/58 [03:25<00:11,  3.76s/it] 97%|█████████▋| 56/58 [03:29<00:07,  3.76s/it] 98%|█████████▊| 57/58 [03:33<00:03,  3.76s/it]100%|██████████| 58/58 [03:36<00:00,  3.76s/it]                                               100%|██████████| 58/58 [03:55<00:00,  3.76s/it]100%|██████████| 58/58 [03:55<00:00,  4.06s/it]
-/home/vs3041/.conda/envs/hf_environment/lib/python3.12/site-packages/peft/utils/save_and_load.py:195: UserWarning: Could not find a config file in /scratch/gpfs/vs3041/prefer_prepare/hf_pipeline_MWE/hf_models/Meta-Llama-3-8B/ - will assume that the vocabulary was not modified.
-  warnings.warn(
-{'loss': 1.3154, 'grad_norm': 2.0635244846343994, 'learning_rate': 1.310344827586207e-05, 'epoch': 0.69}
-{'loss': 0.5783, 'grad_norm': 4.781550407409668, 'learning_rate': 6.206896551724138e-06, 'epoch': 1.38}
-{'train_runtime': 235.5637, 'train_samples_per_second': 0.985, 'train_steps_per_second': 0.246, 'train_loss': 0.8265596915935648, 'epoch': 2.0}
-Fine-tuning time: 236.32808208465576 seconds
-wandb: 
-wandb: Run history:
-wandb:         train/epoch ▁▅█
-wandb:   train/global_step ▁▅█
-wandb:     train/grad_norm ▁█
-wandb: train/learning_rate █▁
-wandb:          train/loss █▁
-wandb: 
-wandb: Run summary:
-wandb:               total_flos 4984107247337472.0
-wandb:              train/epoch 2.0
-wandb:        train/global_step 58
-wandb:          train/grad_norm 4.78155
-wandb:      train/learning_rate 1e-05
-wandb:               train/loss 0.5783
-wandb:               train_loss 0.82656
-wandb:            train_runtime 235.5637
-wandb: train_samples_per_second 0.985
-wandb:   train_steps_per_second 0.246
-wandb: 
-wandb: You can sync this run to the cloud by running:
-wandb: wandb sync /scratch/gpfs/vs3041/prefer_prepare/hf_pipeline_MWE/wandb/offline-run-20240718_080049-fqvaly95
-wandb: Find logs at: ./wandb/offline-run-20240718_080049-fqvaly95/logs
-wandb: WARNING The new W&B backend becomes opt-out in version 0.18.0; try it out with `wandb.require("core")`! See https://wandb.me/wandb-core for more information.

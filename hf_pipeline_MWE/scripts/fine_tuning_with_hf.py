@@ -54,6 +54,9 @@ def format_BOL_data(path_to_training_data):
     # the books of life are contained in multiple .txt files 
     BOL_txt_files = glob.glob(path_to_training_data + "bol/" + '*.txt')
 
+    # FOR NOW: picking the top 3000 BOLS
+    BOL_txt_files[0:100]
+
     books_of_life = []
     unique_ids = []
     data = []
@@ -187,10 +190,12 @@ training_args = TrainingArguments(
     output_dir=output_directory,
     logging_steps=20,
     learning_rate=2e-5,
-    per_device_train_batch_size=8,
+    per_device_train_batch_size=16,
     num_train_epochs=1,
     gradient_accumulation_steps=4, # improves memory utilization
     # weight_decay=0.01,
+    fp16=True     #https://huggingface.co/docs/transformers/main/en/perf_train_gpu_one
+    
 )
 
 # input padding options 
