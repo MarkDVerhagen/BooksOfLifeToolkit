@@ -25,14 +25,14 @@ for recipe in ['test_template1', 'test_template2']:
 
     for text, title in zip(bol_train, train_rins):
         filename = f"{title}.txt"
-        with open(os.path.join('synth', 'data', 'e2e', 'test_template1', 'train',
+        with open(os.path.join('synth', 'data', 'e2e', recipe, 'train',
                             'bol', filename), 'w') as file:
             file.write(text)
         print(f"Written {filename}")
 
     for text, title in zip(bol_test, test_rins):
         filename = f"{title}.txt"
-        with open(os.path.join('synth', 'data', 'e2e', 'test_template1', 'test',
+        with open(os.path.join('synth', 'data', 'e2e', recipe, 'test',
                             'bol', filename), 'w') as file:
             file.write(text)
         print(f"Written {filename}")
