@@ -1,35 +1,31 @@
-import sqlite3
+import duckdb
 from typing import Dict, Any
 from serialization.instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
 
-def get_person_attributes(rinpersoon: str, db_path: str = 'synthetic_data.db') -> PersonAttributesParagraph:
+def get_person_attributes(rinpersoon: str, db_name: str = 'synthetic_data.duckdb') -> PersonAttributesParagraph:
     """
     This function loads personal attributes for a given rinpersoon (person_id)
     by querying the SQLite database and creating the PersonAttributesParagraph object.
     """
-    # Connect to the database
-    conn = sqlite3.connect(db_path)
-    dest = sqlite3.connect(':memory:')
-    conn.backup(dest)
-    cursor = conn.cursor()
+   # Connect to the database
+    conn = duckdb.connect(db_name, read_only=True)
+
+    # Get the column names from the table
+    columns_query = "SELECT column_name FROM information_schema.columns WHERE table_name = 'persoon_tab'"
+    columns = [row[0] for row in conn.execute(columns_query).fetchall()]
 
     # Query the database for the person with the given rinpersoon
-    query = """
-    SELECT * FROM persoon_tab
+    query = f"""
+    SELECT {', '.join(columns)} FROM persoon_tab
     WHERE rinpersoon = ?
     """
-    cursor.execute(query, (rinpersoon,))
-    result = cursor.fetchone()
+    result = conn.execute(query, [rinpersoon]).fetchone()
 
     if not result:
-        conn.close()
         raise ValueError(f"No person found with rinpersoon {rinpersoon}")
 
-    # Get the column names
-    column_names = [description[0] for description in cursor.description]
-
     # Create a dictionary with column names as keys and row values as values
-    person_row = dict(zip(column_names, result))
+    person_row = dict(zip(columns, result))
 
     # Close the database connection
     conn.close()
@@ -58,6 +54,6 @@ def get_person_attributes(rinpersoon: str, db_path: str = 'synthetic_data.db') -
 
 # Example usage
 # db_path = 'synthetic_data.db'  # Replace with the path to your SQLite database
-# person_id = 12345  # Replace with the actual person_id you want to query
+# person_id = '12345'  # Replace with the actual person_id you want to query
 # person_attributes = get_person_attributes(person_id, db_path)
 # print(person_attributes)

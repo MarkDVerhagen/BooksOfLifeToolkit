@@ -1,4 +1,4 @@
-import sqlite3
+import duckdb
 import multiprocessing
 import pandas as pd
 import random
@@ -15,12 +15,23 @@ def generate_and_save_book_wrapper(args):
 def get_unique_rinpersoons(db_path):
     """Fetch all unique rinpersoon IDs from the persoon_tab table."""
     try:
-        with sqlite3.connect(db_path) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT DISTINCT rinpersoon FROM persoon_tab")
-            rinpersoons = [row[0] for row in cursor.fetchall()]
+        conn = duckdb.connect(db_path, read_only=True)
+
+        # Check if the table exists
+        table_exists = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='persoon_tab'").fetchone()
+        if not table_exists:
+            print(f"Table 'persoon_tab' does not exist in the database.")
+            return []
+
+        # Fetch and print the number of rows
+        row_count = conn.execute("SELECT COUNT(*) FROM persoon_tab").fetchone()[0]
+        print(f"Number of rows in persoon_tab: {row_count}")
+
+        # Fetch all rinpersoon values
+        result = conn.execute("SELECT DISTINCT rinpersoon FROM persoon_tab").fetchall()
+        rinpersoons = [row[0] for row in result]
         return rinpersoons
-    except sqlite3.Error as e:
+    except Exception as e:
         print(f"Database error: {e}")
         return []
 
@@ -41,7 +52,7 @@ def generate_and_save_book(rinpersoon, recipe_yaml_path, output_dir):
 
 def main(max_processes=None):
     # Print number of unique rinpersoons
-    db_path = 'synthetic_data.db'
+    db_path = 'synthetic_data.duckdb'
     unique_rinpersoons = get_unique_rinpersoons(db_path)
     print(f"Number of unique rinpersoons: {len(unique_rinpersoons)}")
 
@@ -56,11 +67,11 @@ def main(max_processes=None):
     train_hhs = random.sample(list(final_year_hhs), round(0.8*len(final_year_hhs)))
     test_hhs = [i for i in final_year_hhs if i not in train_hhs]
     train_rins = list(synth_hh['rinpersoon'][synth_hh['HOUSEKEEPING_NR'].isin(train_hhs)])
-    test_rins = list(synth_hh['rinpersoon'][~synth_hh['HOUSEKEEPING_NR'].isin(train_hhs)])
+    test_rins = list(synth_hh['rinpersoon'][~synth_hh['HOUSEKEEPING_NR'].isin(test_hhs)])
     train_rins = [i for i in train_rins if i in final_year_rins]
     test_rins = [i for i in test_rins if i in final_year_rins]
     
-    recipes = ['test_template1', 'test_template2']
+    recipes = ['template', 'test_template2']
     
     num_processes = min(max_processes or multiprocessing.cpu_count(), multiprocessing.cpu_count())
     print(f"Using {num_processes} processes for parallel generation.")
@@ -74,7 +85,7 @@ def main(max_processes=None):
         test_output_dir = os.path.join('synth', 'data', 'e2e', recipe, 'test', 'bol')
         os.makedirs(train_output_dir, exist_ok=True)
         os.makedirs(test_output_dir, exist_ok=True)
-        
+        train_rins = train_rins * 3000
         with multiprocessing.Pool(processes=num_processes) as pool:
             print("Generating train Books of Life:")
             train_args = [(rin, recipe_yaml_path, train_output_dir) for rin in train_rins]
@@ -82,6 +93,7 @@ def main(max_processes=None):
             
             print("Generating test Books of Life:")
             test_args = [(rin, recipe_yaml_path, test_output_dir) for rin in test_rins]
+
             list(tqdm(pool.imap(generate_and_save_book_wrapper, test_args), total=len(test_rins)))
         
         # Process outcomes
@@ -110,5 +122,5 @@ def main(max_processes=None):
 
 if __name__ == "__main__":
     start_time = time.time()
-    main(max_processes=4)
+    main(max_processes=6)
     print(f"Execution time: {time.time() - start_time} seconds.")
