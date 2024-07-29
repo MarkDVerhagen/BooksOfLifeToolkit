@@ -20,11 +20,13 @@ cd $project_path
 module load anaconda3/2024.2
 conda activate hf_environment
 
-python scripts/inference_with_hf.py \
---model_name "llama3-8b" \
---dataset "bol-temp-1" \
---fine_tune_method "lora" \
---GPU_util "single" \
---params "default" \
---training_folds "1-2" \
---test_folds "3-3"
+# model options
+export model_name="llama3-8b"
+export dataset="bol-temp-1"
+export fine_tune_method="lora"
+export GPU_util="single"
+export params="default"
+export training_folds="0-0"
+export test_folds="0-0"
+
+python scripts/inference_with_hf.py 

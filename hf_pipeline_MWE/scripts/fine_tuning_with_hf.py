@@ -8,6 +8,7 @@ import argparse
 import pandas as pd 
 import time
 import glob
+import torch
 
 # setting wandb to offline
 wandb.init(mode="offline")   
@@ -127,12 +128,14 @@ if dataset == "salganik":
 
     print("using Salganik data")
 
-elif dataset == "bol-temp-1":
+elif dataset == "bol-temp-1" or dataset == "bol-temp-2":
     data_to_read =  "/scratch/gpfs/vs3041/prefer_prepare/synth/data/e2e/test_template1/train/"
 
     train_dataset = format_BOL_data(data_to_read)
 
-    print("Using BOL template 1 data")
+    print("Using" + dataset)
+
+    print("samples = " + str(len(train_dataset)))
 
 else:
     raise Exception("Dataset not recognised")
@@ -146,14 +149,12 @@ elif fine_tune_method == "lora":
 else: 
     raise Exception("Haven't written code to support other fine-tune methods yet")
 
-
 #### SPECIFIYING GPU UTILIZATION
 
 if GPU_util == "single":
     pass
 else: 
     raise Exception("Haven't written code to support distributed GPU utilization yet")
-
 
 #### ADDING CUSTOM HYPERPARAMETERS
 
@@ -162,8 +163,13 @@ if params == "default":
 else: 
     raise Exception("Haven't written code to change parameters yet")
 
+
+# might help with CUDA issues: https://blog.gopenai.com/how-to-resolve-runtimeerror-cuda-out-of-memory-d48995452a0
+torch.cuda.empty_cache()
+
+
 # setting up model architecture and initializing tokenizer
-model = AutoModelForSequenceClassification.from_pretrained(model_to_read, num_labels=2, device_map = "auto")
+model = AutoModelForSequenceClassification.from_pretrained(model_to_read, device_map = "auto")  # num_labels=2,
 tokenizer = AutoTokenizer.from_pretrained(model_to_read)
 tokenizer.pad_token = tokenizer.eos_token 
 
@@ -187,10 +193,13 @@ training_args = TrainingArguments(
     output_dir=output_directory,
     logging_steps=20,
     learning_rate=2e-5,
-    per_device_train_batch_size=8,
+    per_device_train_batch_size=4,
     num_train_epochs=1,
-    gradient_accumulation_steps=4, # improves memory utilization
-    # weight_decay=0.01,
+    gradient_accumulation_steps=8, # improves memory utilization
+    # weight_decay=0.01
+    fp16=True,
+    gradient_checkpointing=True,
+    save_strategy = "no"  # will save model manually usuing 
 )
 
 # input padding options 

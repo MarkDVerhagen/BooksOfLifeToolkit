@@ -125,6 +125,13 @@ elif dataset == "bol-temp-1":
 
     index_column = test_dataset["unique_id"]
 
+elif dataset == "bol-temp-2":
+    data_to_read =  "/scratch/gpfs/vs3041/prefer_prepare/synth/data/e2e/test_template2/test/"  # make sure this is test
+
+    test_dataset = format_BOL_data(data_to_read)
+
+    index_column = test_dataset["unique_id"]
+
 
 else:
     raise Exception("Dataset not recognised")

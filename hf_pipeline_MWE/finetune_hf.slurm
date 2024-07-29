@@ -2,7 +2,7 @@
 #SBATCH --job-name=finetuner     # create a short name for your job
 #SBATCH --ntasks=1               # total number of tasks across all nodes
 #SBATCH --cpus-per-task=8        # cpu-cores per task (>1 if multi-threaded tasks)
-#SBATCH --mem=30G         # memory per cpu-core (4G is default)
+#SBATCH --mem=200G         # memory per cpu-core (4G is default)
 #SBATCH --gres=gpu:1             # number of gpus per node
 #SBATCH --time=12:00:00          # total run time limit (HH:MM:SS)
 #SBATCH --mail-type=begin        # send email when job begins
@@ -20,11 +20,15 @@ cd $project_path
 module load anaconda3/2024.2
 conda activate hf_environment
 
-python scripts/fine_tuning_with_hf.py \
---model_name "llama3-8b" \
---dataset "bol-temp-1" \
---fine_tune_method "lora" \
---GPU_util "single" \
---params "default" \
---training_folds "1-2"   # follows syntax: start-end
+# model options
+export model_name="llama3-8b"
+export dataset="bol-temp-1"
+export fine_tune_method="lora"
+export GPU_util="single"
+export params="default"
+export training_folds="0-0"
+export test_folds="0-0"
 
+echo "Executing on the machine:" $(hostname)
+
+python scripts/fine_tuning_with_hf.py 
