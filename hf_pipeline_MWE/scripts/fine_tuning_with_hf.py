@@ -109,6 +109,8 @@ output_directory = project_directory + "fine_tuned_models/" + fine_tuned_model_n
 
 if model_name == "llama3-8b":
     model_to_read = project_directory + "hf_models/" + "Meta-Llama-3-8B/"
+elif model_name == "llama3.1-8b":
+    model_to_read = project_directory + "hf_models/" + "Meta-Llama-3.1-8B/"
 else: 
     raise Exception("Either the model is the wrong place, or we haven't downloaded it yet :(")
 
@@ -193,13 +195,13 @@ training_args = TrainingArguments(
     output_dir=output_directory,
     logging_steps=20,
     learning_rate=2e-5,
-    per_device_train_batch_size=4,
+    per_device_train_batch_size=1,
     num_train_epochs=1,
     gradient_accumulation_steps=8, # improves memory utilization
     # weight_decay=0.01
     fp16=True,
     gradient_checkpointing=True,
-    save_strategy = "no"  # will save model manually usuing 
+    save_strategy = "no",  # will save model manually usuing 
 )
 
 # input padding options 
