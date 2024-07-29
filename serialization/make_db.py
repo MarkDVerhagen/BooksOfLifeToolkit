@@ -4,6 +4,7 @@ import os
 import sqlite3
 import re
 import json
+import duckdb
 
 class Generator:
     def __init__(self, yaml_file, data_dir='data', db_name='your_database.db'):
@@ -14,12 +15,9 @@ class Generator:
         self.data_dir = data_dir
         self.db_name = db_name
 
-        # Connect to the database
-        self.conn = sqlite3.connect(self.db_name)
-        self.cursor = self.conn.cursor()
+        # Connect to an in-memory DuckDB database
+        self.conn = duckdb.connect(db_name)
 
-        # Enable WAL mode
-        self.conn.execute('PRAGMA journal_mode=WAL')
 
         for d in self.datasets:
             print('Now processing {}'.format(d['name']))
@@ -43,9 +41,21 @@ class Generator:
         # Print database overview
         self.print_database_overview()
 
-        # Commit changes and close the connection
-        self.conn.commit()
+        # Save the in-memory database to a file
+        # self.conn.execute(f"EXPORT DATABASE '{self.db_name}'")
+        # print(f"Database exported to: {self.db_name}")
+
+        # Close the in-memory connection
         self.conn.close()
+
+        # Verify the exported database
+        try:
+            verify_conn = duckdb.connect(self.db_name)
+            tables = verify_conn.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'main'").fetchall()
+            print(f"Verified tables in exported database: {[table[0] for table in tables]}")
+            verify_conn.close()
+        except Exception as e:
+            print(f"Error verifying exported database: {e}")
     
     def pull_hierarchy(self, data, hierarchy_vars=['HOUSEKEEPING_NR', 'DATE_STIRTHH'],
                        main_key='rinpersoon', hierarchy_cat=None):
@@ -78,13 +88,10 @@ class Generator:
         # Convert all data to strings
         data = data.map(self.convert_to_string)
 
-        # Create table
-        columns = ', '.join([f'"{col}" TEXT' for col in data.columns])
-        self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS "{table_name}"
-                                ({columns})''')
-
-        # Insert data
-        data.to_sql(table_name, self.conn, if_exists='replace', index=False)
+        # Create table and insert data
+        self.conn.register('temp_df', data)
+        self.conn.execute(f"CREATE TABLE IF NOT EXISTS {table_name} AS SELECT * FROM temp_df")
+        self.conn.unregister('temp_df')
 
     @staticmethod
     def sanitize_column_name(name):
@@ -110,29 +117,26 @@ class Generator:
         print("==================")
         
         # Get list of tables
-        self.cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-        tables = self.cursor.fetchall()
+        tables = self.conn.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'main'").fetchall()
         
         for table in tables:
             table_name = table[0]
             print(f"\nTable: {table_name}")
             
             # Get column info
-            self.cursor.execute(f"PRAGMA table_info({table_name})")
-            columns = self.cursor.fetchall()
+            columns = self.conn.execute(f"PRAGMA table_info({table_name})").fetchall()
             
             print("Columns:")
             for column in columns:
                 print(f"  - {column[1]} ({column[2]})")
             
             # Get row count
-            self.cursor.execute(f"SELECT COUNT(*) FROM {table_name}")
-            row_count = self.cursor.fetchone()[0]
+            row_count = self.conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
             print(f"Row count: {row_count}")
 
 if __name__ == "__main__":    
     # Example usage
     yaml_file = os.path.join('recipes', 'make_db.yaml')
     data_path = os.path.join('synth', 'data')
-    db_name = 'synthetic_data.db'
+    db_name = 'synthetic_data.duckdb'
     a = Generator(yaml_file, data_dir=data_path, db_name=db_name)

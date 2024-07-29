@@ -1,33 +1,34 @@
-import sqlite3
+import duckdb
 import json
 from typing import List
 from serialization.instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
 
-def get_households(rinpersoon: str, db_path: str = 'synthetic_data.db') -> List[HouseholdEventParagraph]:
+def get_households(rinpersoon: str, db_name: str = 'synthetic_data.duckdb') -> List[HouseholdEventParagraph]:
     """
     This function loads all households for a given rinpersoon (person_id)
     by querying the SQLite database and creating a list of HouseholdEventParagraph objects.
     """
     # Connect to the database
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row  # This allows accessing columns by name
-    cursor = conn.cursor()
+    conn = duckdb.connect(db_name, read_only=True)
+
+    # Get the column names from the table
+    columns_query = "SELECT column_name FROM information_schema.columns WHERE table_name = 'household_bus'"
+    columns = [row[0] for row in conn.execute(columns_query).fetchall()]
 
     # Query the database for all households related to the given rinpersoon
-    query = """
-    SELECT * FROM household_bus
+    query = f"""
+    SELECT {', '.join(columns)} FROM household_bus
     WHERE rinpersoon = ?
     """
-    cursor.execute(query, (rinpersoon,))
-    results = cursor.fetchall()
+    results = conn.execute(query, [rinpersoon]).fetchall()
 
     # Create a list to hold HouseholdEventParagraph objects
     household_paragraphs = []
 
     # Iterate over each row to create HouseholdEventParagraph objects
     for row in results:
-        # Convert sqlite3.Row object to a regular dictionary
-        row_dict = dict(row)
+        # Convert row to a dictionary
+        row_dict = dict(zip(columns, row))
 
         # TODO Replace this for loop with the actual istantiation of the hoousehold mmebers from edited table
         # Parse JSON strings for specific fields if they exist

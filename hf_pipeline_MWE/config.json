@@ -1,0 +1,14 @@
+{
+    "dataset_name": "scripts/parity.csv",
+    "project_name": "test",
+    "model_name": "/scratch/gpfs/vs3041/prefer_prepare/hf_pipeline_MWE/hf_models/Meta-Llama-3-8B",
+    "num_labels": 2,
+    "num_steps": 10,
+    "learning_rate": 3e-5,
+    "batch_size": 16,
+    "num_epochs": 1,
+    "save_checkpoint_every": 5,
+    "output_dir": "output/juanky/",
+    "text_column": "BitSequence",
+    "label_column": "Parity"    
+}
