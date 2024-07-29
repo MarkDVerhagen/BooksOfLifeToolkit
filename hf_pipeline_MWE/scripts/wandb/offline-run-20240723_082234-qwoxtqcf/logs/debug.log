@@ -1,0 +1,45 @@
+2024-07-23 08:22:34,700 INFO    MainThread:1711383 [wandb_setup.py:_flush():76] Current SDK version is 0.17.4
+2024-07-23 08:22:34,700 INFO    MainThread:1711383 [wandb_setup.py:_flush():76] Configure stats pid to 1711383
+2024-07-23 08:22:34,700 INFO    MainThread:1711383 [wandb_setup.py:_flush():76] Loading settings from /home/vs3041/.config/wandb/settings
+2024-07-23 08:22:34,700 INFO    MainThread:1711383 [wandb_setup.py:_flush():76] Loading settings from /scratch/gpfs/vs3041/prefer_prepare/hf_pipeline_MWE/scripts/wandb/settings
+2024-07-23 08:22:34,701 INFO    MainThread:1711383 [wandb_setup.py:_flush():76] Loading settings from environment variables: {}
+2024-07-23 08:22:34,701 INFO    MainThread:1711383 [wandb_setup.py:_flush():76] Applying setup settings: {'_disable_service': False}
+2024-07-23 08:22:34,701 INFO    MainThread:1711383 [wandb_setup.py:_flush():76] Inferring run settings from compute environment: {'program': '<python with no main file>'}
+2024-07-23 08:22:34,701 INFO    MainThread:1711383 [wandb_init.py:_log_setup():529] Logging user logs to /scratch/gpfs/vs3041/prefer_prepare/hf_pipeline_MWE/scripts/wandb/offline-run-20240723_082234-qwoxtqcf/logs/debug.log
+2024-07-23 08:22:34,701 INFO    MainThread:1711383 [wandb_init.py:_log_setup():530] Logging internal logs to /scratch/gpfs/vs3041/prefer_prepare/hf_pipeline_MWE/scripts/wandb/offline-run-20240723_082234-qwoxtqcf/logs/debug-internal.log
+2024-07-23 08:22:34,701 INFO    MainThread:1711383 [wandb_init.py:_jupyter_setup():475] configuring jupyter hooks <wandb.sdk.wandb_init._WandbInit object at 0x145761ecaf90>
+2024-07-23 08:22:34,701 INFO    MainThread:1711383 [wandb_init.py:init():569] calling init triggers
+2024-07-23 08:22:34,701 INFO    MainThread:1711383 [wandb_init.py:init():576] wandb.init called with sweep_config: {}
+config: {}
+2024-07-23 08:22:34,701 INFO    MainThread:1711383 [wandb_init.py:init():594] re-initializing run, found existing run on stack: jdqi8t8x
+2024-07-23 08:22:34,702 INFO    MainThread:1711383 [wandb_run.py:_finish():2109] finishing run prefer_prepare-hf_pipeline_MWE_scripts/jdqi8t8x
+2024-07-23 08:22:34,702 INFO    MainThread:1711383 [wandb_run.py:_atexit_cleanup():2349] got exitcode: 0
+2024-07-23 08:22:34,702 INFO    MainThread:1711383 [wandb_run.py:_restore():2332] restore
+2024-07-23 08:22:34,702 INFO    MainThread:1711383 [wandb_run.py:_restore():2338] restore done
+2024-07-23 08:22:36,059 INFO    MainThread:1711383 [wandb_run.py:_footer_history_summary_info():3991] rendering history
+2024-07-23 08:22:36,059 INFO    MainThread:1711383 [wandb_run.py:_footer_history_summary_info():4023] rendering summary
+2024-07-23 08:22:36,096 INFO    MainThread:1711383 [wandb_init.py:init():619] starting backend
+2024-07-23 08:22:36,096 INFO    MainThread:1711383 [wandb_init.py:init():623] setting up manager
+2024-07-23 08:22:36,097 INFO    MainThread:1711383 [backend.py:_multiprocessing_setup():105] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2024-07-23 08:22:36,097 INFO    MainThread:1711383 [wandb_init.py:init():631] backend started and connected
+2024-07-23 08:22:36,099 INFO    MainThread:1711383 [wandb_run.py:_label_probe_notebook():1334] probe notebook
+2024-07-23 08:22:36,099 INFO    MainThread:1711383 [wandb_run.py:_label_probe_notebook():1344] Unable to probe notebook: 'NoneType' object has no attribute 'get'
+2024-07-23 08:22:36,099 INFO    MainThread:1711383 [wandb_init.py:init():720] updated telemetry
+2024-07-23 08:22:36,110 INFO    MainThread:1711383 [wandb_init.py:init():753] communicating run to backend with 90.0 second timeout
+2024-07-23 08:22:37,064 INFO    MainThread:1711383 [wandb_init.py:init():804] starting run threads in backend
+2024-07-23 08:22:40,220 INFO    MainThread:1711383 [wandb_run.py:_console_start():2380] atexit reg
+2024-07-23 08:22:40,221 INFO    MainThread:1711383 [wandb_run.py:_redirect():2235] redirect: wrap_raw
+2024-07-23 08:22:40,221 INFO    MainThread:1711383 [wandb_run.py:_redirect():2300] Wrapping output streams.
+2024-07-23 08:22:40,221 INFO    MainThread:1711383 [wandb_run.py:_redirect():2325] Redirects installed.
+2024-07-23 08:22:40,221 INFO    MainThread:1711383 [wandb_init.py:init():847] run started, returning control to user process
+2024-07-23 08:22:40,222 INFO    MainThread:1711383 [jupyter.py:save_ipynb():372] not saving jupyter notebook
+2024-07-23 08:22:40,222 INFO    MainThread:1711383 [wandb_init.py:_pause_backend():440] pausing backend
+2024-07-23 08:22:44,242 INFO    MainThread:1711383 [wandb_init.py:_resume_backend():445] resuming backend
+2024-07-23 08:22:52,245 INFO    MainThread:1711383 [jupyter.py:save_ipynb():372] not saving jupyter notebook
+2024-07-23 08:22:52,246 INFO    MainThread:1711383 [wandb_init.py:_pause_backend():440] pausing backend
+2024-07-23 08:23:03,463 INFO    MainThread:1711383 [wandb_init.py:_resume_backend():445] resuming backend
+2024-07-23 08:23:11,236 INFO    MainThread:1711383 [jupyter.py:save_ipynb():372] not saving jupyter notebook
+2024-07-23 08:23:11,236 INFO    MainThread:1711383 [wandb_init.py:_pause_backend():440] pausing backend
+2024-07-23 08:23:13,764 INFO    MainThread:1711383 [wandb_init.py:_resume_backend():445] resuming backend
+2024-07-23 08:23:26,897 INFO    MainThread:1711383 [jupyter.py:save_ipynb():372] not saving jupyter notebook
+2024-07-23 08:23:26,897 INFO    MainThread:1711383 [wandb_init.py:_pause_backend():440] pausing backend
