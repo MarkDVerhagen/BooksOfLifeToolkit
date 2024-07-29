@@ -3,12 +3,9 @@
 #SBATCH --output=llama_finetune_%j.log
 #SBATCH --error=llama_finetune_%j.err
 #SBATCH --nodes=1
-#SBATCH --ntasks=NUM_GPUS_YOU_HAVE
-#SBATCH --gres=gpu:NUM_GPUS_YOU_HAVE
-#SBATCH --cpus-per-task=4
-#SBATCH --mem=32G
+#SBATCH --ntasks=4
+#SBATCH --gres=gpu:4
 #SBATCH --time=24:00:00
-#SBATCH --partition=gpu
 
 # Load necessary modules
 module load cuda/11.3
@@ -16,7 +13,7 @@ module load anaconda/3
 source activate myenv  # Assuming you have a conda environment set up
 
 # Set the number of GPUs
-export NUM_GPUS=NUM_GPUS_YOU_HAVE
+export NUM_GPUS=4
 
 # Launch the distributed training
 srun python -m torch.distributed.launch \
