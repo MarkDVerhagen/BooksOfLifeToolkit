@@ -7,6 +7,8 @@ from serialization.BookofLifeGenerator import BookofLifeGenerator
 import time
 import traceback
 from tqdm import tqdm
+import argparse
+import json
 
 def generate_and_save_book_wrapper(args):
     """Wrapper function to unpack arguments for generate_and_save_book."""
@@ -35,22 +37,41 @@ def get_unique_rinpersoons(db_path):
         print(f"Database error: {e}")
         return []
 
-def generate_and_save_book(rinpersoon, recipe_yaml_path, output_dir):
-    """Generate a Book of Life for a single rinpersoon and save it to a file."""
+def generate_and_save_book(rinpersoon, recipe_yaml_path, outcome_dict):
+    """Generate a Book of Life for a single rinpersoon and include the outcome."""
     try:
         generator = BookofLifeGenerator(rinpersoon, recipe_yaml_path=recipe_yaml_path)
         book_content = generator.generate_book()
-        
-        filename = f"{rinpersoon}.txt"
-        filepath = os.path.join(output_dir, filename)
-        with open(filepath, 'w') as file:
-            file.write(book_content)
-        
+        outcome = outcome_dict.get(rinpersoon, "0")  # Default to "0" if not found
+        return rinpersoon, book_content, outcome
     except Exception as e:
         print(f"Error generating Book of Life for rinpersoon {rinpersoon}: {str(e)}")
         print(traceback.format_exc())
+        return rinpersoon, None, None
 
-def main(max_processes=None):
+def save_to_jsonl_shard(data, output_dir, shard_index):
+    """Save a shard of data to a JSONL file."""
+    shard_filename = f"shard_{shard_index}.jsonl"
+    shard_path = os.path.join(output_dir, shard_filename)
+    
+    with open(shard_path, 'a') as jsonl_file:
+        json_record = {
+            "rinpersoon": data[0],
+            "book_content": data[1],
+            "outcome": data[2]
+        }
+        jsonl_file.write(json.dumps(json_record) + '\n')
+
+def process_and_save_books(rins, recipe_yaml_path, output_dir, shard_size, pool, outcome_dict):
+    """Process books and save them to shards on the go."""
+    for i, result in enumerate(tqdm(pool.imap(generate_and_save_book_wrapper, [(rin, recipe_yaml_path, outcome_dict) for rin in rins]), total=len(rins))):
+        save_to_jsonl_shard(result, output_dir, i // shard_size)
+
+def main(bol_name, recipe_name, max_processes=None, shard_size=1000, output_dir=None):
+    # check if data directory for this bol_name already exists
+    if os.path.exists(bol_name):
+        raise ValueError(f"Data directory for {bol_name} already exists.")
+
     # Print number of unique rinpersoons
     db_path = 'synthetic_data.duckdb'
     unique_rinpersoons = get_unique_rinpersoons(db_path)
@@ -71,56 +92,50 @@ def main(max_processes=None):
     train_rins = [i for i in train_rins if i in final_year_rins]
     test_rins = [i for i in test_rins if i in final_year_rins]
     
-    recipes = ['template', 'test_template2']
+    # Process outcomes
+    outcome = pd.read_csv(os.path.join('synth', 'data', 'edit', 'household_bus.csv'))
+    outcome = outcome[outcome['DATE_STIRTHH'] == '1999-01-01']
+    outcome_rins_1 = outcome['rinpersoon'][outcome['EVENT'] == 'child_born']
     
+    # Create outcome dictionary
+    outcome_dict = {rin: 1 if rin in outcome_rins_1.values else 0 for rin in final_year_rins}
+        
     num_processes = min(max_processes or multiprocessing.cpu_count(), multiprocessing.cpu_count())
     print(f"Using {num_processes} processes for parallel generation.")
     
-    for recipe in recipes:
-        print(f"\n\nGenerating Books of Life and outcomes for recipe: {recipe}\n----------")
-        recipe_yaml_path = f'./recipes/{recipe}.yaml'
-        
-        # Generate and save Books of Life
-        train_output_dir = os.path.join('synth', 'data', 'e2e', recipe, 'train', 'bol')
-        test_output_dir = os.path.join('synth', 'data', 'e2e', recipe, 'test', 'bol')
-        os.makedirs(train_output_dir, exist_ok=True)
-        os.makedirs(test_output_dir, exist_ok=True)
-        train_rins = train_rins * 3000
-        with multiprocessing.Pool(processes=num_processes) as pool:
-            print("Generating train Books of Life:")
-            train_args = [(rin, recipe_yaml_path, train_output_dir) for rin in train_rins]
-            list(tqdm(pool.imap(generate_and_save_book_wrapper, train_args), total=len(train_rins)))
-            
-            print("Generating test Books of Life:")
-            test_args = [(rin, recipe_yaml_path, test_output_dir) for rin in test_rins]
-
-            list(tqdm(pool.imap(generate_and_save_book_wrapper, test_args), total=len(test_rins)))
-        
-        # Process outcomes
-        outcome = pd.read_csv(os.path.join('synth', 'data', 'edit', 'household_bus.csv'))
-        outcome = outcome[outcome['DATE_STIRTHH'] == '1999-01-01']
-        outcome_rins_1 = outcome['rinpersoon'][outcome['EVENT'] == 'child_born']
-        
-        train_outcome = ["1" if rin in outcome_rins_1.values else "0" for rin in train_rins]
-        test_outcome = ["1" if rin in outcome_rins_1.values else "0" for rin in test_rins]
-        
-        # Save outcomes
-        train_outcome_dir = os.path.join('synth', 'data', 'e2e', recipe, 'train', 'outcome')
-        test_outcome_dir = os.path.join('synth', 'data', 'e2e', recipe, 'test', 'outcome')
-        os.makedirs(train_outcome_dir, exist_ok=True)
-        os.makedirs(test_outcome_dir, exist_ok=True)
-        
-        for outcome, rin in zip(train_outcome, train_rins):
-            with open(os.path.join(train_outcome_dir, f"{rin}.txt"), 'w') as file:
-                file.write(outcome)
-        
-        for outcome, rin in zip(test_outcome, test_rins):
-            with open(os.path.join(test_outcome_dir, f"{rin}.txt"), 'w') as file:
-                file.write(outcome)
+    print(f"\n\nGenerating Books of Life with outcomes for recipe: {recipe_name}\n----------")
+    recipe_yaml_path = f'./recipes/{recipe_name}.yaml'
     
-    print("All Books of Life and outcomes have been generated and saved.")
+    # Set up directory structure
+    if output_dir is not None:
+        bol_name = os.path.join(output_dir, bol_name)
+    base_dir = os.path.join(bol_name, 'data')
+    train_dir = os.path.join(base_dir, 'train')
+    test_dir = os.path.join(base_dir, 'test')
+    os.makedirs(train_dir, exist_ok=True)
+    os.makedirs(test_dir, exist_ok=True)
+
+    with multiprocessing.Pool(processes=num_processes) as pool:
+        print("Generating and saving train Books of Life with outcomes:")
+        process_and_save_books(train_rins, recipe_yaml_path, train_dir, shard_size, pool, outcome_dict)
+        
+        print("Generating and saving test Books of Life with outcomes:")
+        process_and_save_books(test_rins, recipe_yaml_path, test_dir, shard_size, pool, outcome_dict)
+
+    # store recipe file in data directory
+    os.system(f"cp {recipe_yaml_path} {base_dir}")
+
+    print("All Books of Life with outcomes have been generated and saved in JSONL shards.")
 
 if __name__ == "__main__":
+    args = argparse.ArgumentParser()
+    args.add_argument("--max_processes", type=int, default=6, help="Maximum number of processes to use for parallel generation.")
+    args.add_argument("--bol_name", type=str, required=True, help="Name of the Book of Life data repository that is stored.")
+    args.add_argument("--shard_size", type=int, default=1000, help="Number of entries per shard.")
+    args.add_argument("--output_dir", type=str, default=None, help="Output directory to save the data directory.")
+    args.add_argument("--recipe_name", type=str, required=True, help="Name of the recipe file to use. This should be stored in the recipe directory.")
+    args = args.parse_args()
+
     start_time = time.time()
-    main(max_processes=6)
-    print(f"Execution time: {time.time() - start_time} seconds.")
+    main(bol_name=args.bol_name, recipe_name=args.recipe_name, max_processes=args.max_processes, shard_size=args.shard_size, output_dir=args.output_dir)
+    print(f"Execution time: {round(time.time() - start_time, 2)} seconds.")
