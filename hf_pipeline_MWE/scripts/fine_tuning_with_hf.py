@@ -9,80 +9,11 @@ import pandas as pd
 import time
 import glob
 import torch
+from data_formatting import get_data
 
 # setting wandb to offline
 wandb.init(mode="offline")   
 
-def format_salganik_data(data):
-
-    ## Taking csv and turning it into HF format
-
-    # HF needs a specific form for the dataset
-    data["text"] = data["input"]
-    data["labels"] = data["output"]
-
-    # keeping only inputs and outputs
-    data = data[["text", "labels"]]
-
-    # making sure outputs are 0s and 1s (will need to make this programatic)
-    data["labels"] = (data["labels"] == "kid: 1").astype(int)  
-
-    # converting to HF format
-    data = Dataset.from_pandas(data)
-
-    return data
-
-
-def extract_unique_id(filename):
-
-    # extract from books of life 
-    if "bol/" in filename:
-        start = filename.index('bol/') + len('bol/')
-        end = filename.index('.txt')
-
-    elif "outcome/" in filename:
-        start = filename.index('outcome/') + len('outcome/')
-        end = filename.index('.txt')
-    else: 
-        ValueError("Can't find unique id from filename")
-    
-    return filename[start:end]
-
-def format_BOL_data(path_to_training_data):
-    
-    # Step 1: reading in books of life
-
-    # the books of life are contained in multiple .txt files 
-    BOL_txt_files = glob.glob(path_to_training_data + "bol/" + '*.txt')
-
-    books_of_life = []
-    unique_ids = []
-    data = []
-
-    for txt_file in BOL_txt_files:
-
-        #reading books of life
-        with open(txt_file, 'r') as infile:
-            book_of_life = infile.read().strip()
-            unique_id = extract_unique_id(txt_file)     # extract unique_id from filename
-
-        
-        # reading outcomes
-        outcome_txt_file = path_to_training_data + "outcome/" + unique_id + '.txt'
-        with open(outcome_txt_file, 'r') as infile:
-            outcome = infile.read().strip()
-
-        data_for_unique_id = {
-            "text": book_of_life,
-            "unique_id": unique_id,
-            "labels": int(outcome)
-        }
-
-        data.append(data_for_unique_id)
-
-    data = Dataset.from_list(data)
-
-    return data
 
 def tokenize_and_prepare(data):
 
@@ -116,31 +47,7 @@ else:
 
 
 #### SPECIFIYING DATA
-
-if dataset == "salganik":
-    # reading training data 
-    data_to_read = project_directory + "data/salganik_data.csv"
-    train_dataset = pd.read_csv(data_to_read)
-
-    # subsetting data to specified training folds 
-    train_dataset = train_dataset[train_dataset['fold'].between(first_training_fold, last_training_fold)]
-
-    # formatting the salganik data to get it into a format readable by the LLM
-    train_dataset = format_salganik_data(train_dataset)    
-
-    print("using Salganik data")
-
-elif dataset == "bol-temp-1" or dataset == "bol-temp-2":
-    data_to_read =  "/scratch/gpfs/vs3041/prefer_prepare/synth/data/e2e/test_template1/train/"
-
-    train_dataset = format_BOL_data(data_to_read)
-
-    print("Using" + dataset)
-
-    print("samples = " + str(len(train_dataset)))
-
-else:
-    raise Exception("Dataset not recognised")
+train_dataset,_ = get_data(dataset)
 
 #### SPECIFIYING FINE-TUNING METHOD
 
@@ -184,8 +91,9 @@ if fine_tune_method == "lora":
     peft_model = get_peft_model(model, peft_config)
     print('PEFT Model')
     peft_model.print_trainable_parameters()
+    model_to_use = peft_model
 else:
-    pass
+    model_to_use = model
 
 
 # see: https://huggingface.co/docs/transformers/en/perf_train_gpu_one#batch-size-choice
@@ -193,19 +101,21 @@ else:
 # model hyperparameters
 training_args = TrainingArguments(
     output_dir=output_directory,
-    logging_steps=20,
-    learning_rate=2e-5,
-    per_device_train_batch_size=1,
+    logging_steps=10,
+    learning_rate=1e-3,
+    per_device_train_batch_size=128,
     num_train_epochs=1,
     gradient_accumulation_steps=8, # improves memory utilization
     # weight_decay=0.01
     fp16=True,
     gradient_checkpointing=True,
-    save_strategy = "no",  # will save model manually usuing 
+    save_strategy = "no",  # will save model manually usuing,
+    lr_scheduler_type = "cosine",
+    warmup_ratio = 0.1 
 )
 
 # input padding options 
-model.config.pad_token_id = model.config.eos_token_id
+model_to_use.config.pad_token_id = model_to_use.config.eos_token_id
 data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
 # tokenizing the training data 
@@ -213,13 +123,12 @@ tokenized_train_data = train_dataset.map(tokenize_and_prepare, batched=True)
 
 
 trainer = Trainer(
-    model=model,
+    model=model_to_use,
     args=training_args,
     train_dataset=tokenized_train_data,
     tokenizer=tokenizer,
     data_collator=data_collator,
 )
-
 
 
 start_time = time.time()
@@ -233,10 +142,7 @@ execution_time = end_time - start_time
 print(f"Fine-tuning time: {execution_time} seconds")
 
 # saving model weights
-if fine_tune_method == "lora":
-    peft_model.save_pretrained(output_directory)
-else:
-    trainer.save_pretrained(output_directory)
+trainer.save_model(output_directory)
 
 # saving tokenizer
 tokenizer.save_pretrained(output_directory)
