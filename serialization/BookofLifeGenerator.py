@@ -26,11 +26,9 @@ class BookofLifeGenerator:
             if dataset_name == 'persoon_tab':
                 ## Add PersonAttributesParagraph to the list of paragraphs
                 self.paragraphs.append(get_person_attributes(self.rinpersoon))
-                #print('person added')
             elif dataset_name == 'household_bus':
                 ## Add List of HouseholdEventParagraphs to the list of paragraphs
                 self.paragraphs.extend(get_households(self.rinpersoon))
-                #print('household added')
             else:
                 raise ValueError(f"Dataset name {dataset_name} not recognized")
             
