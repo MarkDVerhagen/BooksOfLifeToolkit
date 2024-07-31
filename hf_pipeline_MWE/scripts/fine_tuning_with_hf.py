@@ -19,7 +19,7 @@ def tokenize_and_prepare(data):
 
     # Tokenizer for HF models
 
-    return tokenizer(data["text"], truncation=True, padding="max_length", max_length=512)
+    return tokenizer(data["text"], truncation=True)
 
 # model arguments from the command line
 
@@ -102,9 +102,9 @@ else:
 training_args = TrainingArguments(
     output_dir=output_directory,
     logging_steps=10,
-    learning_rate=1e-3,
-    per_device_train_batch_size=128,
-    num_train_epochs=1,
+    learning_rate=1e-2,
+    per_device_train_batch_size=8,
+    num_train_epochs=100,
     gradient_accumulation_steps=8, # improves memory utilization
     # weight_decay=0.01
     fp16=True,

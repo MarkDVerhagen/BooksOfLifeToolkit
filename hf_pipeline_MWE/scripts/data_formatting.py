@@ -160,6 +160,11 @@ def get_data(dataset):
 
         print("samples = " + str(len(train_dataset)))
 
+    elif dataset == "sayash_speed":
+
+        data_to_read =  "/scratch/gpfs/vs3041/prefer_prepare/hf_pipeline_MWE/large_dataset/"
+
+        train_dataset = load_from_disk(data_to_read)
 
     else:
         raise Exception("Dataset not recognised")
