@@ -9,6 +9,7 @@ import traceback
 from tqdm import tqdm
 import argparse
 import json
+from utils.summary import generate_token_length_stats
 
 def generate_and_save_book_wrapper(args):
     """Wrapper function to unpack arguments for generate_and_save_book."""
@@ -67,7 +68,7 @@ def process_and_save_books(rins, recipe_yaml_path, output_dir, shard_size, pool,
     for i, result in enumerate(tqdm(pool.imap(generate_and_save_book_wrapper, [(rin, recipe_yaml_path, outcome_dict) for rin in rins]), total=len(rins))):
         save_to_jsonl_shard(result, output_dir, i // shard_size)
 
-def main(bol_name, recipe_name, max_processes=None, shard_size=1000, output_dir=None):
+def main(bol_name, recipe_name, max_processes=None, shard_size=1000, output_dir=None, save_summary=False):
     # check if data directory for this bol_name already exists
     if os.path.exists(bol_name):
         raise ValueError(f"Data directory for {bol_name} already exists.")
@@ -127,15 +128,20 @@ def main(bol_name, recipe_name, max_processes=None, shard_size=1000, output_dir=
 
     print("All Books of Life with outcomes have been generated and saved in JSONL shards.")
 
+    # Generate token length statistics
+    print("\nGenerating token length statistics for the generated Books of Life:")
+    generate_token_length_stats(base_dir, sample_size=10000, save_to_file=save_summary)
+
 if __name__ == "__main__":
     args = argparse.ArgumentParser()
-    args.add_argument("--max_processes", type=int, default=6, help="Maximum number of processes to use for parallel generation.")
+    args.add_argument("--max_processes", type=int, default=4, help="Maximum number of processes to use for parallel generation.")
     args.add_argument("--bol_name", type=str, required=True, help="Name of the Book of Life data repository that is stored.")
-    args.add_argument("--shard_size", type=int, default=1000, help="Number of entries per shard.")
+    args.add_argument("--shard_size", type=int, default=10000, help="Number of entries per shard.")
     args.add_argument("--output_dir", type=str, default=None, help="Output directory to save the data directory.")
     args.add_argument("--recipe_name", type=str, required=True, help="Name of the recipe file to use. This should be stored in the recipe directory.")
+    args.add_argument("--save_summary", action='store_true', help="Whether to save the token length statistics summary to the data directory after generation.")
     args = args.parse_args()
 
     start_time = time.time()
-    main(bol_name=args.bol_name, recipe_name=args.recipe_name, max_processes=args.max_processes, shard_size=args.shard_size, output_dir=args.output_dir)
-    print(f"Execution time: {round(time.time() - start_time, 2)} seconds.")
+    main(**vars(args))
+    print(f"Execution time: {round((time.time() - start_time)/60, 2)} mins.")
