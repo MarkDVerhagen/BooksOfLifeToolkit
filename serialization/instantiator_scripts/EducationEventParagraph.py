@@ -17,7 +17,7 @@ class EducationEventParagraph(Paragraph):
     ## full code is the combined OPLNRHB and OPLNRHG codes:
     ## e.g., 801515 014836 Natural Stone Worker (Natural Stone Worker, Gravework) 
     ## 801516 014836 Natural Stone Worker (Machine Natural Stone Worker)
-    OPLNRHB: str = field(default=None)
+    OPLNRHB: str = field(default=None) 
     OPLNRHG: str = field(default=None)
 
     #### 2016 SOI classifications 
