@@ -15,7 +15,7 @@ def generate_random_text(num_tokens):
 def generate_dataset(num_samples, tokens_per_sample):
     data = {
         "text": [],
-        "label": []
+        "labels": []
     }
     for _ in range(num_samples):
         # Generate random text for text field
@@ -23,12 +23,12 @@ def generate_dataset(num_samples, tokens_per_sample):
         # Generate binary label (0 or 1)
         label = random.choice([0, 1])
         data["text"].append(text)
-        data["label"].append(label)
+        data["labels"].append(label)
     return Dataset.from_dict(data)
 # Generate dataset with 10 samples of 100,000 tokens each
 # Adjust these numbers as needed
-num_samples = 10
-tokens_per_sample = 100000
+num_samples = 100
+tokens_per_sample = 20000
 dataset = generate_dataset(num_samples, tokens_per_sample)
 # Save the dataset
 dataset.save_to_disk("large_dataset")
@@ -38,5 +38,5 @@ print("Dataset saved to 'large_dataset' directory.")
 print("\nSample entry:")
 sample = dataset[0]
 print(f"Text (first 100 characters): {sample["text"][:100]}...")
-print(f"Label: {sample["label"]}")
+print(f"Label: {sample["labels"]}")
 print(f"Actual token count for text: {len(tokenizer.encode(sample["text"]))}")

@@ -6,7 +6,7 @@
       "dtype": "string",
       "_type": "Value"
     },
-    "label": {
+    "labels": {
       "dtype": "int64",
       "_type": "Value"
     }
