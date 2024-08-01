@@ -1,7 +1,7 @@
 from serialization.BookofLifeGenerator import BookofLifeGenerator
 
 # Example usage:
-generator = BookofLifeGenerator("00a2cd32", 'recipes/template.yaml')
+generator = BookofLifeGenerator("0009f3ff", 'recipes/template.yaml')
 print("Partner:", generator.social_context_paragraphs)
 # print("Partner's child:", generator.social_context_paragraphs['household_bus']['partners'].social_context_paragraphs['household_bus']['children'].generate_book())
 print('Main book:', generator.generate_book())
