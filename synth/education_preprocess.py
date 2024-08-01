@@ -15,7 +15,7 @@ def preprocess():
 
     # save preprocessed data file
     df_grouped_sorted.to_csv(
-        os.path.join('synth', 'data', 'edit', 'education_bus.csv'), index=False)
+        os.path.join('synth', 'data', 'raw', 'education_bus.csv'), index=False)
 
 if __name__ == "__main__":
     preprocess()

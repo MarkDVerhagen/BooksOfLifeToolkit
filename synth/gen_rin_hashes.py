@@ -3,7 +3,7 @@ import json
 import random
 import string
 import os
-from synth.params import synth_params
+from params import synth_params
 
 def generate_hashed_id(length=8):
     random_string = ''.join(random.choices(string.ascii_letters + string.digits, k=32))
