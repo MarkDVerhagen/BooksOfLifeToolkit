@@ -27,6 +27,14 @@ datasets:
       - OPLNRHB
       - OPLNIVSOI2016AGG4HGMETNIRWO
       - OPLNIVSOI2021AGG4HBmetNIRWO
+  - name: employment_bus
+    features:
+      - SIMPUTATIE
+      - SEXTRSAL
+      - SPRWAOAOK
+      - SINLEGLEVENSLOOP
+      - SCDAGH
+      - SOPGRCHTEXTRSAL
 formatting:
   sorting_keys: year  ## right now only supports 'year' and 'dataset_name'
   paragraph_generator: get_paragraph_string_tabular
