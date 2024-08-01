@@ -8,7 +8,7 @@ class EducationEventParagraph(Paragraph):
     The PersonOriginParagraph class is designed for the HOOGSTEOPLTAB data table.
     It extends the Paragraph class by adding attributes that capture information about each person's 
     educational attainment.
-    name: education_tab
+    name: education_bus
     """
 
     ### ORDER OF BELOW IS RELEVANT! ###
@@ -37,7 +37,7 @@ class EducationEventParagraph(Paragraph):
     
     def __post_init__(self):
         super().__post_init__()
-        assert self.dataset_name == 'education_tab', "This class is specifically designed for the HOOGSTEOPLTAB data table. Dataset name must be 'education_tab'"
+        assert self.dataset_name == 'education_bus', "This class is specifically designed for the HOOGSTEOPLTAB data table. Dataset name must be 'education_bus'"
 
         # TODO instantiate parent class attributes such as year, month, etc.
         # year is extracted from filename: (1999-2022) HOOGSTEOPLJJJJTABVV: year = JJJJ
