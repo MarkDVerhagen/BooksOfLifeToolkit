@@ -6,3 +6,9 @@ datasets:
   - name: persoon_tab
     structure_features:
     structure_classification:
+  - name: education_bus
+    structure_features:
+    structure_classification:
+  - name: employment_bus
+    structure_features:
+    structure_classification:

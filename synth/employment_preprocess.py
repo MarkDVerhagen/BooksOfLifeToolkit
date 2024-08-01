@@ -30,7 +30,7 @@ def preprocess(group_columns = ['rinpersoon', 'year']):
 
     # save preprocessed data file
     df_cleaned.to_csv(
-        os.path.join('synth', 'data', 'edit', 'employment_bus.csv'), index=False)
+        os.path.join('synth', 'data', 'raw', 'employment_bus.csv'), index=False)
 
 if __name__ == "__main__":
     preprocess()

@@ -9,6 +9,6 @@ hf_pipeline_MWE/hf_models/*
 hf_pipeline_MWE/fine_tuned_models/*
 hf_pipeline_MWE/output/*
 hf_pipeline_MWE/wandb/
-synth/data/*
+
 !synth/data/e2e/outcomes_in_csv_format/*
 fertility_data_sim/hf_token
