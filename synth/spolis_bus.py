@@ -68,7 +68,7 @@ results = results.drop(columns = ['birth_year', 'year'])
 results = results.assign(year = 2010 + results['month'] % 12)
 results = results.assign(month = (results['month'] % 12) + 1)
 results = results.loc[results['employment_status'] != 'unemployed']
-results.assign(salary = [np.random.randint(1000, 10000) for i in range(results.shape[0])])
+results = results.assign(salary = [np.random.randint(1000, 10000) for i in range(results.shape[0])])
 
 # # Initialize additional columns with random data for simulation purposes
 # results['SIMPUTATIE'] = np.random.choice(['J', 'N', '-'], len(results))
