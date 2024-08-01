@@ -6,8 +6,8 @@ cd $project_path
 module load anaconda3/2024.2
 conda activate hf_environment
 
-export model_name="llama3-8b"
-export dataset="bol-temp-1"
+export model_name="llama3.1-8b"
+export dataset="juanky_parity"
 export fine_tune_method="lora"
 export GPU_util="single"
 export params="default"
