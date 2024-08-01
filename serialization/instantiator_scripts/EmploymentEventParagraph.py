@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field, fields
 from typing import Literal
-from instantiator_scripts.Paragraph import Paragraph
+from serialization.instantiator_scripts.Paragraph import Paragraph
 
 @dataclass
 class EmploymentEventParagraph:
@@ -80,9 +80,9 @@ class EmploymentEventParagraph:
                    "30", "31", "32", "33", "34", "35", "38", "39", "40", "41",
                    "42", "43", "44", "45", "46", "47", "48", "49", "50", "51",
                    "52", "53", "54", "55", "56", "57", "58", "59", "60", "61",
-                   "62", "63", "64", "65", "66", "67", "68", "69", "99"]
+                   "62", "63", "64", "65", "66", "67", "68", "69", "99"] = field(default=None)
     ## Job type code
-    SSOORTBAAN: Literal["1", "2", "3", "4", "5", "9"] 
+    SSOORTBAAN: Literal["1", "2", "3", "4", "5", "9"] = field(default=None)
     ## Amount of employer's tax Zvw
     SWGHZVW: float = field(default=None)
     ## Amount of employer's low AWf premium
