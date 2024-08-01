@@ -6,6 +6,8 @@ from serialization.instantiator_scripts.HouseholdEventParagraph import Household
 from serialization.Recipe import Recipe
 from serialization.instantiator_scripts.persoon_tab import get_person_attributes
 from serialization.instantiator_scripts.household_bus import get_households
+from serialization.instantiator_scripts.education_bus import get_education_events
+from serialization.instantiator_scripts.employment_bus import get_employment_events
 from operator import attrgetter
 
 class BookofLifeGenerator:
@@ -24,11 +26,13 @@ class BookofLifeGenerator:
             features = self.recipe.get_features(dataset_name)
 
             if dataset_name == 'persoon_tab':
-                ## Add PersonAttributesParagraph to the list of paragraphs
                 self.paragraphs.append(get_person_attributes(self.rinpersoon))
             elif dataset_name == 'household_bus':
-                ## Add List of HouseholdEventParagraphs to the list of paragraphs
                 self.paragraphs.extend(get_households(self.rinpersoon))
+            elif dataset_name == 'education_bus':
+                self.paragraphs.extend(get_education_events(self.rinpersoon))
+            elif dataset_name == 'employment_bus':
+                self.paragraphs.extend(get_employment_events(self.rinpersoon))
             else:
                 raise ValueError(f"Dataset name {dataset_name} not recognized")
             
