@@ -3,7 +3,7 @@ from typing import Literal
 from serialization.instantiator_scripts.Paragraph import Paragraph
 
 @dataclass
-class EmploymentEventParagraph:
+class EmploymentEventParagraph(Paragraph):
     """
     The EmploymentEventParagraph class is designed for the dataset that includes employment information
     on jobs and wages of employees at Dutch companies for a given reporting year.
@@ -334,16 +334,14 @@ class EmploymentEventParagraph:
         # 88888888: start before reporting year
         # 99999999: no payments in reporting year
         if self.SDATUMAANVANGIKO == "88888888" or self.SDATUMAANVANGIKO == "99999999":
-            self.year, self.month, self.day = None, None, None
+            self.month, self.day = None, None # TODO What do those code mean? Can we not find a year value for those? 
         # set year, month, and day values of parent class from employment start date of given reporting period
         else:
-            year = self.SDATUMAANVANGIKO[4:], 
-            month = self.SDATUMAANVANGIKO[2:4]
-            day = self.SDATUMAANVANGIKO[:2]
+            pass
+            # month = self.SDATUMAANVANGIKO[2:4]
+            # day = self.SDATUMAANVANGIKO[:2]
 
-            # Convert them to integers (if needed)
-            self.year = int(year)
-            self.month = int(month)
-            self.day = int(day)
+            # # Convert them to integers (if needed)
+            # self.month = int(month)
+            # self.day = int(day)
 
-        return

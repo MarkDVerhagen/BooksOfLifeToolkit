@@ -27,6 +27,7 @@ def get_employment_events(rinpersoon: str, db_name: str = 'synthetic_data.duckdb
 
         employment_paragraph = EmploymentEventParagraph(
             dataset_name="employment_bus",
+            year=int(row_dict.get('year')),
             rinpersoon=rinpersoon,
             SIMPUTATIE=row_dict.get('SIMPUTATIE'),
             SINDWAARNEMING=row_dict.get('SINDWAARNEMING'),
@@ -106,7 +107,7 @@ def get_employment_events(rinpersoon: str, db_name: str = 'synthetic_data.duckdb
             SWRKNBIJDRAUT=row_dict.get('SWRKNBIJDRAUT'),
             SCDRDNGNBIJT=row_dict.get('SCDRDNGNBIJT'),
             SBIJZONDEREBELONING=row_dict.get('SBIJZONDEREBELONING'),
-            SEXTRSAL=row_dict.get('SEXTRSAL'),
+            SEXTRSAL=row_dict.get('average_salary_while_employed'),
             SLNOWRK=row_dict.get('SLNOWRK'),
             SLVLPREG=row_dict.get('SLVLPREG'),
             SLVLPREGTOEG=row_dict.get('SLVLPREGTOEG'),

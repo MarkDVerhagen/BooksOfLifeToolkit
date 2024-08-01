@@ -28,6 +28,7 @@ def get_education_events(rinpersoon: str, db_name: str = 'synthetic_data.duckdb'
         education_paragraph = EducationEventParagraph(
             dataset_name="education_bus",
             rinpersoon=rinpersoon,
+            year = int(row_dict['year']) if 'year' in row_dict else None,
             OPLNRHB=row_dict['OPLNRHB'] if 'OPLNRHB' in row_dict else None,
             OPLNRHG=row_dict['OPLNRHG'] if 'OPLNRHG' in row_dict else None,
             OPLNIVSOI2016AGG4HBMETNIRWO=row_dict['OPLNIVSOI2016AGG4HBMETNIRWO'] if 'OPLNIVSOI2016AGG4HBMETNIRWO' in row_dict else None,
