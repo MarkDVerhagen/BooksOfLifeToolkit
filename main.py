@@ -134,11 +134,11 @@ def main(bol_name, recipe_name, max_processes=None, shard_size=1000, output_dir=
 
 if __name__ == "__main__":
     args = argparse.ArgumentParser()
-    args.add_argument("--max_processes", type=int, default=4, help="Maximum number of processes to use for parallel generation.")
     args.add_argument("--bol_name", type=str, required=True, help="Name of the Book of Life data repository that is stored.")
+    args.add_argument("--recipe_name", type=str, required=True, help="Name of the recipe file to use. This should be stored in the recipe directory.")
+    args.add_argument("--max_processes", type=int, default=4, help="Maximum number of processes to use for parallel generation.")
     args.add_argument("--shard_size", type=int, default=10000, help="Number of entries per shard.")
     args.add_argument("--output_dir", type=str, default=None, help="Output directory to save the data directory.")
-    args.add_argument("--recipe_name", type=str, required=True, help="Name of the recipe file to use. This should be stored in the recipe directory.")
     args.add_argument("--save_summary", action='store_true', help="Whether to save the token length statistics summary to the data directory after generation.")
     args = args.parse_args()
 

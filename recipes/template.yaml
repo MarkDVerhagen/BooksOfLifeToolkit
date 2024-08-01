@@ -22,6 +22,11 @@ datasets:
         - name: persoon_tab
           features:
             - GBAGESLACHT
+  - name: education_bus
+    features:
+      - OPLNRHB
+      - OPLNIVSOI2016AGG4HGMETNIRWO
+      - OPLNIVSOI2021AGG4HBmetNIRWO
 formatting:
   sorting_keys: year  ## right now only supports 'year' and 'dataset_name'
-  paragraph_generator: get_paragraph_string_biographic
+  paragraph_generator: get_paragraph_string_tabular
