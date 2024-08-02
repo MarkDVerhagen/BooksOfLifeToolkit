@@ -12,7 +12,12 @@ hf_pipeline_MWE/wandb/
 
 !synth/data/e2e/outcomes_in_csv_format/*
 fertility_data_sim/hf_token
-synth/data/raw/*
-synth/data/edit/*
-synth/data/e2e/*
-synth/data/hashes/*
+
+## Synth data folders
+synth/data/raw/.gitkeep
+synth/data/edit/.gitkeep
+synth/data/e2e/.gitkeep
+synth/data/hashes/.gitkeep
+synth/data/*
+!synth/data/.gitkeep
+
