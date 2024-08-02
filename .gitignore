@@ -14,10 +14,12 @@ hf_pipeline_MWE/wandb/
 fertility_data_sim/hf_token
 
 ## Synth data folders
-synth/data/raw/.gitkeep
-synth/data/edit/.gitkeep
-synth/data/e2e/.gitkeep
-synth/data/hashes/.gitkeep
+!synth/data/raw/.gitkeep
+!synth/data/edit/.gitkeep
+!synth/data/e2e/.gitkeep
+!synth/data/hashes/.gitkeep
 synth/data/*
 !synth/data/.gitkeep
+*.db
 
+synth/wrangle.py
