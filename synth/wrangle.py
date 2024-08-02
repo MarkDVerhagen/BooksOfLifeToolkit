@@ -1,8 +1,23 @@
 import pandas as pd
 import os
 
-data = pd.read_csv(os.path.join('synth', 'data', 'householdbus.csv'),
-                   index_col = False).drop(columns=['Unnamed: 0'])
+hh = pd.read_csv(os.path.join('data', 'raw', 'household_bus_100.csv'),
+                   index_col = False)
+persoon = pd.read_csv(os.path.join('data', 'raw', 'persoon_tab_100.csv'),
+                   index_col = False)
+spolis = pd.read_csv(os.path.join('synth', 'data', 'raw', 'spolis_bus.csv'),
+                   index_col = False)
+hoogsteopl = pd.read_csv(os.path.join('data', 'raw', 'hoogsteopl_tab_100.csv'),
+                   index_col = False)
+
+
+
+
+
+persoon['rinpersoon'].isin(hh['rinpersoon']).mean()
+hh['rinpersoon'].isin(persoon['rinpersoon']).mean()
+spolis['rinpersoon'].isin(persoon['rinpersoon']).mean()
+hoogsteopl['rinpersoon'].isin(persoon['rinpersoon']).mean()
 
 def pull_hierarchy(data, hierarchy_vars=['HOUSEKEEPING_NR', 'DATE_STIRTHH'],
                    hierarchy_cat=None, main_key='rinpersoon'):
