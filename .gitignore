@@ -19,3 +19,4 @@ synth/wrangle*
 !synth/data/.gitkeep
 !synth/data/raw/.gitkeep
 !synth/data/edit/.gitkeep
+!synth/hashes/.gitkeep

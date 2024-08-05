@@ -17,17 +17,6 @@ source myenv/bin/activate
 pip install -r requirements.txt
 ```
 
-## Synthetic Data
-
-`synth`: folder containing scripts to generate synthetic data
-
-To generate synthetic data for the householdbus (household structure over time), persoontab (characteristics at birth) and vektistab (medical activities) run:
-
-
-```bash
-python3 synth/main.py
-```
-
 ## Serializing Books of Life
 
 ### Overview
@@ -64,3 +53,26 @@ The following code snippet prints the Book of Life for person `"03c6605f"`.
     # Output the book
     print(book)
     ```
+
+## Usage with synthetic data
+
+To generate synthetic data for the householdbus (household structure over time), persoontab (characteristics at birth), spolisbus (employment spells) and hoogsteopltab (highest level of acquired education) run:
+
+```bash
+python synth/main.py
+```
+
+To populate the DuckDB database from which data is queried to generate Books of Life, run:
+
+```bash
+python serialization/make_db.py
+python serialization/populate_db.py --yaml_file  template
+```
+
+To generate an example Book of Life, run:
+
+```bash
+python main_test.py --hash "0006861b" --recipe template
+```
+
+Where the hash has to feature in the database.
