@@ -9,6 +9,7 @@ def main():
     for script in scripts:
         # run_script(script)
         # import script name as module
+        print(f"Now doing {script}")
         script_module = __import__(script)
 
 if __name__ == "__main__":
