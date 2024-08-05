@@ -10,10 +10,10 @@ import numpy as np
 from datetime import datetime
 
 # Load hashed set of individuals and households
-with open(os.path.join('synth', 'hashed_ids_' + str(synth_params['N_hash']) + '.json'), 'r') as f:
+with open(os.path.join('synth', 'hashes', 'hashed_ids_' + str(synth_params['N_hash']) + '.json'), 'r') as f:
     hash_set = json.load(f)
 
-with open(os.path.join('synth', 'hashed_hh_ids_' + str(synth_params['N_hh_hash']) + '.json'), 'r') as f:
+with open(os.path.join('synth', 'hashes', 'hashed_hh_ids_' + str(synth_params['N_hh_hash']) + '.json'), 'r') as f:
     household_hash_set = json.load(f)
 
 place_descriptions = {

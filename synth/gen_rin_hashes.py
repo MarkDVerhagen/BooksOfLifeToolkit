@@ -20,7 +20,7 @@ N = synth_params["N_hash"]
 seed = synth_params["seed"]
 hashed_ids = generate_n_hashed_ids(N, seed, hash_length=8)
 
-with open(os.path.join('synth', 'hashed_ids_' + str(N) + '.json'), 'w') as f:
+with open(os.path.join('synth', 'hashes', 'hashed_ids_' + str(N) + '.json'), 'w') as f:
     json.dump(hashed_ids, f)
 
 
@@ -29,7 +29,7 @@ N = synth_params["N_hh_hash"]
 seed = synth_params["seed"]
 hashed_ids = generate_n_hashed_ids(N, seed, hash_length=8)
 
-with open(os.path.join('synth', 'hashed_hh_ids_' + str(N) + '.json'), 'w') as f:
+with open(os.path.join('synth', 'hashes', 'hashed_hh_ids_' + str(N) + '.json'), 'w') as f:
     json.dump(hashed_ids, f)
 
 
@@ -38,5 +38,5 @@ N = synth_params["N_firms"]
 seed = synth_params["seed"]
 hashed_ids = generate_n_hashed_ids(N, seed, hash_length=8)
 
-with open(os.path.join('synth', 'hashed_firm_ids_' + str(N) + '.json'), 'w') as f:
+with open(os.path.join('synth', 'hashes', 'hashed_firm_ids_' + str(N) + '.json'), 'w') as f:
     json.dump(hashed_ids, f)
