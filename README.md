@@ -8,7 +8,7 @@ This repository contains code to prepare the analytical pipeline for PreFer Stag
 
 2. **Set up virtual environment (recommended).**
 ```
-python3 -m venv myenv  
+python3 -m venv [myenv] (where [myenv] is the environment name you want)  
 source myenv/bin/activate
 ```
 
