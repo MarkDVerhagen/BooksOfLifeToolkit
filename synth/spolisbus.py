@@ -5,7 +5,7 @@ import json
 from params import synth_params
 
 # Set simulation parameters
-with open(os.path.join('synth', 'hashed_firm_ids_' + str(synth_params['N_firms']) + '.json'), 'r') as f:
+with open(os.path.join('synth', 'hashes', 'hashed_firm_ids_' + str(synth_params['N_firms']) + '.json'), 'r') as f:
     firm_ids = json.load(f)
 T = 5*12  # Number of months to simulate
 
