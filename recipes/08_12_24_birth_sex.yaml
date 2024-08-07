@@ -1,0 +1,9 @@
+main_key: rinpersoon
+datasets:
+  - name: persoon_tab
+    features:
+      - age # age is a constructed var 
+      - GBAGESLACHT
+formatting:
+  sorting_keys: dataset_name  
+  paragraph_generator: get_paragraph_string_tabular

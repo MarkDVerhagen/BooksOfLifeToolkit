@@ -30,7 +30,10 @@ class BookofLifeGenerator:
             if dataset_name == 'persoon_tab':
                 self.paragraphs.append(get_person_attributes(self.rinpersoon, self.conn))
             elif dataset_name == 'household_bus':
-                self.paragraphs.extend(get_households(self.rinpersoon, self.conn))
+                household_paragraphs = get_households(self.rinpersoon, self.conn)
+                # Sort household paragraphs by year before extending the global list
+                household_paragraphs.sort(key=attrgetter('year'))
+                self.paragraphs.extend(household_paragraphs)
             elif dataset_name == 'education_bus':
                 self.paragraphs.extend(get_education_events(self.rinpersoon, self.conn))
             elif dataset_name == 'employment_bus':

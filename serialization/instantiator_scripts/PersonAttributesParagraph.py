@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field, fields
+from datetime import datetime
 from typing import List, Literal
 from serialization.instantiator_scripts.Paragraph import Paragraph
 
@@ -66,8 +67,6 @@ class PersonAttributesParagraph(Paragraph):
     GBAGEBOORTEMAANDVADER: Literal["--", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"] = field(default=None)
     # Father's birth day: "01" to "31", "--" - unknown
     GBAGEBOORTEDAGVADER: Literal["--", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"] = field(default=None)
-    
-    
 
     def __post_init__(self):
         super().__post_init__()
@@ -77,7 +76,25 @@ class PersonAttributesParagraph(Paragraph):
         self.month = self.GBAGEBOORTEMAAND
         self.day = self.GBAGEBOORTEDAG
 
+        target_date = datetime(2020, 12, 31) # getting age on 12/31/2020
+        self.age = self.calculate_age(target_date)
 
+    def calculate_age(self, target_date: datetime) -> int:
+        # Handle unknown month and day
+        if self.month == "--":
+            self.month = "06"  # Assume June
+        if self.day == "--":
+            self.day = "15"  # Assume 15th
+
+        birth_date = datetime(self.year, int(self.month), int(self.day))
+        age = target_date.year - birth_date.year
+        
+        # Check if the birthday has occurred this year
+        if (target_date.month, target_date.day) < (birth_date.month, birth_date.day):
+            age -= 1
+        
+        return age
+    
     def get_paragraph_string_biographic(self, features=None):
         paragraph = ""
 

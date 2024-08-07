@@ -1,0 +1,27 @@
+main_key: rinpersoon
+datasets:
+  - name: persoon_tab
+    features:
+      - GBAGEBOORTELAND
+      - GBAGESLACHT
+      - GBAGEBOORTEJAAR
+      - GBAGEBOORTEMAAND
+      - GBAGEBOORTEDAG
+      - GBAHERKOMSTLAND
+      - GBAGEBOORTELANDNL
+      - GBAHERKOMSTGROEPERING
+      - GBAGENERATIE
+      - GBAAANTALOUDERSBUITENLAND
+      - GBAGEBOORTELANDMOEDER
+      - GBAGESLACHTMOEDER
+      - GBAGEBOORTEJAARMOEDER
+      - GBAGEBOORTEMAANDMOEDER
+      - GBAGEBOORTEDAGMOEDER
+      - GBAGEBOORTELANDVADER
+      - GBAGESLACHTVADER
+      - GBAGEBOORTEJAARVADER
+      - GBAGEBOORTEMAANDVADER
+      - GBAGEBOORTEDAGVADER
+formatting:
+  sorting_keys: year  ## right now only supports 'year' and 'dataset_name'
+  paragraph_generator: get_paragraph_string_tabular

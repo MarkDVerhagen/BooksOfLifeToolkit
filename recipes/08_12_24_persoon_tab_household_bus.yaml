@@ -1,0 +1,46 @@
+main_key: rinpersoon
+datasets:
+  - name: household_bus
+    features:
+      - HOUSEKEEPING_NR
+      - TYPHH
+      - DATE_STIRTHH
+      - DATUMEINDEHH
+      - NUMBERPERSHH
+      - PLHH
+      - REFPERSOONHH
+      - AANTALOVHH
+      - AANTALKINDHH
+      - BIRTHEDYOUNGCHILDHH
+      - GEBMAANDJONGSTEKINDHH
+      - GEBJAAROUDSTEKINDHH
+      - BMAANDOUDSTEKINDHH
+      - CHILDREN # didn't include this as social context features - ok?
+      - PARTNERS # didn't include this as social context features - ok?
+      - OTHER_MEMBERS
+      - ALL_MEMBERS
+  - name: persoon_tab
+    features:
+      - GBAGEBOORTELAND
+      - GBAGESLACHT
+      - GBAGEBOORTEJAAR
+      - GBAGEBOORTEMAAND
+      - GBAGEBOORTEDAG
+      - GBAHERKOMSTLAND
+      - GBAGEBOORTELANDNL
+      - GBAHERKOMSTGROEPERING
+      - GBAGENERATIE
+      - GBAAANTALOUDERSBUITENLAND
+      - GBAGEBOORTELANDMOEDER
+      - GBAGESLACHTMOEDER
+      - GBAGEBOORTEJAARMOEDER
+      - GBAGEBOORTEMAANDMOEDER
+      - GBAGEBOORTEDAGMOEDER
+      - GBAGEBOORTELANDVADER
+      - GBAGESLACHTVADER
+      - GBAGEBOORTEJAARVADER
+      - GBAGEBOORTEMAANDVADER
+      - GBAGEBOORTEDAGVADER
+formatting:
+  sorting_keys: dataset_name  
+  paragraph_generator: get_paragraph_string_tabular
