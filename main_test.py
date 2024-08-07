@@ -1,6 +1,10 @@
 import argparse
 import os
 from serialization.BookofLifeGenerator import BookofLifeGenerator
+import duckdb
+
+conn = duckdb.connect("synthetic_data.duckdb", read_only=True)
+
 
 def main():
     # Parse command-line arguments

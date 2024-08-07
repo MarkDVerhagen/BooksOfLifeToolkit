@@ -10,6 +10,10 @@ from tqdm import tqdm
 import argparse
 import json
 from utils.summary import generate_token_length_stats
+import sqlite3
+
+global conn_dict
+conn_dict = {}
 
 def generate_and_save_book_wrapper(args):
     """Wrapper function to unpack arguments for generate_and_save_book."""
@@ -40,8 +44,34 @@ def get_unique_rinpersoons(db_path):
 
 def generate_and_save_book(rinpersoon, recipe_yaml_path, outcome_dict):
     """Generate a Book of Life for a single rinpersoon and include the outcome."""
+    if multiprocessing.current_process().name not in conn_dict:
+        print(f"Process {multiprocessing.current_process().name} is initializing a new connection to the database.")
+        # copy the database to a new file for this process
+        db_path = 'synthetic_data.duckdb'
+        new_db_path = f'synthetic_data_{multiprocessing.current_process().name}.duckdb'
+        os.system(f"cp {db_path} {new_db_path}")
+
+        conn = duckdb.connect(":memory:")
+        
+        # copy the data from original database to new database without attaching the original database but by copying the data
+        conn.execute(f"ATTACH DATABASE '{new_db_path}' AS new_db")
+        
+        # Get all table names from the attached database
+        tables = conn.execute("SELECT table_name FROM new_db.information_schema.tables WHERE table_schema = 'main'").fetchall()
+        
+        # Create tables and copy data for each table
+        for table in tables:
+            table_name = table[0]
+            conn.execute(f"CREATE TABLE {table_name} AS SELECT * FROM new_db.{table_name}")
+
+        conn_dict[multiprocessing.current_process().name] = conn
+
+        # remove the copied database file
+        os.system(f"rm {new_db_path}")
+
+
     try:
-        generator = BookofLifeGenerator(rinpersoon, recipe_yaml_path=recipe_yaml_path)
+        generator = BookofLifeGenerator(rinpersoon, recipe_yaml_path=recipe_yaml_path, duck_db_conn=conn_dict[multiprocessing.current_process().name])
         book_content = generator.generate_book()
         outcome = outcome_dict.get(rinpersoon, "0")  # Default to "0" if not found
         return rinpersoon, book_content, outcome
@@ -72,34 +102,88 @@ def main(bol_name, recipe_name, max_processes=None, shard_size=1000, output_dir=
     # check if data directory for this bol_name already exists
     if os.path.exists(bol_name):
         raise ValueError(f"Data directory for {bol_name} already exists.")
+    
 
     # Print number of unique rinpersoons
     db_path = 'synthetic_data.duckdb'
+    conn = duckdb.connect(db_path, read_only=True)
     unique_rinpersoons = get_unique_rinpersoons(db_path)
     print(f"Number of unique rinpersoons: {len(unique_rinpersoons)}")
 
-    synth_hh = pd.read_csv(os.path.join('synth', 'data', 'edit', 'household_bus.csv'))
-    
+
     # Filter and process data
-    synth_hh = synth_hh[synth_hh['DATE_STIRTHH'] == '1998-01-01']
-    final_year_rins = synth_hh['rinpersoon'][synth_hh['PLHH'] != 'child living at home'].unique()
-    final_year_hhs = synth_hh['HOUSEKEEPING_NR'].unique()
-    
+    conn.execute("""
+        CREATE TEMPORARY TABLE synth_hh AS
+        SELECT *
+        FROM household_bus
+        WHERE DATE_STIRTHH = '1998-01-01'
+    """)
+
+    final_year_rins = conn.execute("""
+        SELECT DISTINCT rinpersoon
+        FROM synth_hh
+        WHERE PLHH != 'child living at home'
+    """).fetchnumpy()['rinpersoon']
+
+    final_year_hhs = conn.execute("""
+        SELECT DISTINCT HOUSEKEEPING_NR
+        FROM synth_hh
+    """).fetchnumpy()['HOUSEKEEPING_NR']
+
     # Split into train and test sets
-    train_hhs = random.sample(list(final_year_hhs), round(0.8*len(final_year_hhs)))
-    test_hhs = [i for i in final_year_hhs if i not in train_hhs]
-    train_rins = list(synth_hh['rinpersoon'][synth_hh['HOUSEKEEPING_NR'].isin(train_hhs)])
-    test_rins = list(synth_hh['rinpersoon'][~synth_hh['HOUSEKEEPING_NR'].isin(test_hhs)])
-    train_rins = [i for i in train_rins if i in final_year_rins]
-    test_rins = [i for i in test_rins if i in final_year_rins]
-    
+    train_size = round(0.8 * len(final_year_hhs))
+    random.shuffle(final_year_hhs)
+    train_hhs = final_year_hhs[:train_size]
+    test_hhs = final_year_hhs[train_size:]
+
+    # Create temporary tables for train and test households
+    conn.execute("CREATE TEMPORARY TABLE train_hhs (HOUSEKEEPING_NR VARCHAR)")
+    conn.executemany("INSERT INTO train_hhs VALUES (?)", [(hh,) for hh in train_hhs])
+
+    conn.execute("CREATE TEMPORARY TABLE test_hhs (HOUSEKEEPING_NR VARCHAR)")
+    conn.executemany("INSERT INTO test_hhs VALUES (?)", [(hh,) for hh in test_hhs])
+
+    train_rins = conn.execute("""
+        SELECT DISTINCT s.rinpersoon
+        FROM synth_hh s
+        JOIN train_hhs t ON s.HOUSEKEEPING_NR = t.HOUSEKEEPING_NR
+        WHERE s.rinpersoon IN (SELECT UNNEST(?))
+    """, [list(final_year_rins)]).fetchnumpy()['rinpersoon']
+
+    test_rins = conn.execute("""
+        SELECT DISTINCT s.rinpersoon
+        FROM synth_hh s
+        JOIN test_hhs t ON s.HOUSEKEEPING_NR = t.HOUSEKEEPING_NR
+        WHERE s.rinpersoon IN (SELECT UNNEST(?))
+    """, [list(final_year_rins)]).fetchnumpy()['rinpersoon']
+
     # Process outcomes
-    outcome = pd.read_csv(os.path.join('synth', 'data', 'edit', 'household_bus.csv'))
-    outcome = outcome[outcome['DATE_STIRTHH'] == '1999-01-01']
-    outcome_rins_1 = outcome['rinpersoon'][outcome['EVENT'] == 'child_born']
-    
+    outcome_rins_1 = conn.execute("""
+        SELECT DISTINCT rinpersoon
+        FROM household_bus
+        WHERE DATE_STIRTHH = '1999-01-01' AND EVENT = 'child_born'
+    """).fetchnumpy()['rinpersoon']
+
     # Create outcome dictionary
-    outcome_dict = {rin: 1 if rin in outcome_rins_1.values else 0 for rin in final_year_rins}
+    outcome_dict = conn.execute("""
+        WITH outcome_table AS (
+            SELECT UNNEST(?) AS rinpersoon, 1 AS outcome
+        )
+        SELECT f.rinpersoon, COALESCE(o.outcome, 0) AS outcome
+        FROM (SELECT UNNEST(?) AS rinpersoon) f
+        LEFT JOIN outcome_table o ON f.rinpersoon = o.rinpersoon
+    """, [list(outcome_rins_1), list(final_year_rins)]).fetchall()
+
+    outcome_dict = dict(outcome_dict)
+
+    # Clean up temporary tables
+    conn.execute("""
+        DROP TABLE IF EXISTS synth_hh;
+        DROP TABLE IF EXISTS train_hhs;
+        DROP TABLE IF EXISTS test_hhs;
+    """)
+
+    conn.close()
         
     num_processes = min(max_processes or multiprocessing.cpu_count(), multiprocessing.cpu_count())
     print(f"Using {num_processes} processes for parallel generation.")
@@ -117,6 +201,7 @@ def main(bol_name, recipe_name, max_processes=None, shard_size=1000, output_dir=
     os.makedirs(test_dir, exist_ok=True)
 
     with multiprocessing.Pool(processes=num_processes) as pool:
+
         print("Generating and saving train Books of Life with outcomes:")
         process_and_save_books(train_rins, recipe_yaml_path, train_dir, shard_size, pool, outcome_dict)
         
@@ -125,6 +210,10 @@ def main(bol_name, recipe_name, max_processes=None, shard_size=1000, output_dir=
 
     # store recipe file in data directory
     os.system(f"cp {recipe_yaml_path} {base_dir}")
+
+    # close all DB connections in conn_dict
+    for conn in conn_dict.values():
+        conn.close()
 
     print("All Books of Life with outcomes have been generated and saved in JSONL shards.")
 
@@ -136,7 +225,7 @@ if __name__ == "__main__":
     args = argparse.ArgumentParser()
     args.add_argument("--bol_name", type=str, required=True, help="Name of the Book of Life data repository that is stored.")
     args.add_argument("--recipe_name", type=str, required=True, help="Name of the recipe file to use. This should be stored in the recipe directory.")
-    args.add_argument("--max_processes", type=int, default=4, help="Maximum number of processes to use for parallel generation.")
+    args.add_argument("--max_processes", type=int, default=4, choices=list(range(1,13)), help="Maximum number of processes to use for parallel generation.")
     args.add_argument("--shard_size", type=int, default=10000, help="Number of entries per shard.")
     args.add_argument("--output_dir", type=str, default=None, help="Output directory to save the data directory.")
     args.add_argument("--save_summary", action='store_true', help="Whether to save the token length statistics summary to the data directory after generation.")
