@@ -9,13 +9,15 @@ from serialization.instantiator_scripts.household_bus import get_households
 from serialization.instantiator_scripts.education_bus import get_education_events
 from serialization.instantiator_scripts.employment_bus import get_employment_events
 from operator import attrgetter
+import duckdb
 
 class BookofLifeGenerator:
-    def __init__(self, rinpersoon, recipe_yaml_path):
+    def __init__(self, rinpersoon, recipe_yaml_path, duck_db_conn):
         self.rinpersoon = rinpersoon
         self.recipe = Recipe(recipe_yaml_path)
         self.book: str = ""
         self.paragraphs: List[Paragraph] = []
+        self.conn = duck_db_conn
         self.instantiate_paragraphs()
 
         self.social_context_paragraphs = self.instantiate_social_context_paragraphs(self.recipe.social_context_features)
@@ -26,13 +28,13 @@ class BookofLifeGenerator:
             features = self.recipe.get_features(dataset_name)
 
             if dataset_name == 'persoon_tab':
-                self.paragraphs.append(get_person_attributes(self.rinpersoon))
+                self.paragraphs.append(get_person_attributes(self.rinpersoon, self.conn))
             elif dataset_name == 'household_bus':
-                self.paragraphs.extend(get_households(self.rinpersoon))
+                self.paragraphs.extend(get_households(self.rinpersoon, self.conn))
             elif dataset_name == 'education_bus':
-                self.paragraphs.extend(get_education_events(self.rinpersoon))
+                self.paragraphs.extend(get_education_events(self.rinpersoon, self.conn))
             elif dataset_name == 'employment_bus':
-                self.paragraphs.extend(get_employment_events(self.rinpersoon))
+                self.paragraphs.extend(get_employment_events(self.rinpersoon, self.conn))
             else:
                 raise ValueError(f"Dataset name {dataset_name} not recognized")
             
@@ -67,7 +69,7 @@ class BookofLifeGenerator:
                                 'sorting_keys': self.recipe.sorting_keys,
                                 'paragraph_generator': 'get_paragraph_string_tabular'
                             }
-                        })
+                        }, duck_db_conn=self.conn)
 
         return result
 

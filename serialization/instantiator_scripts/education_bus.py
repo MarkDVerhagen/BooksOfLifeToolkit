@@ -3,9 +3,7 @@ import json
 from typing import List
 from serialization.instantiator_scripts.EducationEventParagraph import EducationEventParagraph
 
-def get_education_events(rinpersoon: str, db_name: str = 'synthetic_data.duckdb') -> List[EducationEventParagraph]:
-    # Connect to the database
-    conn = duckdb.connect(db_name, read_only=True)
+def get_education_events(rinpersoon: str, conn) -> List[EducationEventParagraph]:
 
     # Get the column names from the table
     columns_query = "SELECT column_name FROM information_schema.columns WHERE table_name = 'education_bus'"
@@ -41,9 +39,6 @@ def get_education_events(rinpersoon: str, db_name: str = 'synthetic_data.duckdb'
             RICHTSOI2021SCEDF2013HGNIRWO=row_dict['RICHTSOI2021SCEDF2013HGNIRWO'] if 'RICHTSOI2021SCEDF2013HGNIRWO' in row_dict else None
         )
         education_paragraphs.append(education_paragraph)
-
-    # Close the database connection
-    conn.close()
 
     return education_paragraphs
 

@@ -3,13 +3,11 @@ import json
 from typing import List
 from serialization.instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
 
-def get_households(rinpersoon: str, db_name: str = 'synthetic_data.duckdb') -> List[HouseholdEventParagraph]:
+def get_households(rinpersoon: str, conn) -> List[HouseholdEventParagraph]:
     """
     This function loads all households for a given rinpersoon (person_id)
     by querying the SQLite database and creating a list of HouseholdEventParagraph objects.
     """
-    # Connect to the database
-    conn = duckdb.connect(db_name, read_only=True)
 
     # Get the column names from the table
     columns_query = "SELECT column_name FROM information_schema.columns WHERE table_name = 'household_bus'"
@@ -47,11 +45,11 @@ def get_households(rinpersoon: str, db_name: str = 'synthetic_data.duckdb') -> L
             TYPHH=row_dict['TYPHH'],
             DATE_STIRTHH=row_dict['DATE_STIRTHH'],
             DATUMEINDEHH=row_dict['DATUMEINDEHH'],
-            NUMBERPERSHH=int(row_dict['NUMBERPERSHH']),
+            NUMBERPERSHH=row_dict['NUMBERPERSHH'],
             PLHH=row_dict['PLHH'],
             REFPERSOONHH=row_dict['REFPERSOONHH'],
-            AANTALOVHH=int(row_dict['AANTALOVHH']),
-            AANTALKINDHH=int(row_dict['AANTALKINDHH']),
+            AANTALOVHH=row_dict['AANTALOVHH'],
+            AANTALKINDHH=row_dict['AANTALKINDHH'],
             BIRTHEDYOUNGCHILDHH=row_dict['BIRTHEDYOUNGCHILDHH'],
             GEBMAANDJONGSTEKINDHH=row_dict['GEBMAANDJONGSTEKINDHH'],
             GEBJAAROUDSTEKINDHH=row_dict['GEBJAAROUDSTEKINDHH'],
@@ -62,9 +60,6 @@ def get_households(rinpersoon: str, db_name: str = 'synthetic_data.duckdb') -> L
             ALL_MEMBERS=row_dict.get('ALL_MEMBERS')
         )
         household_paragraphs.append(household_paragraph)
-
-    # Close the database connection
-    conn.close()
 
     return household_paragraphs
 

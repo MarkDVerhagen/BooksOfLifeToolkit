@@ -2,13 +2,11 @@ import duckdb
 from typing import Dict, Any
 from serialization.instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
 
-def get_person_attributes(rinpersoon: str, db_name: str = 'synthetic_data.duckdb') -> PersonAttributesParagraph:
+def get_person_attributes(rinpersoon: str, conn) -> PersonAttributesParagraph:
     """
     This function loads personal attributes for a given rinpersoon (person_id)
     by querying the SQLite database and creating the PersonAttributesParagraph object.
     """
-   # Connect to the database
-    conn = duckdb.connect(db_name, read_only=True)
 
     # Get the column names from the table
     columns_query = "SELECT column_name FROM information_schema.columns WHERE table_name = 'persoon_tab'"
@@ -26,9 +24,6 @@ def get_person_attributes(rinpersoon: str, db_name: str = 'synthetic_data.duckdb
 
     # Create a dictionary with column names as keys and row values as values
     person_row = dict(zip(columns, result))
-
-    # Close the database connection
-    conn.close()
 
     # Create the PersonAttributesParagraph object
     person_attributes = PersonAttributesParagraph(
