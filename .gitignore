@@ -20,3 +20,4 @@ synth/wrangle*
 !synth/data/raw/.gitkeep
 !synth/data/edit/.gitkeep
 !synth/hashes/.gitkeep
+*.duckdb

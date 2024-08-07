@@ -1,7 +1,7 @@
 import yaml
 import pandas as pd
 import os
-import sqlite3
+import argparse
 import re
 import json
 import duckdb
@@ -135,8 +135,10 @@ class Generator:
             print(f"Row count: {row_count}")
 
 if __name__ == "__main__":    
-    # Example usage
-    yaml_file = os.path.join('recipes', 'make_db.yaml')
-    data_path = os.path.join('synth', 'data')
-    db_name = 'synthetic_data.duckdb'
-    a = Generator(yaml_file, data_dir=data_path, db_name=db_name)
+    parser = argparse.ArgumentParser(description='Populate a DuckDB database with data')
+    parser.add_argument('--data_dir', type=str, default=os.path.join('synth', 'data'), help='Path to data directory')
+    parser.add_argument('--yaml_file', type=str, default=os.path.join('recipes', 'make_db.yaml'), help='Path to the YAML configuration file')
+    parser.add_argument('--db_name', type=str, default='synthetic_data.duckdb', help='Name of the DuckDB database')
+    args = parser.parse_args()
+    
+    a = Generator(args.yaml_file, data_dir=args.data_dir, db_name=args.db_name)
