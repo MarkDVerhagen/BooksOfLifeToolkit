@@ -82,11 +82,16 @@ class PersonAttributesParagraph(Paragraph):
     def calculate_age(self, target_date: datetime) -> int:
         # Handle unknown month and day
         if self.month == "--":
-            self.month = "06"  # Assume June
+            self.month = 6  # Assume June
         if self.day == "--":
-            self.day = "15"  # Assume 15th
+            self.day = 15  # Assume 15th
 
-        birth_date = datetime(self.year, int(self.month), int(self.day))
+        if self.month is None:
+            self.month = 6
+        if self.day is None:
+            self.day = 15
+
+        birth_date = datetime(self.year, self.month, self.day)
         age = target_date.year - birth_date.year
         
         # Check if the birthday has occurred this year
