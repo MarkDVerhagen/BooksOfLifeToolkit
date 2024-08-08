@@ -36,5 +36,6 @@ datasets:
       - SCDAGH
       - SOPGRCHTEXTRSAL
 formatting:
-  sorting_keys: year  ## right now only supports 'year' and 'dataset_name'
+  sorting_keys: # list of keys to sort the paragraphs on. Order indicates priority.
+      - year
   paragraph_generator: get_paragraph_string_tabular
