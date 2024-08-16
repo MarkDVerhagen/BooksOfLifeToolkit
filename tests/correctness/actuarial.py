@@ -25,15 +25,16 @@ def gen_fertility_probs(test_dir):
 def gen_books(df, test_dir, sample_n=250000):
     # Sample from the DataFrame
     sample = df.sample(sample_n, weights='sample_weight', random_state=1704, replace=True)
-    
+    sample['outcome'] = sample['fertility_prob'].apply(lambda x: 1 if x > np.random.uniform(0, 1) else 0)
     sample['RINPERSOON'] = range(sample.shape[0])
+    
     # Write each row as a JSON object to a JSONL file
     with open(os.path.join(test_dir, 'output', f'sample_{sample_n}.jsonl'), 'w') as jsonl_file:
         for _, person in sample.iterrows():
             pdict = {
-                "rinpersoon": person["RINPERSOON"],
+                "rinpersoon": person['RINPERSOON'],
                 "book_content": f"\n\nGender: {person['GBAGESLACHT']}\nYear of Birth: {person['GBAGEBOORTEJAAR']}",
-                "outcome": str(int(np.random.uniform() <= person['fertility_prob'])),
+                "outcome": person['outcome'],
             }
             jsonl_file.write(json.dumps(pdict) + '\n')
 
