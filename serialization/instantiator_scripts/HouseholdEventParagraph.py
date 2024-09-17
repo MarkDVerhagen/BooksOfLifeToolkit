@@ -9,6 +9,9 @@ class HouseholdEventParagraph(Paragraph):
     It includes attributes such as household start and end dates, household type, number of persons 
     in the household, and more.
     name: household_bus
+        
+    Average token length of default book: 2,000
+    Std. Dev. token length of default book: 1,659
     """
     ## HOUSEHOLD
     # Unique household identification number

@@ -10,6 +10,9 @@ class PersonAttributesParagraph(Paragraph):
     It extends the Paragraph class by adding attributes that capture invariant personal information 
     such as country of birth, gender, parents' birth countries, and more.
     name: persoon_tab
+        
+    Average token length of default book: 89
+    Std. Dev. token length of default book: -
     """
 
     ### ORDER OF BELOW IS RELEVANT! ###
