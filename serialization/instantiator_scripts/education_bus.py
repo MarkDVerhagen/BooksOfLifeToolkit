@@ -3,14 +3,16 @@ import json
 from typing import List
 from serialization.instantiator_scripts.EducationEventParagraph import EducationEventParagraph
 
-def get_education_events(rinpersoon: str, conn) -> List[EducationEventParagraph]:
+# def get_education_events(rinpersoon: str, db_name: str = 'synthetic_data.duckdb') -> List[EducationEventParagraph]: ## 20/8
+def get_education_events(rinpersoon: str, conn, table_version: str = '') -> List[EducationEventParagraph]: ## 20/8
+    # conn = duckdb.connect(db_name, read_only=True) ## 20/8
 
     # Get the column names from the table
-    columns_query = "SELECT column_name FROM information_schema.columns WHERE table_name = 'education_bus'"
+    columns_query = f"SELECT column_name FROM information_schema.columns WHERE table_name = 'education_bus{table_version}'"
     columns = [row[0] for row in conn.execute(columns_query).fetchall()]
 
     query = f"""
-    SELECT {', '.join(columns)} FROM education_bus
+    SELECT {', '.join(columns)} FROM education_bus{table_version}
     WHERE rinpersoon = ?
     """
     results = conn.execute(query, [rinpersoon]).fetchall()
@@ -26,7 +28,7 @@ def get_education_events(rinpersoon: str, conn) -> List[EducationEventParagraph]
         education_paragraph = EducationEventParagraph(
             dataset_name="education_bus",
             rinpersoon=rinpersoon,
-            year = int(row_dict['year']) if 'year' in row_dict else None,
+            year = int(row_dict['year']) if 'year' in row_dict else 2020,
             OPLNRHB=row_dict['OPLNRHB'] if 'OPLNRHB' in row_dict else None,
             OPLNRHG=row_dict['OPLNRHG'] if 'OPLNRHG' in row_dict else None,
             OPLNIVSOI2016AGG4HBMETNIRWO=row_dict['OPLNIVSOI2016AGG4HBMETNIRWO'] if 'OPLNIVSOI2016AGG4HBMETNIRWO' in row_dict else None,
@@ -39,6 +41,9 @@ def get_education_events(rinpersoon: str, conn) -> List[EducationEventParagraph]
             RICHTSOI2021SCEDF2013HGNIRWO=row_dict['RICHTSOI2021SCEDF2013HGNIRWO'] if 'RICHTSOI2021SCEDF2013HGNIRWO' in row_dict else None
         )
         education_paragraphs.append(education_paragraph)
+
+    # Close the database connection
+    # conn.close() ## 20/8
 
     return education_paragraphs
 

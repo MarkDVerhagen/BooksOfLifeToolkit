@@ -3,7 +3,9 @@ import json
 from typing import List
 from serialization.instantiator_scripts.EmploymentEventParagraph import EmploymentEventParagraph
 
-def get_employment_events(rinpersoon: str, conn) -> List[EmploymentEventParagraph]:
+# def get_employment_events(rinpersoon: str, db_name: str = 'synthetic_data.duckdb', table_version: str = '') -> List[EmploymentEventParagraph]: ## 20/8
+def get_employment_events(rinpersoon: str, conn, table_version: str = '') -> List[EmploymentEventParagraph]: ## 20/8
+    # conn = duckdb.connect(db_name, read_only=True) ## 20/8
 
     # Get the column names from the table
     columns_query = "SELECT column_name FROM information_schema.columns WHERE table_name = 'employment_bus'"
@@ -160,6 +162,9 @@ def get_employment_events(rinpersoon: str, conn) -> List[EmploymentEventParagrap
         )
 
         employment_paragraphs.append(employment_paragraph)
+
+    # Close the database connection
+    # conn.close() ## 20/8
 
     return employment_paragraphs
 

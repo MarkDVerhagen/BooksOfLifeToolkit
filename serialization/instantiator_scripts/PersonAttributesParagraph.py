@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field, fields
-from datetime import datetime
 from typing import List, Literal
 from serialization.instantiator_scripts.Paragraph import Paragraph
 
@@ -21,7 +20,7 @@ class PersonAttributesParagraph(Paragraph):
     # Gender: 1 - man, 2 - woman, "-" - unknown
     GBAGESLACHT: Literal["1", "2", "-"] = field(default=None)
     # Year of birth
-    GBAGEBOORTEJAAR: int = field(default=None)
+    GBAGEBOORTEJAAR: str = field(default=None)
     # Month of birth: "01" to "12", "--" - unknown
     GBAGEBOORTEMAAND: Literal["--", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"] = field(default=None)
     # Day of birth: "01" to "31", "--" - unknown
@@ -50,7 +49,7 @@ class PersonAttributesParagraph(Paragraph):
     # Mother's gender: 1 - man, 2 - woman, "-" - unknown
     GBAGESLACHTMOEDER: Literal["1", "2", "-"] = field(default=None)
     # Mother's birth year
-    GBAGEBOORTEJAARMOEDER: int = field(default=None)
+    GBAGEBOORTEJAARMOEDER: str = field(default=None)
     # Mother's birth month: "01" to "12", "--" - unknown
     GBAGEBOORTEMAANDMOEDER: Literal["--", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"] = field(default=None)
     # Mother's birth day: "01" to "31", "--" - unknown
@@ -62,44 +61,22 @@ class PersonAttributesParagraph(Paragraph):
     # Father's gender: 1 - man, 2 - woman, "-" - unknown
     GBAGESLACHTVADER: Literal["1", "2", "-"] = field(default=None)
     # Father's birth year
-    GBAGEBOORTEJAARVADER: int = field(default=None)
+    GBAGEBOORTEJAARVADER: str = field(default=None)
     # Father's birth month: "01" to "12", "--" - unknown
     GBAGEBOORTEMAANDVADER: Literal["--", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"] = field(default=None)
     # Father's birth day: "01" to "31", "--" - unknown
     GBAGEBOORTEDAGVADER: Literal["--", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"] = field(default=None)
+    
+    
 
     def __post_init__(self):
         super().__post_init__()
-        assert self.dataset_name == 'persoon_tab', "This class is specifically designed for the GBAPERSOONTAB data table. Dataset name must be 'persoon_tab'"
+        assert self.dataset_name.startswith('persoon_tab'), "This class is specifically designed for the GBAPERSOONTAB data table. Dataset name must be 'persoon_tab'"
 
-        self.year = self.GBAGEBOORTEJAAR
+        self.year = int(self.GBAGEBOORTEJAAR)
         self.month = self.GBAGEBOORTEMAAND
         self.day = self.GBAGEBOORTEDAG
 
-        target_date = datetime(2020, 12, 31) # getting age on 12/31/2020
-        self.age = self.calculate_age(target_date)
-
-    def calculate_age(self, target_date: datetime) -> int:
-        # Handle unknown month and day
-        if self.month == "--":
-            self.month = 6  # Assume June
-        if self.day == "--":
-            self.day = 15  # Assume 15th
-
-        if self.month is None:
-            self.month = 6
-        if self.day is None:
-            self.day = 15
-
-        birth_date = datetime(self.year, self.month, self.day)
-        age = target_date.year - birth_date.year
-        
-        # Check if the birthday has occurred this year
-        if (target_date.month, target_date.day) < (birth_date.month, birth_date.day):
-            age -= 1
-        
-        return age
-    
     def get_paragraph_string_biographic(self, features=None):
         paragraph = ""
 
