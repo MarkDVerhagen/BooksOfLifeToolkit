@@ -4,7 +4,7 @@
 
 This repository contains the **Books of Life Toolbox (BOLT)**, a framework designed to parse rich, structured social science data (like registry data, surveys, logs) into textual life sequences, or "Books of Life" (BoLs). This approach allows researchers to leverage the power of Large Language Models (LLMs) for analyzing complex life trajectories, moving beyond the traditional "X matrix" paradigm.
 
-## Introduction: Embracing the "Bitter Lesson"
+## Motivation
 
 As detailed in our accompanying paper "Life Course Analysis in the Time of LLMs", there's a growing tension between the richness of modern social data and the methods traditionally used to analyze it. Formatting complex, longitudinal, hierarchical, and networked data into a flat "X matrix" for GLMs or standard machine learning often leads to information loss and requires extensive, task-specific feature engineering.
 
@@ -23,18 +23,14 @@ BOLT is built around several core concepts:
 
 1.  **Books of Life (BoLs):** The primary output. A textual representation with attributes of a specific unit of analysis (e.g., a person, a household) based on available data sources.
 2.  **Paragraphs:** The building blocks of a BoL. Each paragraph typically corresponds to a single record or event from an information source (e.g., a row in a table, a specific spell).
-3.  **Instantiation:** The process of converting raw data from various sources into structured `Paragraph` objects. This involves identifying key variables:
-    *   **Identifiers:** Link records for the main unit of analysis (e.g., `rinpersoon`).
-    *   **Hierarchy Variables:** Link related entities (e.g., `hh_id` to link household members, employer ID to link coworkers).
-    *   **Temporal Variables:** Define the time and sequence of events (e.g., `start_date`, `end_date`).
-    *   **Content Variables:** All other information to be included in the paragraph text.
+3.  **Instantiation:** The process of converting raw data from various sources into structured `Paragraph` objects. This is done by the instantiator functions (e.g. `get_households()` in `household_bus.py`)
 4.  **Recipes (`*.yaml`):** Configuration files that define *how* to build a BoL. They specify:
     *   The **unit of analysis** identifier.
     *   The **information sources** to include.
-    *   **Filtering rules** for paragraphs (e.g., based on date, content, or sequence position).
-    *   **Hierarchy rules** for including information about related entities (e.g., fetching data for household members).
-    *   **Parsing and ordering** instructions for generating the final text.
-5.  **Modularity (`serialization/instantiator_scripts/`):** New data sources can be integrated by creating dedicated Python classes (inheriting from `Paragraph` or a specialized base) that handle the instantiation logic for that source.
+    *   **Nested Social Context** for including information about related entities (e.g., fetching data for household members).
+    *   **Formatting and ordering** instructions for writing the final BoL.
+
+![BOLT workflow overview](path_or_url_to_image)
 
 
 ## Getting Started
@@ -115,10 +111,22 @@ This quickstart uses synthetic data to demonstrate the end-to-end workflow.
         *   `--output_dir`: Optional parent directory to save the `bol_name` directory into.
         *   `--save_summary`: Flag to generate and save token count statistics.
 
-*   **Single BoL Generation (`main_test.py`):**
-    *   Use `main_test.py` primarily for debugging recipes or inspecting the output for a specific individual.
-    *   Requires `--hash` (the identifier of the unit of analysis) and `--recipe` (the recipe name).
-    *   Prints the generated BoL to the console.
+*   **Single BoL Generation Example:**
+The following code snippet prints the Book of Life for person `"03c6605f"`.
+
+```python
+from serialization import BookofLifeGenerator 
+
+rinpersoon = "03c6605f"
+recipe_yaml_path = "path/to/your/recipe.yaml"
+
+generator = BookofLifeGenerator(rinpersoon, recipe_yaml_path)
+book = generator.generate_book()
+
+# Output the book
+print(book)
+```
+    
 
 ## Understanding Recipes (`recipes/*.yaml`)
 
