@@ -31,7 +31,7 @@ BOLT is built around several core concepts:
     *   **Formatting and ordering** instructions for writing the final BoL.
 
 <p align="center">
-  <img src="https://github.com/MarkDVerhagen/prefer_prepare/blob/8ab4a67f08eeca89f96b1d85e91b68a45a5217ab/bolt_workflow.png" alt="BOLT overview" width="600"/>
+  <img src="https://github.com/MarkDVerhagen/prefer_prepare/blob/4adac4a7899abe585ad60b90e33cdf598e36e1a5/bolt_workflow.png" alt="BOLT overview" width="800"/>
 </p>
 
 ## Getting Started
