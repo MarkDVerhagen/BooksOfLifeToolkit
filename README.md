@@ -122,27 +122,71 @@ This quickstart uses synthetic data to demonstrate the end-to-end workflow.
 
 ## Understanding Recipes (`recipes/*.yaml`)
 
-Recipes are the core configuration for BOLT, defining the structure and content of the Books of Life. They follow the 4-step conceptual process:
+Recipes are the core configuration for BOLT, defining the structure and content of the Books of Life. They follow the 3-step conceptual process:
 
-1.  **`UoA_identifier:`** (Step 1: Choose Unit of Analysis) Specifies the primary key for the unit of analysis (e.g., `rinpersoon`).
-2.  **`Information_sources:`** (Step 2 & 3: Determine & Filter Information) A list of data sources to include. Each source specifies:
-    *   `source_name:` Matches the table name in the database (or a logical name).
-    *   `parsing_config:` Defines how to map database columns to paragraph text (e.g., using `feature_translations.json`).
-    *   `filters:` Rules to select specific paragraphs (e.g., `start_year >= 2018`, `[:1]` for the first record, `[-2:]` for the last two records).
-    *   `hierarchy:` Defines how to include information from related entities (e.g., using `hh_id` to recursively generate BoLs for household members using a nested recipe). See `recipes/template.yaml` for an example.
-3.  **`Parsing_settings:`** (Step 4: Generate the Book) Controls the final output generation:
-    *   `order:` How paragraphs are ordered (`default` orders by source then time within source, `chronological` orders strictly by time across all sources).
-    *   `parsing_style:` How paragraphs are formatted (`machine` for `key: value` pairs, `natural` for more sentence-like structures based on templates).
+1.  **`main_key:`** (Step 1: Choose Unit of Analysis) Specifies the primary key for the unit of analysis (e.g., `rinpersoon`; so far we only support this).
+2.  **`datasets:`** (Step 2 & 3: Determine & Filter Information) A list of data sources to include. Each source specifies:
+    *   `name:` Matches the table name in the database (or a logical name).
+    *   `features:` Defines which features to include in the book. Available features can be seen from the `Paragraph`class of the respective dataset.
+    *   `social_context_features:` Defines whether to recursively instantiate Paragraph objects for related entities (e.g., using `CHILDREN` and `PARTNERS` to recursively generate BoLs for household members using a nested recipe). See `recipes/template.yaml` and below for an example.
+3.  **`formatting:`** (Step 4: Generate the Book) Controls the final output generation:
+    *   `sorting_keys:` How paragraphs are ordered (you can select any attribute part of the `Paragraph` class).
+    *   `paragraph_generator:` How paragraphs are formatted (`machine` for `key: value` pairs, `natural` for more sentence-like structures based on templates).
+  
+Example:
+```main_key: rinpersoon
+datasets:
+  - name: persoon_tab
+    features:
+      - GBAGEBOORTEMAAND
+      - GBAGEBOORTEDAG
+      - GBAGEBOORTEJAARVADER
+      - GBAGESLACHTVADER
+  - name: household_bus
+    features:
+    social_context_features:
+      PARTNERS:
+          - name: household_bus
+            features:
+              - GBAGESLACHT
+            social_context_features:
+              CHILDREN:
+                  - name: persoon_tab
+                    features:
+                      - GBAGEBOORTEJAARMOEDER
+      CHILDREN: 
+        - name: persoon_tab
+          features:
+            - GBAGESLACHT
+  - name: education_bus
+    features:
+      - OPLNRHB
+      - OPLNIVSOI2016AGG4HGMETNIRWO
+      - OPLNIVSOI2021AGG4HBmetNIRWO
+  - name: employment_bus
+    features:
+      - SIMPUTATIE
+      - SEXTRSAL
+      - SPRWAOAOK
+      - SINLEGLEVENSLOOP
+      - SCDAGH
+      - SOPGRCHTEXTRSAL
+formatting:
+  sorting_keys: # list of keys to sort the paragraphs on. Order indicates priority.
+      - year
+  paragraph_generator: get_paragraph_string_tabular
+```
 
-Explore the files in the `recipes/` directory for concrete examples.
+Explore the files in the `recipes/` directory for more examples.
 
 ## Extending BOLT: Adding New Data Sources
 
 To add support for a new data source (e.g., a new registry table):
 
-1.  **Create an Instantiator Class:** Add a new Python file in `serialization/instantiator_scripts/`. Create a class that inherits from `Paragraph` (or a relevant base like `LisaBaseParagraph.py`). This class needs to handle fetching data for the specific source and defining its `identifier`, `hierarchy_vars`, `temporal_vars`, and how content maps to the paragraph text.
-2.  **Update `populate_db.py`:** Modify this script to handle loading your new synthetic or real data source into the DuckDB database, ensuring the table name matches what your instantiator expects. You might also need to adjust `make_db.py` if explicit schema definition is required.
-3.  **Update/Create Recipes:** Add your new `source_name` to the `Information_sources` section of relevant YAML recipes in the `recipes/` directory.
+1.  **Create an Instantiator Class:** Add a new Python file in `serialization/instantiator_scripts/`. Create a class that inherits from `Paragraph` (or a relevant base like `HouseholdEventParagraph.py`).
+2.  **Add Instantiator Function:** Add a new Python file in `serialization/instantiator_scripts/` that instantiates the Paragraph object for the respective dataset and person. E.g. `househould_bus.py`
+3.  **Update `populate_db.py`:** Modify this script to handle loading your new synthetic or real data source into the DuckDB database, ensuring the table name matches what your instantiator expects. You might also need to adjust `make_db.py` if explicit schema definition is required.
+4.  **Update BookOfLifeGenerator Class:** Add your new instantiator script in the constructor of the BookOfLifeGenerator Class to include it. 
 
 ## Connection to LLM Fine-tuning
 
