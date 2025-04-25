@@ -1,4 +1,5 @@
 import tiktoken
+from transformers import AutoTokenizer
 import numpy as np
 import os
 import json
@@ -6,7 +7,13 @@ import random
 from datasets import load_dataset
 
 def generate_token_length_stats(dataset_path: str, sample_size: int = 10000, save_to_file: bool = False):
-    tokenizer = tiktoken.encoding_for_model("gpt-4")
+    # Load the LLaMA 7B tokenizer from the hardcoded local directory
+    model_path = "ADD PATH TO LLAMA ON OSSC"
+    tokenizer = AutoTokenizer.from_pretrained(model_path, use_fast=False)
+
+    # tiktoken tokenizer not longer used
+    #  tokenizer = tiktoken.encoding_for_model("gpt-4")
+    
     dataset = load_dataset(dataset_path)
     
     def get_stats(split):

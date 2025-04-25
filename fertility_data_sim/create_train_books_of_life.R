@@ -64,9 +64,9 @@ ggsave(filename = "figures/fer_sim_dgp.png", plot = g)
 write_csv(param_combos, "data/fer_sim_dpg_params.csv")
 
 # set parameters
-n_chad <- 1000
-n_netherlands <- 1000
-n_south_korea <- 1000
+n_chad <- 5000
+n_netherlands <- 5000
+n_south_korea <- 5000
 
 prop_desire_chad <- 0.3
 chad_desire <- c(rep("wants a baby", round(n_chad * prop_desire_chad)), 
@@ -109,6 +109,9 @@ people <- people %>%
     desire_hash = hash(desire)
   )
 
+
+
+
 # write instruction file
 
 #header <- "Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request." 
@@ -145,4 +148,6 @@ people %>%
 
 people %>%
   pull(sample_hashed) %>%
-  write_lines(str_glue("fake_data_hashed_train_n_{n_train}.csv"))
+  write_lines(str_glue("fake_data_hashed_train_n_{n_train}.json"))
+
+

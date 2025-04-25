@@ -9,18 +9,21 @@ class HouseholdEventParagraph(Paragraph):
     It includes attributes such as household start and end dates, household type, number of persons 
     in the household, and more.
     name: household_bus
+        
+    Average token length of default book: 2,000
+    Std. Dev. token length of default book: 1,659
     """
     ## HOUSEHOLD
     # Unique household identification number
-    HOUSEKEEPING_NR: str = field(default=None)
+    HUISHOUDNR: str = field(default=None)
     # Household type
     TYPHH: str = field(default=None)
     # Household start date
-    DATE_STIRTHH: str = field(default=None)
+    DATUMAANVANGHH: str = field(default=None)
     # Household end date
     DATUMEINDEHH: str = field(default=None)
     # Number of persons in the household
-    NUMBERPERSHH: int = field(default=None)
+    AANTALPERSHH: int = field(default=None)
     # Place of person in the household
     PLHH: str = field(default=None)
     # Reference person indicator (0: no, 1: yes)
@@ -32,13 +35,13 @@ class HouseholdEventParagraph(Paragraph):
     # Number of children living at home in the household
     AANTALKINDHH: int = field(default=None)
     # Year of birth of the youngest child in the household
-    BIRTHEDYOUNGCHILDHH: int = field(default=None)
+    GEBJAARJONGSTEKINDHH: int = field(default=None)
     # Birth month of the youngest child in the household
     GEBMAANDJONGSTEKINDHH: Literal["--", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"] = field(default=None)
     # Year of birth of the oldest child in the household
     GEBJAAROUDSTEKINDHH: int = field(default=None)
     # Birth month of the oldest child in the household
-    BMAANDOUDSTEKINDHH: Literal["--", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"] = field(default=None)
+    GEBMAANDOUDSTEKINDHH: Literal["--", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"] = field(default=None)
 
     # HOUSEHOLD MEMBER LISTS
     # Children living at home in the household
@@ -48,14 +51,17 @@ class HouseholdEventParagraph(Paragraph):
     # Other members living at home in the household
     OTHER_MEMBERS: List[str] = field(default_factory=list)
     # All members living at home in the household
-    ALL_MEMBERS: List[str] = field(default_factory=list)
+    # ALL_MEMBERS: List[str] = field(default_factory=list)
+
 
     def __post_init__(self):        
         super().__post_init__()
-        assert self.dataset_name == 'household_bus', "This class is specifically designed for the GBAPERSOONTAB data table. Dataset name must be 'household_bus'"
+        assert self.dataset_name.startswith('household_bus'), "This class is specifically designed for the GBAHUISHOUDENSBUS data table. Dataset name must be 'household_bus'"
         
         # set year, month, and day values of parent class from houshold start date
-        year, month, day = self.DATE_STIRTHH.split('-')
+        year = self.DATUMAANVANGHH[:4]
+        month = self.DATUMAANVANGHH[4:6]
+        day = self.DATUMAANVANGHH[6:8]
 
         # Convert them to integers (if needed)
         self.year = int(year)
@@ -81,27 +87,40 @@ class HouseholdEventParagraph(Paragraph):
         return result
 
     def get_paragraph_string_biographic(self, features=None):
-        paragraph = f"On {self.DATE_STIRTHH}, a new household (ID: {self.HOUSEKEEPING_NR}) was formed. "
-
+            
         household_types = {
-            "1": "single-person",
-            "2": "unmarried couple without children",
-            "3": "married couple without children",
-            "4": "unmarried couple with children",
-            "5": "married couple with children",
-            "6": "single parent",
-            "7": "other"
-        }
+                "1": "single-person",
+                "2": "unmarried couple without children",
+                "3": "married couple without children",
+                "4": "unmarried couple with children",
+                "5": "married couple with children",
+                "6": "single parent",
+                "7": "other"
+            }
+        
+        household_place = {
+                "1": "child",
+                "2": "single-person",
+                "3": "partner",
+                "4": "partner",
+                "5": "partner",
+                "6": "partner",
+                "7": "single-parent",
+                "8": "other",
+                "9": "other",
+                "10": "institutional",
+            }
+        paragraph = f"On {self.DATUMAANVANGHH}, a new household (ID: {self.HUISHOUDNR}) was formed. "
 
         household_type = household_types.get(self.TYPHH, "unknown type")
-        paragraph += f"This was a {household_type} household consisting of {self.NUMBERPERSHH} person{'s' if self.NUMBERPERSHH != 1 else ''}. "
+        paragraph += f"This was a {household_type} household consisting of {self.AANTALPERSHH} person{'s' if self.AANTALPERSHH != 1 else ''}. "
 
         if self.AANTALKINDHH > 0:
             paragraph += f"The household included {self.AANTALKINDHH} child{'ren' if self.AANTALKINDHH > 1 else ''}. "
-            if self.GEBJAAROUDSTEKINDHH and self.GEBJAAROUDSTEKINDHH != self.BIRTHEDYOUNGCHILDHH:
-                paragraph += f"The oldest child was born in {self.GEBJAAROUDSTEKINDHH}, while the youngest was born in {self.BIRTHEDYOUNGCHILDHH}. "
-            elif self.BIRTHEDYOUNGCHILDHH:
-                paragraph += f"The {'only' if self.AANTALKINDHH == 1 else 'youngest'} child was born in {self.BIRTHEDYOUNGCHILDHH}. "
+            if self.GEBJAAROUDSTEKINDHH and self.GEBJAAROUDSTEKINDHH != self.GEBJAARJONGSTEKINDHH:
+                paragraph += f"The oldest child was born in {self.GEBJAAROUDSTEKINDHH}, while the youngest was born in {self.GEBJAARJONGSTEKINDHH}. "
+            elif self.GEBJAARJONGSTEKINDHH:
+                paragraph += f"The {'only' if self.AANTALKINDHH == 1 else 'youngest'} child was born in {self.GEBJAARJONGSTEKINDHH}. "
 
         if self.AANTALOVHH > 0:
             paragraph += f"Besides the reference person and any children, there {'was' if self.AANTALOVHH == 1 else 'were'} {self.AANTALOVHH} other household member{'s' if self.AANTALOVHH > 1 else ''}. "
