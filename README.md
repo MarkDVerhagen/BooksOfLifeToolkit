@@ -163,11 +163,10 @@ If you use BOLT or the concepts presented in our work, please cite our paper:
 
 ```bibtex
 @article{VerhagenBOLT2025,
-  title={Embracing the "Bitter Lesson" in social science with the Books of Life Toolbox},
+  title={Life Course Analysis in the Time of LLMs},
   author={Verhagen, Mark and Stroebl, Benedikt and Liu, Tiffany and Liu, Lydia T. and Salganik, Matthew},
   journal={Journal of Computational Social Science},
   year={2025},
-  note={Forthcoming, DRAFT April 25, 2025},
-  url = {https://github.com/markdverhagen/prefer_prepare} # Or paper link
-  % TODO: Update with actual publication details when available
+  note={DRAFT April 25, 2025},
+  url = {https://github.com/markdverhagen/prefer_prepare}
 }
