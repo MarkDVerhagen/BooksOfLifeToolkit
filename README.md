@@ -30,8 +30,9 @@ BOLT is built around several core concepts:
     *   **Nested Social Context** for including information about related entities (e.g., fetching data for household members).
     *   **Formatting and ordering** instructions for writing the final BoL.
 
-![BOLT workflow overview](path_or_url_to_image)
-
+<p align="center">
+  <img src="https://github.com/MarkDVerhagen/prefer_prepare/blob/8ab4a67f08eeca89f96b1d85e91b68a45a5217ab/bolt_workflow.png" alt="BOLT overview" width="600"/>
+</p>
 
 ## Getting Started
 
