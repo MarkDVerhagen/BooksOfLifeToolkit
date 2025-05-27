@@ -10,7 +10,6 @@ from tqdm import tqdm
 import argparse
 import json
 from utils.summary import generate_token_length_stats
-import sqlite3
 
 global conn_dict
 conn_dict = {}

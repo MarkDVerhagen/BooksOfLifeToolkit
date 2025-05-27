@@ -5,6 +5,16 @@ import os
 import argparse
 import re
 import json
+import time
+
+def log_general(log_file, message="Message"):
+    """Logs general statement to a log file"""
+    print(message)
+    current_time = time.time()
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(current_time))
+
+    with open(log_file, "a") as f:
+        f.write(f"{timestamp}: {message}\n")
 
 def write_to_db(conn, data, table_name):
         # Sanitize column names
@@ -58,18 +68,18 @@ def print_database_overview(conn):
         print(f"Row count: {row_count}")
 
 def populate_db(yaml_file, db_name='your_database.db'):
-    with open(os.path.join('recipes', f'{yaml_file}.yaml'), 'r') as file:
+    with open(yaml_file + '.yaml', 'r') as file:
         config = yaml.safe_load(file)
         datasets = config.get('datasets', [])
         main_key = config.get('main_key', [])
     
     # Connect to an in-memory DuckDB database
-    conn = duckdb.connect(db_name)
+    conn = duckdb.connect(os.path.join('dbs', db_name))
 
     for d in datasets:
         print(f"Processing {d['name']}...")
         # Load data
-        data = pd.read_csv(os.path.join('synth', 'data', 'edit', d['name'] + '.csv'))
+        data = pd.read_csv(os.path.join('data', 'edit', d['name'] + '.csv'))
 
         # Write to database
         write_to_db(conn, data, d['name'])
@@ -80,12 +90,20 @@ def populate_db(yaml_file, db_name='your_database.db'):
     # Close the in-memory connection
     conn.close()
 
-
+ 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Populate a DuckDB database with data')
     parser.add_argument('--yaml_file', type=str, help='Path to the YAML configuration file')
-    parser.add_argument('--db_name', type=str, default='synthetic_data.duckdb', help='Name of the DuckDB database')
+    parser.add_argument('--db_name', type=str, default=None, help='Name of the DuckDB database')
+    parser.add_argument('--log_file', type=str, default=None, help='Log file to record database population duration')
+    parser.add_argument('--table_version', type=str, default="", help='Table version to load')
     args = parser.parse_args()
 
-    populate_db(args.yaml_file, args.db_name)
+    db_name = args.db_name if args.db_name else (args.yaml_file.split("/make_")[-1] + args.table_version + '.duckdb')
+    log_file = args.log_file if args.log_file else (args.yaml_file.split("recipes/")[-1] + args.table_version + '.log')
+    log_file = os.path.join('logs', log_file)
+    
+    log_general(log_file, f"Starting to populate database {db_name}.\n")
+    populate_db(args.yaml_file, db_name)
+    log_general(log_file, f"Finished populating database {db_name}.\n")

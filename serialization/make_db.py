@@ -1,27 +1,37 @@
 import yaml
 import pandas as pd
 import os
-import argparse
 import re
 import json
+import argparse
 import duckdb
+import time
+
+def log_general(log_file, message="Message"):
+    """Logs general statement to a log file"""
+    print(message)
+    current_time = time.time()
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(current_time))
+
+    with open(log_file, "a") as f:
+        f.write(f"{timestamp}: {message}\n")
 
 class Generator:
-    def __init__(self, yaml_file, data_dir='data', db_name='your_database.db'):
-        with open(yaml_file, 'r') as file:
+    def __init__(self, yaml_file, data_dir='data', db_name='your_database.db', table_version=""):
+        with open(yaml_file + '.yaml', 'r') as file:
             self.config = yaml.safe_load(file)
         self.datasets = self.config.get('datasets', [])
         self.main_key = self.config.get('main_key', [])
         self.data_dir = data_dir
-        self.db_name = db_name
+        self.db_name = os.path.join('dbs', db_name)
 
         # Connect to an in-memory DuckDB database
-        self.conn = duckdb.connect(db_name)
+        self.conn = duckdb.connect(self.db_name)
 
 
         for d in self.datasets:
             print('Now processing {}'.format(d['name']))
-            data = pd.read_csv(os.path.join(self.data_dir, 'raw', d['name'] + '.csv'))
+            data = pd.read_csv(os.path.join(self.data_dir, 'raw', d['name'] + table_version + '.csv'), encoding_errors='replace')
             
             structure_features = d.get('structure_features')
             structure_class = d.get('structure_classification')
@@ -31,7 +41,11 @@ class Generator:
                 data = self.pull_hierarchy(
                     data, hierarchy_vars=structure_features,
                     main_key=self.main_key, hierarchy_cat=structure_class)
-            
+            features = d.get('features') + ['RINPERSOON']
+            print(f"Collecting features: {features}")
+
+            data = data[features]
+            data['RINPERSOON'] = data['RINPERSOON'].astype(int).astype(str)
             # Write to CSV
             data.to_csv(os.path.join(self.data_dir, 'edit', d['name'] + '.csv'), index=False)
 
@@ -132,13 +146,21 @@ class Generator:
             
             # Get row count
             row_count = self.conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
-            print(f"Row count: {row_count}")
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Populate a DuckDB database with data')
-    parser.add_argument('--data_dir', type=str, default=os.path.join('synth', 'data'), help='Path to data directory')
-    parser.add_argument('--yaml_file', type=str, default=os.path.join('recipes', 'make_db.yaml'), help='Path to the YAML configuration file')
-    parser.add_argument('--db_name', type=str, default='synthetic_data.duckdb', help='Name of the DuckDB database')
+    parser.add_argument('--data_dir', type=str, help='Path to data directory')
+    parser.add_argument('--yaml_file', type=str, help='Path to the YAML configuration file')
+    parser.add_argument('--db_name', type=str, default=None, help='Name of the DuckDB database')
+    parser.add_argument('--log_file', type=str, default=None, help='Log file to record database population duration')
+    parser.add_argument('--table_version', type=str, default="", help='Table version to load')
     args = parser.parse_args()
-    
-    a = Generator(args.yaml_file, data_dir=args.data_dir, db_name=args.db_name)
+
+    db_name = args.db_name if args.db_name else (args.yaml_file.split("/make_")[-1] + args.table_version + '.duckdb')
+    log_file = args.log_file if args.log_file else (args.yaml_file.split("recipes/")[-1] + args.table_version + '.log')
+    log_file = os.path.join('logs', log_file)
+
+    print(f"Logging at: {log_file}")
+    log_general(log_file, f"Starting to prepare data and make a database according to {args.yaml_file}.\n")
+    a = Generator(args.yaml_file, data_dir=args.data_dir, db_name=db_name, table_version=args.table_version)
+    log_general(log_file, f"Finished generating database {db_name}.\n")

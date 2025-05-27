@@ -13,38 +13,25 @@ class EducationEventParagraph(Paragraph):
 
     ### ORDER OF BELOW IS RELEVANT! ###
 
-    ## Education number of highest education completed (codes for course of study)
-    ## full code is the combined OPLNRHB and OPLNRHG codes:
-    ## e.g., 801515 014836 Natural Stone Worker (Natural Stone Worker, Gravework) 
-    ## 801516 014836 Natural Stone Worker (Machine Natural Stone Worker)
-    OPLNRHB: str = field(default=None) 
-    OPLNRHG: str = field(default=None)
 
-    #### 2016 SOI classifications 
-    ## Highest education level achieved (out of 18 categories)
-    OPLNIVSOI2016AGG4HBMETNIRWO: Literal["-"] = field(default=None)
-    OPLNIVSOI2016AGG4HGMETNIRWO: Literal["-" ] = field(default=None) # not sure how this var is diff from the above
-    ## Highest education level achieved (including estimates for educ not observed in registers)
-    RICHTdetailISCEDF2013HBmetNIRWO: Literal["-"] = field(default=None)
-    RICHTdetailISCEDF2013HGmetNIRWO: Literal["-" ] = field(default=None) # again not sure how this var is diff from above
+    Highest_educational_credential: str = field(default=None)
+    Highest_educational_enrolment: str = field(default=None)
+    Highest_education_credential_level: str = field(default=None)
+    Highest_education_enrolment_level: str = field(default=None)
+    Change_year: str = field(default=None)
 
-    #### 2021 SOI classifications
-    OPLNIVSOI2021AGG4HBmetNIRWO: Literal["-" ] = field(default=None)
-    OPLNIVSOI2021AGG4HGmetNIRWO: Literal["-" ] = field(default=None)
-    ## Highest education level achieved (including estimates for educ not observed in registers)
-    RICHTSOI2021SCEDF2013HBNIRWO: Literal["-" ] = field(default=None)
-    RICHTSOI2021SCEDF2013HGNIRWO: Literal["-" ] = field(default=None)
-    
     def __post_init__(self):
-        super().__post_init__()
+        # super().__post_init__()
         assert self.dataset_name == 'education_bus', "This class is specifically designed for the HOOGSTEOPLTAB data table. Dataset name must be 'education_bus'"
 
-        # TODO instantiate parent class attributes such as year, month, etc.
-        # year is extracted from filename: (1999-2022) HOOGSTEOPLJJJJTABVV: year = JJJJ
+        self.year = int(self.year)
         self.month = "10"
         self.day = "01"
 
-
-
+        self.year_dataset_name = self.dataset_name + '_' + str(self.year)
+        self.year_month_day = '_'.join([str(self.year), self.month, self.day])
+        self.Change_year = str(self.year)
+        self.Highest_education_credential_level = self.Highest_education_credential_level.replace(".0", "")
+        self.Highest_education_enrolment_level = self.Highest_education_enrolment_level.replace(".0", "")
     def get_paragraph_string_biographic(self, features=None):
         pass

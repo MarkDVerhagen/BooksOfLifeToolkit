@@ -2,6 +2,25 @@ from dataclasses import dataclass, field
 from typing import List, Literal
 from serialization.instantiator_scripts.Paragraph import Paragraph
 
+def make_date(day, month, year):
+    month_names = {
+                "01": "Jan",
+                "02": "Feb",
+                "03": "Mar",
+                "04": "Apr",
+                "05": "May",
+                "06": "Jun",
+                "07": "Jul",
+                "08": "Aug",
+                "09": "Sep",
+                "10": "Oct",
+                "11": "Nov",
+                "12": "Dec"
+            }
+    month_acronym = month_names.get(month, "unknown month")
+    return ' '.join([month_acronym, day, year])
+
+
 @dataclass
 class HouseholdEventParagraph(Paragraph):
     """The HouseholdCharacteristics class is designed for the dataset that includes household
@@ -9,9 +28,6 @@ class HouseholdEventParagraph(Paragraph):
     It includes attributes such as household start and end dates, household type, number of persons 
     in the household, and more.
     name: household_bus
-        
-    Average token length of default book: 2,000
-    Std. Dev. token length of default book: 1,659
     """
     ## HOUSEHOLD
     # Unique household identification number
@@ -55,7 +71,7 @@ class HouseholdEventParagraph(Paragraph):
 
 
     def __post_init__(self):        
-        super().__post_init__()
+        # super().__post_init__()
         assert self.dataset_name.startswith('household_bus'), "This class is specifically designed for the GBAHUISHOUDENSBUS data table. Dataset name must be 'household_bus'"
         
         # set year, month, and day values of parent class from houshold start date
@@ -68,6 +84,18 @@ class HouseholdEventParagraph(Paragraph):
         self.month = int(month)
         self.day = int(day)
         
+        # Spell start and end
+        self.spell_year_end = int(self.DATUMEINDEHH[:4])
+        self.spell_year_start = int(self.DATUMAANVANGHH[:4])
+        
+        # Formatted date
+        self.DATUMAANVANGHH = make_date(self.DATUMAANVANGHH[6:8],
+                                        self.DATUMAANVANGHH[4:6], self.DATUMAANVANGHH[:4])
+        self.DATUMEINDEHH = make_date(self.DATUMEINDEHH[6:8],
+                                        self.DATUMEINDEHH[4:6], self.DATUMEINDEHH[:4]) if self.DATUMEINDEHH[:4] != "2050" else "Ongoing"
+
+        self.year_dataset_name = self.dataset_name + '_' + str(self.year)
+        self.year_month_day = '_'.join([year, month, day])
         return
 
     def instantiate_social_context_paragraphs(self, social_context_features):

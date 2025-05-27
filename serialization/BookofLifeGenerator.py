@@ -8,85 +8,75 @@ from serialization.instantiator_scripts.persoon_tab import get_person_attributes
 from serialization.instantiator_scripts.household_bus import get_households
 from serialization.instantiator_scripts.education_bus import get_education_events
 from serialization.instantiator_scripts.employment_bus import get_employment_events
+from serialization.instantiator_scripts.object_bus import get_objects
 from operator import attrgetter
 import duckdb
+import json
 
 class BookofLifeGenerator:
-    def __init__(self, rinpersoon, recipe_yaml_path, duck_db_conn):
+    def __init__(self, rinpersoon, recipe_yaml_path, paragraphs, table_version=""):
         self.rinpersoon = rinpersoon
         self.recipe = Recipe(recipe_yaml_path)
         self.book: str = ""
-        self.paragraphs: List[Paragraph] = []
-        self.conn = duck_db_conn
-        self.instantiate_paragraphs()
+        self.paragraphs = paragraphs
+        # self.db_path = db_path
+        self.table_version = table_version
+        # self.conn = duck_db_conn
+        # self.instantiate_paragraphs()
 
-        self.social_context_paragraphs = self.instantiate_social_context_paragraphs(self.recipe.social_context_features)
-
-    def instantiate_paragraphs(self):
-        for dataset in self.recipe.datasets:
-            dataset_name = dataset.get('name')
-            features = self.recipe.get_features(dataset_name)
-
-            if dataset_name == 'persoon_tab':
-                self.paragraphs.append(get_person_attributes(self.rinpersoon, self.conn))
-            elif dataset_name == 'household_bus':
-                self.paragraphs.extend(get_households(self.rinpersoon, self.conn))
-            elif dataset_name == 'education_bus':
-                self.paragraphs.extend(get_education_events(self.rinpersoon, self.conn))
-            elif dataset_name == 'employment_bus':
-                self.paragraphs.extend(get_employment_events(self.rinpersoon, self.conn))
-            else:
-                raise ValueError(f"Dataset name {dataset_name} not recognized")
-            
-
-    def instantiate_social_context_paragraphs(self, social_context_features):
-        result = {}
-        for dataset in social_context_features:
-            dataset_name = list(dataset.keys())[0]
-            result[dataset_name] = {}
-
-            
-            for context, features in dataset[dataset_name].items():
-
-                # get all paragraphs of this domain from main book of life
-                domain_paragraphs = [item for item in self.paragraphs if item.dataset_name == dataset_name]
-
-                # get all relevant social context rinpersoon to generate BoLs for
-                rinpersoons = []
-                for paragraph in domain_paragraphs:
-                    if context in paragraph.__annotations__:
-                        rinpersoons.extend(getattr(paragraph, context))
-
-                # generate BoLs for all relevant rinpersoons and append to result
-                result[dataset_name][context] = {}
-                for rinpersoon in rinpersoons:
-                    # check if rinpersoon is already in result for this context and dataset
-                    if rinpersoon not in result[dataset_name][context]:
-                        result[dataset_name][context][rinpersoon] = BookofLifeGenerator(rinpersoon, {
-                            'main_key': self.recipe.main_key,
-                            'datasets': features,
-                            'formatting': {
-                                'sorting_keys': self.recipe.sorting_keys,
-                                'paragraph_generator': 'get_paragraph_string_tabular'
-                            }
-                        }, duck_db_conn=self.conn)
-
-        return result
-
-
-
-    def sort_paragraphs(self, sorting_keys):
+    def sort_paragraphs(self):
         '''sort paragraphs based on sorting keys.'''
+        
+        ## Start by adding custom keys if present
+        # getattr(paragraph, )
+        
+        sorting_keys = self.recipe.sorting_keys
 
         if isinstance(sorting_keys, str):
             sorting_keys = [sorting_keys]
         
-        supported_sorting_keys = ['year', 'dataset_name']
+        supported_sorting_keys = ['year', 'dataset_name', 'year_dataset_name',
+                                  'year_month_day']
 
         # Assert that all elements in sorting_keys are either 'year' or 'dataset_name'
         assert all(key in supported_sorting_keys for key in sorting_keys), "sorting_keys contains values outside of 'year' and 'dataset_name'"
 
+        sorting_keys = ['order'] + sorting_keys
+
         self.paragraphs.sort(key=attrgetter(*sorting_keys))
+
+        new_pars = []
+        for info in self.recipe.datasets:
+            sub_pars = []
+            name = info.get('name')
+            n_spell = info.get('n_spell', None)
+            sort_key = info.get('sort_key', None)
+            min_spell_year = info.get('min_spell_year', None)
+            max_spell_year = info.get('max_spell_year', None)
+            sub_pars = [p for p in self.paragraphs if p.dataset_name == str(name)]
+            
+            if n_spell:
+                try:
+                    addition = sub_pars[n_spell:]
+                except IndexError:
+                    addition = []
+            else:
+                addition = sub_pars
+            if not isinstance(addition, list):
+                addition = [addition]
+            
+            if min_spell_year:
+                if addition:
+                    addition = [a for a in addition if a.spell_year_start >= min_spell_year or a.spell_year_end >= min_spell_year]
+            if max_spell_year:
+                if addition:
+                    addition = [a for a in addition if a.spell_year_start <= max_spell_year or a.spell_year_end <= max_spell_year]
+            new_pars.extend(addition)
+            
+        self.paragraphs = new_pars
+
+        self.paragraphs.sort(key=attrgetter(*sorting_keys))
+
         return self.paragraphs
 
     def write_book(self, generator_function):
@@ -96,8 +86,12 @@ class BookofLifeGenerator:
             self.book += "\n\n" + paragraph_string
 
     def generate_book(self):
-        self.sort_paragraphs(self.recipe.sorting_keys)
+        self.sort_paragraphs()
         self.write_book(self.recipe.paragraph_generator)
+
+        if self.recipe.formatting.get('header', False):
+            self.book += f"\n\nThis was the Book of Life of {self.rinpersoon}."
+
         return self.book
 
     

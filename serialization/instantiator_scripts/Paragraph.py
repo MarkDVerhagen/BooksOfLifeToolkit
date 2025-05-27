@@ -20,33 +20,45 @@ from abc import ABC, abstractmethod
 @dataclass
 class Paragraph:
     dataset_name: str
-    rinpersoon: int # RINSPERSOON. Is this the main key?
+    rinpersoon: int
     is_spell: bool = field(default=False)
+    explicit: bool = field(default=True)
+    order: int = field(default=0)
 
     year: int = field(default=None)
     month: int = field(default=None)
     day: int = field(default=None)
+    year_dataset_name: str = field(default=None)
+    year_month_day: str = field(default=None)
 
-    feature_transl_dict: dict = field(default_factory=dict)
-
-    
-
-    def __post_init__(self):
+    # def __post_init__(self):
         # read the feature translation dictionary from static/feature_translations.json. Use path relative to the project root
-        with open('serialization/static/feature_translations.json') as f:
-            self.feature_transl_dict = json.load(f)
-        
 
     def get_paragraph_string_tabular(self, features=None):
         # features of parent class are excluded from basic serialization by default
         parent_class_features = [f.name for f in fields(Paragraph)]
-        if features:
-            attributes = (f"{self.feature_transl_dict[field.name]}: {getattr(self, field.name)}" for field in fields(self) if field.name in features and getattr(self, field.name))
-            return "\n".join(attributes)
+        with open('serialization/static/feature_translations.json') as f:
+            feature_transl_dict = json.load(f)
+        
+        def is_valid(value):
+            return value is not None and value != 'nan' and (not isinstance(value, list) or value) and value != "----" and value != ''
+
+        if self.explicit:
+            if features:
+                attributes = (f"{feature_transl_dict[field.name]}: {getattr(self, field.name)}" for field in fields(self) if field.name in features and getattr(self, field.name))
+                return "\n".join(attributes)
+            else:
+                excluded_features_list = parent_class_features
+                attributes = (f"{feature_transl_dict[field.name]}: {getattr(self, field.name)}" for field in fields(self) if field.name not in excluded_features_list and getattr(self, field.name))
+                return "\n".join(attributes)
         else:
-            excluded_features_list = parent_class_features
-            attributes = (f"{self.feature_transl_dict[field.name]}: {getattr(self, field.name)}" for field in fields(self) if field.name not in excluded_features_list and getattr(self, field.name))
-            return "\n".join(attributes)
+            if features:
+                attributes = (f"{feature_transl_dict[field.name]}: {getattr(self, field.name)}" for field in fields(self) if field.name in features and is_valid(getattr(self, field.name)))
+                return "\n".join(attributes)
+            else:
+                excluded_features_list = parent_class_features
+                attributes = (f"{feature_transl_dict[field.name]}: {getattr(self, field.name)}" for field in fields(self) if field.name not in excluded_features_list and is_valid(getattr(self, field.name)))
+                return "\n".join(attributes)
         
     @abstractmethod
     def get_paragraph_string_biographic(self):
