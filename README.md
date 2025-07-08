@@ -1,6 +1,6 @@
 # Books of Life Toolbox (BOLT)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1234567.svg)](www.google.com) TODO REPlACE STICKER WITH ACTUAL DOI
+[![DOI](https://img.shields.io/badge/arXiv-2507.03027-b31b1b.svg)](https://doi.org/10.48550/arXiv.2507.03027)
 
 This repository contains the **Books of Life Toolbox (BOLT)**, a framework designed to parse rich, structured social science data (like registry data, surveys, logs) into textual life sequences, or "Books of Life" (BoLs). This approach allows researchers to leverage the power of Large Language Models (LLMs) for analyzing complex life trajectories, moving beyond the traditional "X matrix" paradigm.
 
