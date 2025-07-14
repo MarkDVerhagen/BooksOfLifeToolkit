@@ -3,8 +3,7 @@ def main():
     
     # List of scripts to run
     scripts = ['gen_rin_hashes', 'householdbus',
-               'persoontab', 'vektistab', 'spolisbus', 'hoogsteopltab',
-               'education_preprocess', 'employment_preprocess', ]
+               'persoontab']
     
     for script in scripts:
         # run_script(script)

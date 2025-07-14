@@ -180,17 +180,24 @@ def collect_data_for_dataframe_separate_rows(households):
     for household in households:
         household_size = len(household.members)
         
+        # Format dates as 'yyyymmdd' with leading zeroes
+        def format_date(dt):
+            if isinstance(dt, datetime):
+                return dt.strftime('%Y%m%d')
+            return dt
+        
         hh_dict = {
-                    'HOUSEKEEPING_NR': household.id,
+                    'HUISHOUDNR': household.id,
                     'TYPHH': household.household_type,
                     'rinpersoon': [h.id for h in household.members],
                     'PLHH': [h.place for h in household.members],
                     'REFPERSOONHH': round(np.random.choice([0, 1])),
                     'NUMBERPERSHH': len(household.members),
-                    'DATE_STIRTHH': household.spells[0],
-                    'DATUMEINDEHH': household.spells[1],  # Handling ongoing spels
+                    'DATUMAANVANGHH': format_date(household.spells[0]),
+                    'DATUMEINDEHH': format_date(household.spells[1]),  # Handling ongoing spels
                     'AANTALOVHH': len([h.place for h in household.members if h.place != 'child living at home']),
                     'AANTALKINDHH': len([h.place for h in household.members if h.place == 'child living at home']),
+                    'AANTALPERSHH': len([h.place for h in household.members]),
                     'EVENT': household.event,
                 }
         
@@ -224,13 +231,13 @@ hh_df = pd.concat([collect_data_for_dataframe_separate_rows(hh) for hh in househ
 
 # Draw additional random values to align with documentation
 def process_household(df):
-    df['BIRTHEDYOUNGCHILDHH'] = df.apply(lambda x: 2015 if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else None, axis=1)
+    df['GEBJAARJONGSTEKINDHH'] = df.apply(lambda x: 2015 if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else None, axis=1)
     df['GEBMAANDJONGSTEKINDHH'] = df.apply(lambda x: '01' if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else '--', axis=1)
     df['GEBJAAROUDSTEKINDHH'] = df.apply(lambda x: 2010 if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else None, axis=1)
-    df['BMAANDOUDSTEKINDHH'] = df.apply(lambda x: '05' if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else '--', axis=1)
+    df['GEBMAANDOUDSTEKINDHH'] = df.apply(lambda x: '05' if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else '--', axis=1)
 
     return df
 
-process_household(hh_df).to_csv(os.path.join('synth', 'data', 'raw', 'household_bus.csv'),
+process_household(hh_df).to_csv(os.path.join('synth', 'data', 'household_bus.csv'),
                                 index=False)
     
