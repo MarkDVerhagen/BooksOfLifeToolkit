@@ -16,10 +16,13 @@ synth/hashes/*
 synth/data/raw/*
 synth/data/edit/*
 synth/wrangle*
+synth/data/
+synth/data/edit/
 !synth/data/.gitkeep
 !synth/data/raw/.gitkeep
 !synth/data/edit/.gitkeep
 !synth/hashes/.gitkeep
 *.duckdb
 
-recipes/
+/synth/*.py
+/synth/data/edit/*
