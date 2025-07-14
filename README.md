@@ -54,11 +54,17 @@ BOLT is built around several core concepts:
     cd BooksOfLifeToolkit
     ```
 
-2.  **Set up a virtual environment (recommended):**
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate # On Windows use `venv\Scripts\activate`
-    ```
+2.  **Set up a Python 3.12 virtual environment (recommended):**
+  Make sure you have Python 3.12 installed. You can check your version with:
+  ```bash
+  python3.12 --version
+  ```
+  Create and activate a virtual environment:
+  ```bash
+  python3.12 -m venv venv
+  source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+  ```
+  If you don't have Python 3.12, download it from [python.org](https://www.python.org/downloads/release/python-3120/) or use a package manager (e.g., `brew install python@3.12` on macOS).
 
 3.  **Install requirements:**
     ```bash

@@ -21,5 +21,3 @@ synth/data/
 !synth/hashes/.gitkeep
 *.duckdb
 
-/synth/*.py
-
