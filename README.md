@@ -91,54 +91,15 @@ This quickstart uses synthetic data to demonstrate the end-to-end workflow.
 4.  **Generate All Books of Life:**
     This script generates BoLs for the synthetic population, splitting them into train/test sets based on household information from a specific year (as defined in `main.py`), includes a dummy outcome variable, and saves them as sharded JSONL files.
     ```bash
-    # Creates ./my_bol_run/data/{train|test}/shard_*.jsonl files
-    python main.py --bol_name my_bol_run --recipe_name template --max_processes 4 --save_summary
+    python main.py --db_path db.duckdb --recipe_path recipes/template --output_dir output
     ```
-    *   `--bol_name`: Specifies the output directory name.
-    *   `--recipe_name`: Uses `recipes/template.yaml` to define how BoLs are constructed.
-    *   `--max_processes`: Number of parallel processes to use. Adjust based on your machine.
-    *   `--save_summary`: Generates token length statistics after completion.
-
-    Check the `my_bol_run/data/` directory for the output files. Each line in the `.jsonl` files contains a JSON object with `rinpersoon`, `book_content`, and `outcome`.
 
 5.  **Generate a Single Book of Life (for Testing/Debugging):**
     This script is useful for inspecting the BoL for a specific individual. It uses the default hash `00721713` (ensure this hash exists in your generated synthetic data).
     ```bash
-    python main_test.py --hash "00721713" --recipe template
+    python main_test.py --hash "0006861b" --recipe template --db_path db.duckdb
     ```
-    *(If `00721713` doesn't exist, find a valid `rinpersoon` hash from `synthetic_data.duckdb` after population or from the output of `main.py` and use that value for `--hash`)*.
-
-## Usage Details
-
-*   **Large-Scale Generation (`main.py`):**
-    *   Use `main.py` for generating BoLs for entire datasets.
-    *   It handles parallel processing (`--max_processes`) for efficiency.
-    *   It includes logic for train/test splitting based on household data (currently hardcoded for the synthetic data structure).
-    *   It incorporates an outcome variable (modify the logic within `main.py` for different outcome definitions).
-    *   Outputs are sharded JSONL files suitable for LLM fine-tuning pipelines.
-    *   Key arguments:
-        *   `--bol_name`: Name for the output data directory (required).
-        *   `--recipe_name`: Name of the recipe file (without `.yaml`) in the `recipes` directory (required).
-        *   `--max_processes`: Number of CPU cores for parallel generation (default: 4).
-        *   `--shard_size`: Number of BoLs per output JSONL file (default: 10000).
-        *   `--output_dir`: Optional parent directory to save the `bol_name` directory into.
-        *   `--save_summary`: Flag to generate and save token count statistics.
-
-*   **Single BoL Generation Example:**
-The following code snippet prints the Book of Life for person `"03c6605f"`.
-
-```python
-from serialization import BookofLifeGenerator 
-
-rinpersoon = "03c6605f"
-recipe_yaml_path = "path/to/your/recipe.yaml"
-
-generator = BookofLifeGenerator(rinpersoon, recipe_yaml_path)
-book = generator.generate_book()
-
-# Output the book
-print(book)
-```
+    *(If `0006861b` doesn't exist, find a valid `rinpersoon` hash from `db.duckdb` after population or from the output of `main.py` and use that value for `--hash`)*.
     
 
 ## Understanding Recipes (`recipes/*.yaml`)
