@@ -13,7 +13,7 @@ Social scientists have long navigated a trade‑off between depth—rich single�
 
 BOLT bridges the two by programmatically writing out life events, contexts, and relationships into human‑readable narrative summaries—Books of Life—at scale.
 
-## What BOLT offers?
+## What does BOLT offer?
 
 We designed BOLT along the following principles.
 
