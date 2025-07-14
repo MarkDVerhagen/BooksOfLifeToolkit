@@ -1,6 +1,6 @@
 # Books of Life Toolbox (BOLT)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1234567.svg)](www.google.com) TODO REPlACE STICKER WITH ACTUAL DOI
+[![DOI](https://img.shields.io/badge/arXiv-2507.03027-b31b1b.svg)](https://doi.org/10.48550/arXiv.2507.03027)
 
 This repository contains the **Books of Life Toolbox (BOLT)**, a framework designed to turn complex social data into plain‑text “Books of Life” (BoLs) that can be read by Large Language Models.
 
