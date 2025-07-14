@@ -2,18 +2,30 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1234567.svg)](www.google.com) TODO REPlACE STICKER WITH ACTUAL DOI
 
-This repository contains the **Books of Life Toolbox (BOLT)**, a framework designed to parse rich, structured social science data (like registry data, surveys, logs) into textual life sequences, or "Books of Life" (BoLs). This approach allows researchers to leverage the power of Large Language Models (LLMs) for analyzing complex life trajectories, moving beyond the traditional "X matrix" paradigm.
+This repository contains the **Books of Life Toolbox (BOLT)**, a framework designed to turn complex social data into plain‑text “Books of Life” (BoLs) that can be read by Large Language Models.
 
-## Motivation
+## Why BOLT?
+Social scientists have long navigated a trade‑off between depth—rich single‑case narratives analysed qualitatively—and scale—large‑N datasets analysed quantitatively. Two recent developments make it possible to explore whether we can have both:
 
-As detailed in our accompanying paper "Life Course Analysis in the Time of LLMs", there's a growing tension between the richness of modern social data and the methods traditionally used to analyze it. Formatting complex, longitudinal, hierarchical, and networked data into a flat "X matrix" for GLMs or standard machine learning often leads to information loss and requires extensive, task-specific feature engineering.
+1. Complex log data that cover many facets of social life but are not recorded as a conventional survey.
 
-Inspired by the "bitter lesson" in computer science (Sutton, 2019), which suggests that scalable, general-purpose methods eventually outperform human-designed feature engineering, BOLT provides a way to represent complex social data as text. This approach aims to:
+2. LLMs with exceptional pattern‑recognition abilities on free text.
 
-1.  **Preserve Information:** Minimize data loss during preprocessing.
-2.  **Leverage LLMs:** Create data representations amenable to powerful LLM techniques.
-3.  **Increase Harmony:** Better align the complexity of social data with the methods used for analysis.
-4.  **Facilitate Experimentation:** Allow researchers to easily define and generate different textual representations based on theoretical needs or modeling constraints.
+BOLT bridges the two by programmatically writing out life events, contexts, and relationships into human‑readable narrative summaries—Books of Life—at scale.
+
+## What BOLT offers?
+
+We designed BOLT along the following principles.
+
+1. **Loss‑minimal representation:** keeps longitudinal, hierarchical, and network structure that is usually flattened away.
+
+2. **LLM‑ready format:** immediate compatibility with GPT‑style prompting, retrieval‑augmented generation, and fine‑tuning.
+
+3. **Composable templates:** declaratively specify which variables, time windows, or social relations to narrate.
+
+4. **Scalable pipeline:** processes registry‑scale data on standard cluster hardware.
+
+5. **Researcher‑friendly recipe:** swap in alternative theories of the life course by editing a single recipe file.
 
 This toolkit was initially developed for the [PreFer](https://preferdatachallenge.nl/) computational social science challenge, focused on predicting fertility using Dutch population registry data.
 
@@ -22,8 +34,8 @@ This toolkit was initially developed for the [PreFer](https://preferdatachalleng
 BOLT is built around several core concepts:
 
 1.  **Books of Life (BoLs):** The primary output. A textual representation with attributes of a specific unit of analysis (e.g., a person, a household) based on available data sources.
-2.  **Paragraphs:** The building blocks of a BoL. Each paragraph typically corresponds to a single record or event from an information source (e.g., a row in a table, a specific spell).
-3.  **Instantiation:** The process of converting raw data from various sources into structured `Paragraph` objects. This is done by the instantiator functions (e.g. `get_households()` in `household_bus.py`)
+2.  **Paragraphs:** The building blocks of a BoL. Each paragraph typically corresponds to a single record from some information source (e.g., a row in a table).
+3.  **Instantiation:** The process of converting raw data from various sources into structured `Paragraph` objects. This is done by  instantiator functions that are custom made per information source and define relevant fields like time and identifiers.
 4.  **Recipes (`*.yaml`):** Configuration files that define *how* to build a BoL. They specify:
     *   The **unit of analysis** identifier.
     *   The **information sources** to include.
@@ -39,7 +51,7 @@ BOLT is built around several core concepts:
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/MarkDVerhagen/BooksOfLifeToolkit.git
-    cd prefer_prepare
+    cd BooksOfLifeToolkit
     ```
 
 2.  **Set up a virtual environment (recommended):**
@@ -64,16 +76,16 @@ This quickstart uses synthetic data to demonstrate the end-to-end workflow.
     ```
 
 2.  **Create Database Schema:**
-    This script initializes an empty DuckDB database file named `synthetic_data.duckdb`.
+    This script reads in a configuration file that defines which datasets are relevant for the desired books of life. It reads these datasets, performs basic wrangling and writes to an edit folder. In parallel, an empty DuckDB database file is generated in line with these datasets.
+    
     ```bash
-    python serialization/make_db.py
+    python serialization/make_db.py --data_dir synth/data --yaml_file recipes/make_db --db_name db
     ```
-    *(Note: This currently just creates the file; the schema is implicitly defined during population.)*
 
 3.  **Populate Database:**
-    This script reads the synthetic data files generated in step 1 and loads them into the `synthetic_data.duckdb` database. It uses the `recipes/template.yaml` file to understand which synthetic data sources correspond to which tables/schemas.
+    This script reads the data files from the edit folder and loads them into the database.
     ```bash
-    python serialization/populate_db.py --yaml_file template
+    python serialization/populate_db.py --yaml_file recipes/template --db_name db.duckdb --data_dir synth/data
     ```
 
 4.  **Generate All Books of Life:**
