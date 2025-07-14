@@ -6,6 +6,7 @@ import json
 import random
 from datasets import load_dataset
 import duckdb
+from serialization.BookofLifeGenerator import BookofLifeGenerator
 
 def generate_token_length_stats(dataset_path: str, sample_size: int = 10000, save_to_file: bool = False):
     # Load the LLaMA 7B tokenizer from the hardcoded local directory
@@ -122,9 +123,12 @@ def spell_gen(generator, spells=5, include_last_n=None):
     generator.paragraphs = old_pars
     return book_content
 
-def save_to_jsonl_shard(data_buffer, output_dir, shard_index):
+def save_to_jsonl_shard(data_buffer, output_dir, shard_index=None):
     """Save a shard of data to a JSONL file."""
-    shard_filename = f"shard_{shard_index}.jsonl"
+    if shard_index:
+        shard_filename = f"shard_{shard_index}.jsonl"
+    else:
+        shard_filename = "books.jsonl"
     shard_path = os.path.join(output_dir, shard_filename)
     
     if not os.path.exists(output_dir):
