@@ -4,37 +4,21 @@ datasets:
     features:
       - GBAGEBOORTEMAAND
       - GBAGEBOORTEDAG
+      - GBAGEBOORTEJAAR
+      - GBAGEBOORTEMAAND
       - GBAGEBOORTEJAARVADER
       - GBAGESLACHTVADER
   - name: household_bus
     features:
-    social_context_features:
-      PARTNERS:
-          - name: household_bus
-            features:
-              - GBAGESLACHT
-            social_context_features:
-              CHILDREN:
-                  - name: persoon_tab
-                    features:
-                      - GBAGEBOORTEJAARMOEDER
-      CHILDREN: 
-        - name: persoon_tab
-          features:
-            - GBAGESLACHT
-  - name: education_bus
-    features:
-      - OPLNRHB
-      - OPLNIVSOI2016AGG4HGMETNIRWO
-      - OPLNIVSOI2021AGG4HBmetNIRWO
-  - name: employment_bus
-    features:
-      - SIMPUTATIE
-      - SEXTRSAL
-      - SPRWAOAOK
-      - SINLEGLEVENSLOOP
-      - SCDAGH
-      - SOPGRCHTEXTRSAL
+      - HUISHOUDNR
+      - TYPHH
+      - DATUMAANVANGHH
+      - DATUMEINDEHH
+      - PLHH
+      - REFPERSOONHH
+      - AANTALOVHH
+      - AANTALKINDHH
+      - AANTALPERSHH
 formatting:
   sorting_keys: # list of keys to sort the paragraphs on. Order indicates priority.
       - year

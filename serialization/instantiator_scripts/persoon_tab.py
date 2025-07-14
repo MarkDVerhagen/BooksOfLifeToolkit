@@ -27,15 +27,15 @@ def get_person_attributes(rinpersoons: list, conn, table_version: str = '', expl
     grouped_results = {}
 
     for row in results:
-        rinpersoon = row[columns.index('RINPERSOON')]
+        rinpersoon = row[columns.index('rinpersoon')]
         row_list = list(row)
-        rinpersoon_index = columns.index('RINPERSOON')
+        rinpersoon_index = columns.index('rinpersoon')
         del row_list[rinpersoon_index]
         if rinpersoon not in grouped_results:
             grouped_results[rinpersoon] = []
         grouped_results[rinpersoon].append(row)
 
-    columns = [c for c in columns if c != "RINPERSOON"]
+    columns = [c for c in columns if c != "rinpersoon"]
     par_dict = {}
     for rinpersoon in rinpersoons:
         par_dict[rinpersoon] = [PersonAttributesParagraph(

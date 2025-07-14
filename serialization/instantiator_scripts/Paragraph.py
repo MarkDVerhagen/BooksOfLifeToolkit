@@ -20,7 +20,7 @@ from abc import ABC, abstractmethod
 @dataclass
 class Paragraph:
     dataset_name: str
-    rinpersoon: int
+    rinpersoon: str
     is_spell: bool = field(default=False)
     explicit: bool = field(default=True)
     order: int = field(default=0)

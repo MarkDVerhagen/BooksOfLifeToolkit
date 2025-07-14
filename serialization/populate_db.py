@@ -67,11 +67,10 @@ def print_database_overview(conn):
         row_count = conn.execute(f"SELECT COUNT(*) FROM {table_name}").fetchone()[0]
         print(f"Row count: {row_count}")
 
-def populate_db(yaml_file, db_name='your_database.db'):
+def populate_db(yaml_file, db_name='your_database.db', data_dir='data'):
     with open(yaml_file + '.yaml', 'r') as file:
         config = yaml.safe_load(file)
         datasets = config.get('datasets', [])
-        main_key = config.get('main_key', [])
     
     # Connect to an in-memory DuckDB database
     conn = duckdb.connect(os.path.join('dbs', db_name))
@@ -79,7 +78,7 @@ def populate_db(yaml_file, db_name='your_database.db'):
     for d in datasets:
         print(f"Processing {d['name']}...")
         # Load data
-        data = pd.read_csv(os.path.join('data', 'edit', d['name'] + '.csv'))
+        data = pd.read_csv(os.path.join(data_dir, d['name'] + '.csv'))
 
         # Write to database
         write_to_db(conn, data, d['name'])
@@ -96,6 +95,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Populate a DuckDB database with data')
     parser.add_argument('--yaml_file', type=str, help='Path to the YAML configuration file')
     parser.add_argument('--db_name', type=str, default=None, help='Name of the DuckDB database')
+    parser.add_argument('--data_dir', type=str, default=None, help='Directory containing the data files')
     parser.add_argument('--log_file', type=str, default=None, help='Log file to record database population duration')
     parser.add_argument('--table_version', type=str, default="", help='Table version to load')
     args = parser.parse_args()
@@ -105,5 +105,5 @@ if __name__ == '__main__':
     log_file = os.path.join('logs', log_file)
     
     log_general(log_file, f"Starting to populate database {db_name}.\n")
-    populate_db(args.yaml_file, db_name)
+    populate_db(args.yaml_file, db_name, args.data_dir)
     log_general(log_file, f"Finished populating database {db_name}.\n")

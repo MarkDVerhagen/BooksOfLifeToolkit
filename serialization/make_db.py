@@ -17,21 +17,46 @@ def log_general(log_file, message="Message"):
         f.write(f"{timestamp}: {message}\n")
 
 class Generator:
+    """
+    Generator is responsible for generating a database as specified in a YAML configuration file, exporting them to CSV, and populating a DuckDB database.
+
+    The class reads a configuration YAML file that specifies datasets, their features, and hierarchical structure. It processes each dataset, optionally applies hierarchical grouping, selects specified features, writes the processed data to CSV, and inserts it into a DuckDB database. It also provides utilities for column name sanitization, data conversion, and database overview printing.
+
+    Args:
+        yaml_file (str): Path (without extension) to the YAML configuration file.
+        data_dir (str): Directory containing the data CSV files. Defaults to 'data'.
+        db_name (str): Name of the DuckDB database file to create. Defaults to 'your_database.db'.
+        table_version (str): Optional suffix for table versioning in file names.
+    """
     def __init__(self, yaml_file, data_dir='data', db_name='your_database.db', table_version=""):
+        """
+        Initializes the Generator, processes datasets as per the YAML config, writes processed data to CSV, and populates the DuckDB database.
+
+        Args:
+            yaml_file (str): Path (without extension) to the YAML configuration file.
+            data_dir (str): Directory containing the data CSV files.
+            db_name (str): Name of the DuckDB database file to create.
+            table_version (str): Optional suffix for table versioning in file names.
+        """
+        
         with open(yaml_file + '.yaml', 'r') as file:
             self.config = yaml.safe_load(file)
+        
+        # Get the datasets, main key, and data directory from the YAML file
         self.datasets = self.config.get('datasets', [])
         self.main_key = self.config.get('main_key', [])
         self.data_dir = data_dir
-        self.db_name = os.path.join('dbs', db_name)
+        
+        # Construct the path to the database
+        self.db_name = os.path.join('dbs', db_name + '.duckdb')
 
         # Connect to an in-memory DuckDB database
         self.conn = duckdb.connect(self.db_name)
 
-
+        # Loop through the datasets, read the data, add hierarchy, extract features and write to CSV in the edit folder.
         for d in self.datasets:
             print('Now processing {}'.format(d['name']))
-            data = pd.read_csv(os.path.join(self.data_dir, 'raw', d['name'] + table_version + '.csv'), encoding_errors='replace')
+            data = pd.read_csv(os.path.join(self.data_dir, d['name'] + table_version + '.csv'), encoding_errors='replace')
             
             structure_features = d.get('structure_features')
             structure_class = d.get('structure_classification')
@@ -41,11 +66,17 @@ class Generator:
                 data = self.pull_hierarchy(
                     data, hierarchy_vars=structure_features,
                     main_key=self.main_key, hierarchy_cat=structure_class)
-            features = d.get('features') + ['RINPERSOON']
+            
+            features = d.get('features')
+            
+            if features is None:
+                features = list(data.columns)
+            else:
+                features = features
             print(f"Collecting features: {features}")
 
             data = data[features]
-            data['RINPERSOON'] = data['RINPERSOON'].astype(int).astype(str)
+            data['rinpersoon'] = data['rinpersoon'].astype(str)
             # Write to CSV
             data.to_csv(os.path.join(self.data_dir, 'edit', d['name'] + '.csv'), index=False)
 
@@ -54,10 +85,6 @@ class Generator:
 
         # Print database overview
         self.print_database_overview()
-
-        # Save the in-memory database to a file
-        # self.conn.execute(f"EXPORT DATABASE '{self.db_name}'")
-        # print(f"Database exported to: {self.db_name}")
 
         # Close the in-memory connection
         self.conn.close()
@@ -71,8 +98,21 @@ class Generator:
         except Exception as e:
             print(f"Error verifying exported database: {e}")
     
-    def pull_hierarchy(self, data, hierarchy_vars=['HOUSEKEEPING_NR', 'DATE_STIRTHH'],
+    def pull_hierarchy(self, data, hierarchy_vars=['HUISHOUDNR', 'DATUMAANVANGHH'],
                        main_key='rinpersoon', hierarchy_cat=None):
+        """
+        Adds hierarchical grouping to the dataset based on specified variables. It is assumed there is a main key in the dataset.
+        Per row, all main keys are fetched based on the hierarchy variables.
+
+        Args:
+            data (pd.DataFrame): The input DataFrame.
+            hierarchy_vars (list): List of columns based on which to define the hierarchy.
+            main_key (str): The main key to fetch based on the hierarchy.
+            hierarchy_cat (str, optional): Additional category for hierarchy grouping and pivoting.
+
+        Returns:
+            pd.DataFrame: DataFrame with added hierarchical columns.
+        """
         ## Function to pull in main keys based on a hierarchy variable
         
         # Make hierarchy variable
@@ -96,6 +136,13 @@ class Generator:
         return pd.merge(data, grouped)
 
     def write_to_db(self, data, table_name):
+        """
+        Writes a DataFrame to the DuckDB database as a table.
+
+        Args:
+            data (pd.DataFrame): The DataFrame to write.
+            table_name (str): The name of the table in the database.
+        """
         # Sanitize column names
         data.columns = [self.sanitize_column_name(col) for col in data.columns]
 
@@ -109,24 +156,51 @@ class Generator:
 
     @staticmethod
     def sanitize_column_name(name):
+        """
+        Sanitizes a column name to be compatible with SQL table requirements.
+
+        Args:
+            name (str): The original column name.
+
+        Returns:
+            str: The sanitized column name.
+        """
         # Remove any character that's not a letter, number, or underscore
         name = re.sub(r'[^\w]', '_', name)
         # Ensure the name doesn't start with a number
         if name[0].isdigit():
             name = '_' + name
         # Avoid SQLite keywords
-        sqlite_keywords = ['ADD', 'ALL', 'ALTER', 'AND', 'AS', 'AUTOINCREMENT', 'BETWEEN', 'CASE', 'CHECK', 'COLLATE', 'COMMIT', 'CONSTRAINT', 'CREATE', 'DEFAULT', 'DEFERRABLE', 'DELETE', 'DISTINCT', 'DROP', 'ELSE', 'ESCAPE', 'EXCEPT', 'EXISTS', 'FOREIGN', 'FROM', 'GROUP', 'HAVING', 'IN', 'INDEX', 'INSERT', 'INTERSECT', 'INTO', 'IS', 'ISNULL', 'JOIN', 'LIMIT', 'NOT', 'NOTNULL', 'NULL', 'ON', 'OR', 'ORDER', 'PRIMARY', 'REFERENCES', 'SELECT', 'SET', 'TABLE', 'THEN', 'TO', 'TRANSACTION', 'UNION', 'UNIQUE', 'UPDATE', 'USING', 'VALUES', 'WHEN', 'WHERE']
+        sqlite_keywords = ['ADD', 'ALL', 'ALTER', 'AND', 'AS', 'AUTOINCREMENT', 'BETWEEN', 'CASE',
+                           'CHECK', 'COLLATE', 'COMMIT', 'CONSTRAINT', 'CREATE', 'DEFAULT', 'DEFERRABLE',
+                           'DELETE', 'DISTINCT', 'DROP', 'ELSE', 'ESCAPE', 'EXCEPT', 'EXISTS', 'FOREIGN',
+                           'FROM', 'GROUP', 'HAVING', 'IN', 'INDEX', 'INSERT', 'INTERSECT', 'INTO', 'IS',
+                           'ISNULL', 'JOIN', 'LIMIT', 'NOT', 'NOTNULL', 'NULL', 'ON', 'OR', 'ORDER',
+                           'PRIMARY', 'REFERENCES', 'SELECT', 'SET', 'TABLE', 'THEN', 'TO', 'TRANSACTION',
+                           'UNION', 'UNIQUE', 'UPDATE', 'USING', 'VALUES', 'WHEN', 'WHERE']
         if name.upper() in sqlite_keywords:
             name = '_' + name
         return name
     
     @staticmethod
     def convert_to_string(val):
+        """
+        Converts a value to a string, serializing lists and dicts as JSON.
+
+        Args:
+            val: The value to convert.
+
+        Returns:
+            str: The string representation of the value.
+        """
         if isinstance(val, (list, dict)):
             return json.dumps(val)
         return str(val)
     
     def print_database_overview(self):
+        """
+        Prints an overview of the tables and columns in the DuckDB database, including row counts for each table.
+        """
         print("\nDatabase Overview:")
         print("==================")
         
@@ -155,6 +229,9 @@ if __name__ == "__main__":
     parser.add_argument('--log_file', type=str, default=None, help='Log file to record database population duration')
     parser.add_argument('--table_version', type=str, default="", help='Table version to load')
     args = parser.parse_args()
+
+    if not args.yaml_file:
+        raise ValueError("The --yaml_file argument is required.")
 
     db_name = args.db_name if args.db_name else (args.yaml_file.split("/make_")[-1] + args.table_version + '.duckdb')
     log_file = args.log_file if args.log_file else (args.yaml_file.split("recipes/")[-1] + args.table_version + '.log')

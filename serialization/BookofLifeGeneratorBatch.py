@@ -2,21 +2,10 @@
 from typing import List
 from serialization.instantiator_scripts.Paragraph import Paragraph
 from serialization.instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
-from serialization.instantiator_scripts.LisaAttributesParagraph import LisaAttributesParagraph
 from serialization.instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
 from serialization.Recipe import Recipe
 from serialization.instantiator_scripts.persoon_tab import get_person_attributes
-from serialization.instantiator_scripts.lisa_tab import get_lisa_attributes
-from serialization.instantiator_scripts.loc_lisa_tab import get_lisa_loc
-from serialization.instantiator_scripts.wealth_lisa_tab import get_lisa_wealth
-from serialization.instantiator_scripts.par_lisa_tab import get_lisa_par
-from serialization.instantiator_scripts.inc_lisa_tab import get_lisa_inc
 from serialization.instantiator_scripts.household_bus import get_households, fill_household_par
-from serialization.instantiator_scripts.education_bus import get_education_events
-from serialization.instantiator_scripts.employment_bus import get_employment_events
-from serialization.instantiator_scripts.object_bus import get_objects
-from serialization.instantiator_scripts.stork_tab import get_stork
-from serialization.instantiator_scripts.stork2_tab import get_stork2
 from operator import attrgetter
 from itertools import chain
 import duckdb

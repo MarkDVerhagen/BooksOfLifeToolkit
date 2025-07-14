@@ -71,8 +71,14 @@ class PersonAttributesParagraph(Paragraph):
         # super().__post_init__()
         assert self.dataset_name.startswith('persoon_tab'), "This class is specifically designed for the GBAPERSOONTAB data table. Dataset name must be 'persoon_tab'"
 
-        self.year = int(self.GBAGEBOORTEJAAR)
+        def safe_int(val):
+            try:
+                return int(val)
+            except (TypeError, ValueError):
+                return 1900
+
+        self.year = safe_int(self.GBAGEBOORTEJAAR)
         self.month = self.GBAGEBOORTEMAAND
         self.day = self.GBAGEBOORTEDAG
-        self.year_dataset_name = self.dataset_name + '_' + str(self.year)
+        self.year_dataset_name = self.dataset_name + '_' + str(self.year) if self.year is not None else self.dataset_name
         self.year_month_day = '_'.join([str(self.GBAGEBOORTEJAAR), str(self.month), str(self.day)])

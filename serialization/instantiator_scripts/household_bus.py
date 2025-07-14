@@ -33,11 +33,10 @@ def fill_household_par(rinpersoon, explicit, order, row_dict, dataset_name="hous
         explicit=explicit,
         order=order,
         rinpersoon=rinpersoon,
-        # HUISHOUDNR=row_dict['HUISHOUDNR'] if row_dict['HUISHOUDNR'] else 'nan',
+        HUISHOUDNR=row_dict['HUISHOUDNR'] if row_dict['HUISHOUDNR'] else 'nan',
         TYPHH=household_types.get(row_dict['TYPHH'], "unknown type"),
         DATUMAANVANGHH=row_dict['DATUMAANVANGHH'],
         DATUMEINDEHH=row_dict['DATUMEINDEHH'],
-        AANTALPERSHH=row_dict['AANTALPERSHH'],
         PLHH=household_places.get(row_dict['PLHH'], "unknown place"),
         REFPERSOONHH= "yes" if (row_dict['REFPERSOONHH'] == 1) else "no",
         AANTALOVHH=row_dict['AANTALOVHH'] if row_dict['TYPHH'] != 1 else 'nan',
@@ -60,7 +59,7 @@ def get_households(rinpersoons: str, conn, table_version: str = '', explicit: bo
 
     columns_query = f"PRAGMA table_info(household_bus{table_version})"
     columns = [row[1] for row in conn.execute(columns_query).fetchall()]
-    # columns = [c for c in columns if c != "RINPERSOON"]
+    # columns = [c for c in columns if c != "rinpersoon"]
 
     # Query the database for the person with the given rinpersoon
     query = f"""
@@ -75,7 +74,7 @@ def get_households(rinpersoons: str, conn, table_version: str = '', explicit: bo
     grouped_results = {}
 
     for row in results:
-        rinpersoon = row[columns.index('RINPERSOON')]
+        rinpersoon = row[columns.index('rinpersoon')]
         if rinpersoon not in grouped_results:
             grouped_results[rinpersoon] = []
         grouped_results[rinpersoon].append(row)
