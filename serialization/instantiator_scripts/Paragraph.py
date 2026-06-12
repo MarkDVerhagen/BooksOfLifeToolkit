@@ -12,10 +12,29 @@ Attributes:
     rinpersoon (int): Unique identifier for the person related to the paragraph.
     paragraph_string (str, init=False): Textual representation of the paragraph (constructed in subclasses).
 """
+import os
 from dataclasses import dataclass, field, fields
 from typing import List, Literal
 import json
 from abc import ABC, abstractmethod
+
+# Path to the field/value translation dictionary, resolved relative to this file
+# so it works regardless of the current working directory.
+_FEATURE_TRANSLATIONS_PATH = os.path.join(
+    os.path.dirname(__file__), os.pardir, "static", "feature_translations.json"
+)
+
+_FEATURE_TRANSLATIONS = None
+
+
+def get_feature_translations():
+    """Load (and cache) the field/value translation dictionary once."""
+    global _FEATURE_TRANSLATIONS
+    if _FEATURE_TRANSLATIONS is None:
+        with open(_FEATURE_TRANSLATIONS_PATH) as f:
+            _FEATURE_TRANSLATIONS = json.load(f)
+    return _FEATURE_TRANSLATIONS
+
 
 @dataclass
 class Paragraph:
@@ -37,8 +56,7 @@ class Paragraph:
     def get_paragraph_string_tabular(self, features=None):
         # features of parent class are excluded from basic serialization by default
         parent_class_features = [f.name for f in fields(Paragraph)]
-        with open('serialization/static/feature_translations.json') as f:
-            feature_transl_dict = json.load(f)
+        feature_transl_dict = get_feature_translations()
         
         def is_valid(value):
             return value is not None and value != 'nan' and (not isinstance(value, list) or value) and value != "----" and value != ''

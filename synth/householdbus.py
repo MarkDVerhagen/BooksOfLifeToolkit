@@ -35,6 +35,27 @@ child_born_map = {
 adult_places = ['single person', 'partner in couple without children',
                 'partner in couple with children', 'parent in single parent household']
 
+# The household_bus instantiator expects the CBS registry's numeric codes, not
+# human-readable labels. These maps translate the simulator's internal labels
+# into the TYPHH (household type) and PLHH (place in household) codes that the
+# instantiator's parsing dictionaries understand. Keeping the simulator's
+# internal labels untouched (they drive the transition probabilities) and only
+# translating at write-time keeps the two representations decoupled.
+household_type_codes = {
+    'single person household': '1',   # single-person
+    'couple without children': '3',   # married couple without children
+    'couple with children': '5',      # married couple with children
+    'single parent household': '6',   # single parent
+}
+
+place_codes = {
+    'child living at home': '1',                    # child
+    'single person': '2',                           # single-person
+    'partner in couple without children': '3',      # partner
+    'partner in couple with children': '4',         # partner
+    'parent in single parent household': '7',       # single-parent
+}
+
 class HouseholdMember:
     def __init__(self, id, place):
         self.id = id
@@ -188,9 +209,9 @@ def collect_data_for_dataframe_separate_rows(households):
         
         hh_dict = {
                     'HUISHOUDNR': household.id,
-                    'TYPHH': household.household_type,
+                    'TYPHH': household_type_codes.get(household.household_type, '7'),
                     'rinpersoon': [h.id for h in household.members],
-                    'PLHH': [h.place for h in household.members],
+                    'PLHH': [place_codes.get(h.place, '8') for h in household.members],
                     'REFPERSOONHH': round(np.random.choice([0, 1])),
                     'NUMBERPERSHH': len(household.members),
                     'DATUMAANVANGHH': format_date(household.spells[0]),
@@ -229,12 +250,16 @@ while t < time_periods:
 
 hh_df = pd.concat([collect_data_for_dataframe_separate_rows(hh) for hh in households_list])
 
-# Draw additional random values to align with documentation
+# Draw additional random values to align with documentation. The youngest/oldest
+# child birth fields are household-level attributes, so they are populated for all
+# rows of households whose TYPHH code indicates children are present:
+#   "4"/"5" -> (un)married couple with children, "6" -> single parent.
 def process_household(df):
-    df['GEBJAARJONGSTEKINDHH'] = df.apply(lambda x: 2015 if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else None, axis=1)
-    df['GEBMAANDJONGSTEKINDHH'] = df.apply(lambda x: '01' if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else '--', axis=1)
-    df['GEBJAAROUDSTEKINDHH'] = df.apply(lambda x: 2010 if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else None, axis=1)
-    df['GEBMAANDOUDSTEKINDHH'] = df.apply(lambda x: '05' if 'children' in x['TYPHH'] and 'child' in x['PLHH'] else '--', axis=1)
+    has_children = df['TYPHH'].isin(['4', '5', '6'])
+    df['GEBJAARJONGSTEKINDHH'] = np.where(has_children, 2015, None)
+    df['GEBMAANDJONGSTEKINDHH'] = np.where(has_children, '01', '--')
+    df['GEBJAAROUDSTEKINDHH'] = np.where(has_children, 2010, None)
+    df['GEBMAANDOUDSTEKINDHH'] = np.where(has_children, '05', '--')
 
     return df
 

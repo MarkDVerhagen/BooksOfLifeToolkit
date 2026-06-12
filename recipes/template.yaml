@@ -1,13 +1,16 @@
 main_key: rinpersoon
 datasets:
+  # The "what": demographic information about the focal person plus their full
+  # household history. Mirrors the "Book 3" style from the paper.
   - name: persoon_tab
     features:
-      - GBAGEBOORTEMAAND
-      - GBAGEBOORTEDAG
       - GBAGEBOORTEJAAR
-      - GBAGEBOORTEMAAND
+      - GBAGESLACHT
+      - GBAGEBOORTELAND
       - GBAGEBOORTEJAARVADER
       - GBAGESLACHTVADER
+      - GBAGEBOORTEJAARMOEDER
+      - GBAGESLACHTMOEDER
   - name: household_bus
     features:
       - HUISHOUDNR
@@ -16,10 +19,10 @@ datasets:
       - DATUMEINDEHH
       - PLHH
       - REFPERSOONHH
-      - AANTALOVHH
-      - AANTALKINDHH
       - AANTALPERSHH
+      - AANTALKINDHH
 formatting:
-  sorting_keys: # list of keys to sort the paragraphs on. Order indicates priority.
+  # The "how": order paragraphs chronologically and render key/value pairs.
+  sorting_keys:
       - year
   paragraph_generator: get_paragraph_string_tabular

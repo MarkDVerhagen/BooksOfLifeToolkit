@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "books-of-life-toolkit"
+version = "0.1.0"
+description = "BOLT: transform complex log data into plain-text 'books of life' for analysis with LLMs."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+    { name = "Mark D. Verhagen" },
+    { name = "Benedikt Stroebl" },
+    { name = "Tiffany Liu" },
+    { name = "Lydia T. Liu" },
+    { name = "Matthew J. Salganik" },
+]
+keywords = [
+    "life course",
+    "administrative data",
+    "registry data",
+    "large language models",
+    "computational social science",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "duckdb>=1.0",
+    "pandas>=2.2",
+    "numpy>=2.0",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+stats = [
+    "tiktoken>=0.7",
+    "transformers>=4.50",
+    "datasets>=2.20",
+]
+dev = [
+    "pytest>=8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/MarkDVerhagen/BooksOfLifeToolkit"
+Repository = "https://github.com/MarkDVerhagen/BooksOfLifeToolkit"
+
+[tool.setuptools]
+packages = ["serialization", "serialization.instantiator_scripts", "utils"]
+
+[tool.setuptools.package-data]
+serialization = ["static/*.json"]
