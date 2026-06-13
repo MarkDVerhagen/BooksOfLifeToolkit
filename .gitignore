@@ -1,7 +1,3 @@
-fertility_data_sim/.RData
-fertility_data_sim/.Rhistory
-fertility_data_sim/.RProj.user/*
-fertility_data_sim/fer_data_sim_files/*
 .DS_Store
 *.pyc
 __pycache__/
@@ -12,14 +8,6 @@ dist/
 venv/
 .venv/
 output/
-prefer/*
-hf_pipeline_MWE/hf_models/*
-hf_pipeline_MWE/fine_tuned_models/*
-hf_pipeline_MWE/output/*
-hf_pipeline_MWE/wandb/
-
-!synth/data/e2e/outcomes_in_csv_format/*
-fertility_data_sim/hf_token
 synth/hashes/*
 synth/wrangle*
 synth/data/
@@ -29,3 +17,5 @@ synth/data/
 !synth/hashes/.gitkeep
 *.duckdb
 
+# Per-clone local ignores (see .gitignore.local.example)
+.gitignore.local

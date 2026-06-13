@@ -23,6 +23,19 @@ pytest -q
 The tests use a small, fully-known synthetic database (see `tests/conftest.py`)
 and run without any access to real registry data.
 
+## Local-only git ignores
+
+The shared `.gitignore` covers project-wide generated files. Machine-specific paths
+(PreFer checkouts, local R projects, fine-tuning experiments) live in a separate
+local file so they are not committed to the repo:
+
+```bash
+cp .gitignore.local.example .gitignore.local
+git config core.excludesFile .gitignore.local
+```
+
+Edit `.gitignore.local` for your own environment; it is never pushed.
+
 ## Optional dependencies
 
 The optional token-length / fine-tuning helpers need extra packages:
