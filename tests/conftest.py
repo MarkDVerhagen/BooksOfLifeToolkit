@@ -55,11 +55,15 @@ def conn(tmp_path):
     """A DuckDB connection to a freshly built, fully-known toy database."""
     db_path = str(tmp_path / "test.duckdb")
     connection = duckdb.connect(db_path)
-    connection.register("persoon_df", PERSOON_TAB)
-    connection.register("household_df", HOUSEHOLD_BUS)
-    connection.execute("CREATE TABLE persoon_tab AS SELECT * FROM persoon_df")
-    connection.execute("CREATE TABLE household_bus AS SELECT * FROM household_df")
-    connection.unregister("persoon_df")
-    connection.unregister("household_df")
+    persoon_csv = tmp_path / "persoon_tab.csv"
+    household_csv = tmp_path / "household_bus.csv"
+    PERSOON_TAB.to_csv(persoon_csv, index=False)
+    HOUSEHOLD_BUS.to_csv(household_csv, index=False)
+    connection.execute(
+        f"CREATE TABLE persoon_tab AS SELECT * FROM read_csv_auto('{persoon_csv}', all_varchar=true)"
+    )
+    connection.execute(
+        f"CREATE TABLE household_bus AS SELECT * FROM read_csv_auto('{household_csv}', all_varchar=true)"
+    )
     yield connection
     connection.close()

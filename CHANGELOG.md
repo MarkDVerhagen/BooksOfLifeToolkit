@@ -23,6 +23,8 @@ First public release of the Books of Life Toolkit (BOLT).
   issue/PR templates.
 
 ### Fixed
+- Bumped vulnerable dependencies: duckdb (≥1.1), aiohttp, urllib3, pyarrow in
+  `requirements.txt` and `requirements-lock.txt`.
 - Person attributes were shifted by one column, mislabeling every demographic
   field in every book.
 - Synthetic household data used descriptive strings where the instantiator

@@ -3,14 +3,14 @@
 # For normal use, prefer `pip install -r requirements.txt` (core) or the
 # pyproject extras (`pip install -e .[stats,dev]`).
 aiohappyeyeballs==2.3.4
-aiohttp==3.10.0
+aiohttp==3.13.4
 aiosignal==1.3.1
 attrs==23.2.0
 certifi==2024.7.4
 charset-normalizer==3.3.2
 datasets==2.20.0
 dill==0.3.8
-duckdb==1.0.0
+duckdb==1.2.2
 filelock==3.15.4
 frozenlist==1.4.1
 fsspec==2024.5.0
@@ -21,7 +21,7 @@ multiprocess==0.70.16
 numpy==2.0.1
 packaging==24.1
 pandas==2.2.2
-pyarrow==17.0.0
+pyarrow==18.1.0
 pyarrow-hotfix==0.6
 python-dateutil==2.9.0.post0
 pytz==2024.1
@@ -34,6 +34,6 @@ tqdm==4.66.4
 transformers==4.53.2
 typing_extensions==4.12.2
 tzdata==2024.1
-urllib3==2.2.2
+urllib3==2.2.3
 xxhash==3.4.1
 yarl==1.9.4
