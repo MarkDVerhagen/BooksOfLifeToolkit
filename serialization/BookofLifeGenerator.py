@@ -12,7 +12,7 @@ class BookofLifeGenerator:
         paragraphs=None,
         duck_db_conn=None,
         table_version: str = "",
-        social_depth: int = 3,
+        social_depth: int = 1,
     ):
         """Create a Book-of-Life generator.
 
