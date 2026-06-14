@@ -16,6 +16,7 @@ synth/data/
 !synth/data/edit/.gitkeep
 !synth/hashes/.gitkeep
 *.duckdb
+*.log
 
 # Per-clone local ignores (see .gitignore.local.example)
 .gitignore.local
