@@ -1,14 +1,8 @@
 
-from typing import List
-from serialization.instantiator_scripts.Paragraph import Paragraph
-from serialization.instantiator_scripts.PersonAttributesParagraph import PersonAttributesParagraph
-from serialization.instantiator_scripts.HouseholdEventParagraph import HouseholdEventParagraph
-from serialization.Recipe import Recipe
-from serialization.instantiator_scripts.persoon_tab import get_person_attributes
-from serialization.instantiator_scripts.household_bus import get_households, fill_household_par
-from operator import attrgetter
 from itertools import chain
-import duckdb
+
+from serialization.Recipe import Recipe
+from serialization.registry import get_instantiator
 
 class BookofLifeGeneratorBatch:
     def __init__(self, rinpersoons, recipe_yaml_path, db_path, duck_db_conn, table_version=""):
@@ -20,65 +14,17 @@ class BookofLifeGeneratorBatch:
         self.table_version = table_version
         self.conn = duck_db_conn
         self.instantiate_paragraph_dicts()
-        # self.write_books()
-        
-        # self.social_context_paragraphs = self.instantiate_social_context_paragraphs(self.recipe.social_context_features)
 
     def instantiate_paragraph_dicts(self):
         for dataset in self.recipe.datasets:
             dataset_name = dataset.get('name')
-            features = self.recipe.get_features(dataset_name)
+            explicit = dataset.get('explicit', False)
+            order = dataset.get('sort_key', 0)
 
-            if dataset_name == 'persoon_tab' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_person_attributes(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            elif dataset_name == 'lisa_tab' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_lisa_attributes(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            elif dataset_name == 'loc_lisa_tab' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_lisa_loc(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            elif dataset_name == 'wealth_lisa_tab' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_lisa_wealth(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            elif dataset_name == 'inc_lisa_tab' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_lisa_inc(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            elif dataset_name == 'par_lisa_tab' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_lisa_par(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            elif dataset_name == 'household_bus' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_households(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            elif dataset_name == 'education_bus' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_education_events(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            elif dataset_name == 'employment_bus' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_employment_events(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            elif dataset_name == 'object_bus' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_objects(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            elif dataset_name == 'stork_tab' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_stork(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            elif dataset_name == 'stork2_tab' + self.table_version:
-                explicit = dataset.get('explicit', False)
-                order = dataset.get('sort_key', 0)
-                self.paragraphs_dict_list.append(get_stork2(self.rinpersoons, self.conn, self.table_version, explicit, order))
-            else:
-                raise ValueError(f"Dataset name {dataset_name + self.table_version} not recognized")
+            instantiator = get_instantiator(dataset_name, self.table_version)
+            self.paragraphs_dict_list.append(
+                instantiator(self.rinpersoons, self.conn, self.table_version, explicit, order)
+            )
     
     def combine_paragraphs(self, dict_list):
         combined_dict = {}
@@ -89,9 +35,5 @@ class BookofLifeGeneratorBatch:
         return combined_dict
 
     def write_books(self):
+        """Combine the per-source paragraph dicts into one dict keyed by rinpersoon."""
         self.rin_dicts = self.combine_paragraphs(self.paragraphs_dict_list)
-        # for rinpersoon, paragraphs in batch_generator.rin_dicts.items():
-        #     book_content = BookofLifeGenerator(
-        #         rinpersoon=rinpersoon, recipe_yaml_path=self.recipe,
-        #         paragraphs=paragraphs, table_version="").generate_book()
-        #     outcome = outcome_dict.get(rinpersoon, "nan")  # Default to "0" if not found

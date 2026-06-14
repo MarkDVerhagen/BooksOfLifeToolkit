@@ -1,0 +1,21 @@
+{
+  "title": "Books of Life Toolkit (BOLT)",
+  "description": "Open-source software that transforms complex log data (such as national registry data) into plain-text 'books of life' for analysis with large language models. Accompanies the paper 'The Book of Life approach: Enabling richness and scale for life course research'.",
+  "license": "MIT",
+  "upload_type": "software",
+  "version": "0.1.0",
+  "keywords": [
+    "life course research",
+    "administrative data",
+    "registry data",
+    "large language models",
+    "computational social science"
+  ],
+  "creators": [
+    { "name": "Verhagen, Mark D." },
+    { "name": "Stroebl, Benedikt" },
+    { "name": "Liu, Tiffany" },
+    { "name": "Liu, Lydia T." },
+    { "name": "Salganik, Matthew J." }
+  ]
+}

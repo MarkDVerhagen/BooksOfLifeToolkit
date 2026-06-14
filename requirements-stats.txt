@@ -1,0 +1,6 @@
+# Optional dependencies for the token-length statistics and downstream
+# fine-tuning helpers in utils.utils.generate_token_length_stats.
+# Install on top of requirements.txt: `pip install -r requirements-stats.txt`.
+tiktoken==0.7.0
+transformers==4.53.2
+datasets==2.20.0

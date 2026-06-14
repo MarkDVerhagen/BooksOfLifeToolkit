@@ -1,0 +1,27 @@
+# Local-only ignore patterns (not shared via the repo .gitignore).
+#
+# Setup (once per clone):
+#   cp .gitignore.local.example .gitignore.local
+#   git config core.excludesFile .gitignore.local
+#
+# Patterns here apply only on your machine. Edit .gitignore.local freely;
+# it is listed in .gitignore and will never be committed.
+
+# R / local analysis projects
+fertility_data_sim/.RData
+fertility_data_sim/.Rhistory
+fertility_data_sim/.RProj.user/*
+fertility_data_sim/fer_data_sim_files/*
+fertility_data_sim/hf_token
+
+# PreFer sandbox artifacts (local checkout)
+prefer/*
+
+# Hugging Face fine-tuning experiments (local MWE directory)
+hf_pipeline_MWE/hf_models/*
+hf_pipeline_MWE/fine_tuned_models/*
+hf_pipeline_MWE/output/*
+hf_pipeline_MWE/wandb/
+
+# Local synth experiment outputs
+!synth/data/e2e/outcomes_in_csv_format/*

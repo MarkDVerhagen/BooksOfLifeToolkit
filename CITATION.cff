@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use BOLT or the book of life approach, please cite the paper below."
+title: "Books of Life Toolkit (BOLT)"
+authors:
+  - family-names: Verhagen
+    given-names: "Mark D."
+  - family-names: Stroebl
+    given-names: Benedikt
+  - family-names: Liu
+    given-names: Tiffany
+  - family-names: Liu
+    given-names: "Lydia T."
+  - family-names: Salganik
+    given-names: "Matthew J."
+repository-code: "https://github.com/MarkDVerhagen/BooksOfLifeToolkit"
+license: MIT
+version: 0.1.0
+preferred-citation:
+  type: article
+  title: "The Book of Life approach: Enabling richness and scale for life course research"
+  authors:
+    - family-names: Verhagen
+      given-names: "Mark D."
+    - family-names: Stroebl
+      given-names: Benedikt
+    - family-names: Liu
+      given-names: Tiffany
+    - family-names: Liu
+      given-names: "Lydia T."
+    - family-names: Salganik
+      given-names: "Matthew J."
+  year: 2025
+  journal: "arXiv preprint arXiv:2507.03027"
+  identifiers:
+    - type: other
+      value: "arXiv:2507.03027"
+      description: arXiv preprint
+  url: "https://doi.org/10.48550/arXiv.2507.03027"

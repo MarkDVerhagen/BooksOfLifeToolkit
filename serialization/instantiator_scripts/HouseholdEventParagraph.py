@@ -98,22 +98,6 @@ class HouseholdEventParagraph(Paragraph):
         self.year_month_day = '_'.join([year, month, day])
         return
 
-    def instantiate_social_context_paragraphs(self, social_context_features):
-        result = {}
-        for dataset in social_context_features:
-            dataset_name = list(dataset.keys())[0]
-            result[dataset_name] = {}
-            for context, features in dataset[dataset_name].items():
-                result[dataset_name][context] = BookofLifeGenerator("03c6605f", {
-                    'main_key': self.recipe.main_key,
-                    'datasets': features,
-                    'formatting': {
-                        'sorting_keys': self.recipe.sorting_keys,
-                        'paragraph_generator': 'get_paragraph_string_tabular'
-                    }
-                })
-        return result
-
     def get_paragraph_string_biographic(self, features=None):
             
         household_types = {

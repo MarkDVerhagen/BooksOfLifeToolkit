@@ -1,20 +1,28 @@
 import os
-import duckdb
 import json
 import argparse
+
+import duckdb
+
 from serialization.BookofLifeGeneratorBatch import BookofLifeGeneratorBatch
 from utils.utils import basic_gen
+
 
 def main():
     parser = argparse.ArgumentParser(description="Inspect the Book of Life for a specific individual.")
     parser.add_argument('--hash', type=str, required=True, help='rinpersoon hash (unique individual ID)')
-    parser.add_argument('--recipe', type=str, default="template", help='Recipe YAML file name (without .yaml)')
-    parser.add_argument('--db_path', type=str, default="db.duckdb", help='DuckDB database file name (in dbs/)')
+    parser.add_argument('--recipe', type=str, default="template", help='Recipe name in recipes/ (or a path, with or without .yaml)')
+    parser.add_argument('--db_path', type=str, default="db.duckdb", help='DuckDB database file name (in dbs/) or a full path')
     parser.add_argument('--output_dir', type=str, default="output", help='Directory to save the output JSONL file')
     args = parser.parse_args()
 
-    db_path = os.path.join('dbs', args.db_path)
-    recipe_path = os.path.join('recipes', args.recipe + '.yaml')
+    db_path = args.db_path if os.path.exists(args.db_path) else os.path.join('dbs', args.db_path)
+    if args.recipe.endswith('.yaml'):
+        recipe_path = args.recipe
+    elif os.path.sep in args.recipe:
+        recipe_path = args.recipe + '.yaml'
+    else:
+        recipe_path = os.path.join('recipes', args.recipe + '.yaml')
     output_dir = args.output_dir
     rinpersoon = args.hash
 
@@ -30,7 +38,7 @@ def main():
         return
 
     # Generate the Book of Life
-    data = basic_gen(rinpersoon=rinpersoon, recipe_yaml_path=recipe_path, paragraphs=paragraphs)
+    data = basic_gen(rinpersoon=rinpersoon, recipe_yaml_path=recipe_path, paragraphs=paragraphs, conn=conn)
     json_record = {
         "rinpersoon": data[0],
         "book_content": data[1]

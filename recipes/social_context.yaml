@@ -1,0 +1,31 @@
+main_key: rinpersoon
+datasets:
+  # The "what": information about the focal person.
+  - name: persoon_tab
+    features:
+      - GBAGEBOORTEJAAR
+      - GBAGESLACHT
+  - name: household_bus
+    features:
+      - HUISHOUDNR
+      - TYPHH
+      - DATUMAANVANGHH
+      - DATUMEINDEHH
+      - PLHH
+    # The "who": for every household spell, write short "books within books"
+    # for the partners and children present in that spell.
+    social_context_features:
+      PARTNERS:
+        - name: persoon_tab
+          features:
+            - GBAGEBOORTEJAAR
+            - GBAGESLACHT
+      CHILDREN:
+        - name: persoon_tab
+          features:
+            - GBAGEBOORTEJAAR
+formatting:
+  # The "how": order paragraphs chronologically and render key/value pairs.
+  sorting_keys:
+      - year
+  paragraph_generator: get_paragraph_string_tabular
