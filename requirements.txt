@@ -6,7 +6,7 @@
 #   - requirements-stats.txt : token-length statistics / fine-tuning helpers
 #   - requirements-lock.txt  : fully pinned environment for exact reproduction
 # Or install via pyproject extras: `pip install -e .[stats,dev]`
-duckdb==1.0.0
+duckdb==1.2.2
 pandas==2.2.2
 numpy==2.0.1
 PyYAML==6.0.1
