@@ -38,7 +38,7 @@ dependencies = [
 [project.optional-dependencies]
 stats = [
     "tiktoken>=0.7",
-    "transformers>=4.50",
+    "transformers>=5.13",
     "datasets>=2.20",
 ]
 dev = [
