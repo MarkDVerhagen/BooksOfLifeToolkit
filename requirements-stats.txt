@@ -4,3 +4,4 @@
 tiktoken==0.7.0
 transformers==5.13.0
 datasets==2.20.0
+aiohttp==3.14.3

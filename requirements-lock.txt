@@ -3,7 +3,7 @@
 # For normal use, prefer `pip install -r requirements.txt` (core) or the
 # pyproject extras (`pip install -e .[stats,dev]`).
 aiohappyeyeballs==2.7.1
-aiohttp==3.14.1
+aiohttp==3.14.3
 aiosignal==1.4.0
 attrs==23.2.0
 certifi==2024.7.4
