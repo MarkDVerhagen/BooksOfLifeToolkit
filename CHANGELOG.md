@@ -23,6 +23,8 @@ First public release of the Books of Life Toolkit (BOLT).
   issue/PR templates.
 
 ### Fixed
+- Bumped `certifi` to 2026.10.23 and `aiohttp` to 3.14.5 to clear Dependabot
+  alerts (compromised emSign roots; aiohttp request-handling issues).
 - Bumped vulnerable dependencies: duckdb (≥1.1), aiohttp, urllib3, pyarrow in
   `requirements.txt` and `requirements-lock.txt`.
 - Person attributes were shifted by one column, mislabeling every demographic
